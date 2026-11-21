@@ -26,19 +26,36 @@ from detector.sources import FETCHERS, Job, client, detail_hooks, enrich_smartre
 ROOT = Path(__file__).resolve().parent.parent
 CLOSED_URL = ("error=true", "/404", "job-not-found", "jobnotfound")  # closed jobs redirect here
 APPLY_ENTRY = ("/oneclick-ui/",)  # ATS application entry paths that refuse non-browser clients
+SIGNIN_APPLY_HOSTS = ("account.amazon.jobs",)  # apply links that always go to a sign-in (see live())
 FULL_SWEEP_EVERY = 12  # passes; incremental fetchers (Workday) fully re-enumerate one board per pass
 CLOSED_TEXT = ("this job is no longer", "position has been filled", "no longer accepting applications",
                "job you are looking for is no longer")
 
 
+def kind(b: dict) -> str:
+    """Fetcher key: the ATS, or for custom-JSON boards the platform (amazon, eightfold, jibe, ...)."""
+    return b.get("platform", "") if b.get("ats") == "custom" else b.get("ats", "")
+
+
 def load_boards(names: list[str] | None) -> list[dict]:
     boards = yaml.safe_load((ROOT / "boards.yaml").read_text(encoding="utf-8"))["boards"]
-    boards = [b for b in boards if b.get("ats") in FETCHERS]
+    boards = [b for b in boards if kind(b) in FETCHERS]
     return [b for b in boards if b["name"] in names] if names else boards
 
 
 def live(c: httpx.Client, url: str) -> tuple[bool, str]:
     """The page loads (2xx after redirects) and doesn't land on a closed/404 page."""
+    host = httpx.URL(url).host if url else ""
+    if host in SIGNIN_APPLY_HOSTS:
+        # The apply link sends every job, open or not, through a long SSO redirect chain that drops
+        # non-browser clients. Only the first hop says anything: it answers (2xx/3xx) at the entry page.
+        try:
+            r = c.get(url, follow_redirects=False)
+        except httpx.HTTPError as e:
+            return False, f"{type(e).__name__}"
+        if r.status_code < 400:
+            return True, f"apply link answers ({r.status_code}) and leads to the {host} sign-in"
+        return False, f"HTTP {r.status_code}"
     try:
         r = c.get(url)
     except httpx.HTTPError as e:
@@ -91,7 +108,7 @@ def run(names: list[str] | None, dry_run: bool) -> int:
     with client() as c:
         for i, b in enumerate(load_boards(names)):
             name = b["name"]
-            ats_of[name] = b["ats"]
+            ats_of[name] = kind(b)
             # health.json changes only when a board starts/stops failing, so healthy runs commit nothing.
             h = health.setdefault(name, {"ok": True, "fails": 0})
             bs = seen["boards"].setdefault(name, {"jobs": {}})
@@ -100,7 +117,7 @@ def run(names: list[str] | None, dry_run: bool) -> int:
             full = baseline or (pass_no - i) % FULL_SWEEP_EVERY == 0
             skip = {k for k, e in known.items() if e.get("status") != "pending"}
             try:
-                jobs = FETCHERS[b["ats"]](c, b, skip=skip, location_ok=pf.location_ok, full=full)
+                jobs = FETCHERS[kind(b)](c, b, skip=skip, location_ok=pf.location_ok, full=full)
             except Exception as e:
                 h.update(ok=False, error=f"{type(e).__name__}: {str(e)[:150]}", fails=h.get("fails", 0) + 1)
                 h.setdefault("failing_since", ts)

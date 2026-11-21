@@ -100,6 +100,50 @@ def smartrecruiters(c: httpx.Client, board: str, slug: str) -> list[Job]:
             return out
 
 
+def amazon(c: httpx.Client, board: str, skip: set[str] = frozenset(), full: bool = True) -> list[Job]:
+    """amazon.jobs search.json, India only. Max 100 per page; `sort=recent` is newest first by posted date
+    (only roughly within a day), so a normal pass stops at the first page with nothing unseen or pending."""
+    import json as _json
+    import time
+    from datetime import datetime
+    url = "https://www.amazon.jobs/en/search.json"
+    out, offset = [], 0
+    while True:
+        r = c.get(url, params={"result_limit": 100, "offset": offset, "country": "IND", "sort": "recent"})
+        r.raise_for_status()
+        d = r.json()
+        if d.get("error"):
+            raise RuntimeError(f"amazon.jobs: {d['error']}")
+        page = d.get("jobs") or []
+        fresh = 0
+        for j in page:
+            locs = []
+            for raw in j.get("locations") or []:
+                try:
+                    l = _json.loads(raw) if isinstance(raw, str) else raw
+                    locs.append(", ".join(x for x in (l.get("normalizedCityName") or l.get("city"),
+                                                      l.get("normalizedStateName"), l.get("normalizedCountryName")) if x))
+                except (ValueError, AttributeError):
+                    pass
+            if not locs and j.get("city"):
+                locs = [f"{j['city']}, India"]
+            try:
+                posted = datetime.strptime(j.get("posted_date", ""), "%B %d, %Y").date().isoformat()
+            except ValueError:
+                posted = None
+            jid = str(j["id_icims"])
+            out.append(Job(
+                board=board, id=jid, title=j["title"].strip(), locations=locs,
+                url=f"https://www.amazon.jobs{j['job_path']}", apply_url=j.get("url_next_step") or "",
+                posted_at=posted, req_id=jid,
+            ))
+            fresh += jid not in skip
+        offset += len(page)
+        if not page or offset >= d.get("hits", 0) or (not full and fresh == 0):
+            return out
+        time.sleep(0.5)
+
+
 def _workday(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     from detector import workday  # Workday goes through curl, not httpx (see detector/workday.py)
     return workday.fetch(b, **ctx)
@@ -119,6 +163,7 @@ FETCHERS = {
     "smartrecruiters": lambda c, b, **_: smartrecruiters(c, b["name"], b["locator"][0]),
     "workday": _workday,
     "oracle": _oracle,
+    "amazon": lambda c, b, skip=frozenset(), full=True, **_: amazon(c, b["name"], skip, full),
 }
 
 

@@ -168,3 +168,54 @@ def test_workday_rechecks_location_after_detail(env, monkeypatch):
     runmod.run(None, dry_run=False)
     s = seen(tmp)
     assert s["7"]["status"] == "filtered" and s["8"]["status"] == "alerted" and pushed == ["Acme: ML Engineer"]
+
+
+def amazon_job(n, date="November 20, 2026", locs=("Hyderabad", "Telangana")):
+    loc = json.dumps({"normalizedCityName": locs[0], "normalizedStateName": locs[1], "normalizedCountryName": "India"})
+    return {"id_icims": str(n), "title": " Applied Scientist ", "job_path": f"/en/jobs/{n}/applied-scientist",
+            "url_next_step": f"https://account.amazon.jobs/jobs/{n}/apply", "posted_date": date,
+            "locations": [loc], "city": locs[0]}
+
+
+def amazon_client(total):
+    calls = []
+
+    def handler(req):
+        calls.append(req)
+        assert req.url.params["country"] == "IND" and req.url.params["sort"] == "recent"
+        off = int(req.url.params["offset"])
+        return httpx.Response(200, json={"hits": total, "jobs": [amazon_job(i) for i in range(off, min(off + 100, total))]})
+    return httpx.Client(transport=httpx.MockTransport(handler)), calls
+
+
+def test_amazon_parse(monkeypatch):
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    c, calls = amazon_client(150)
+    jobs = sources.amazon(c, "Amazon")
+    assert len(jobs) == 150 and len(calls) == 2
+    j = jobs[0]
+    assert (j.id, j.title, j.locations, j.posted_at) == ("0", "Applied Scientist", ["Hyderabad, Telangana, India"], "2026-11-20")
+    assert j.url == "https://www.amazon.jobs/en/jobs/0/applied-scientist"
+    assert j.apply_url == "https://account.amazon.jobs/jobs/0/apply"
+    assert PF.location_ok(j.locations[0])
+
+
+def test_amazon_incremental_stops_when_page_has_nothing_new(monkeypatch):
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    c, calls = amazon_client(2000)
+    sources.amazon(c, "Amazon", skip={str(i) for i in range(5, 2000)}, full=False)
+    assert len(calls) == 2  # page 1 has new IDs, page 2 has none
+
+
+def test_custom_board_routed_by_platform():
+    assert runmod.kind({"ats": "custom", "platform": "amazon"}) == "amazon"
+    assert runmod.kind({"ats": "workday"}) == "workday"
+
+
+def test_signin_apply_link_checks_first_hop_only():
+    def handler(req):
+        assert req.url.host == "account.amazon.jobs"  # never follows into the SSO chain
+        return httpx.Response(302, headers={"location": "https://idp.federate.amazon.com/sso"})
+    c = httpx.Client(transport=httpx.MockTransport(handler), follow_redirects=True)
+    ok, why = runmod.live(c, "https://account.amazon.jobs/jobs/1/apply")
+    assert ok and "sign-in" in why
