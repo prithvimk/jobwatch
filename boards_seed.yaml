@@ -40,7 +40,8 @@ boards:
     hints: {greenhouse: databricks}
   - name: Morgan Stanley
     careers_url: https://www.morganstanley.com/careers/career-opportunities-search
-    hints: {eightfold: "morganstanley.eightfold.ai|morganstanley.com"}
+    hints: {workday: "https://ms.wd5.myworkdayjobs.com/External"}
+    note: "Eightfold front end (morganstanley.eightfold.ai); its apply button goes to this Workday site"
   - name: Swiggy
     careers_url: https://careers.swiggy.in/
     hints: {smartrecruiters: Swiggy}

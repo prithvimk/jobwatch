@@ -149,6 +149,11 @@ def _workday(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     return workday.fetch(b, **ctx)
 
 
+def _eightfold(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import eightfold
+    return eightfold.fetch(c, b, **ctx)
+
+
 def _oracle(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     from detector import oracle
     return oracle.fetch(c, b, **ctx)
@@ -164,6 +169,7 @@ FETCHERS = {
     "workday": _workday,
     "oracle": _oracle,
     "amazon": lambda c, b, skip=frozenset(), full=True, **_: amazon(c, b["name"], skip, full),
+    "eightfold": _eightfold,
 }
 
 
@@ -177,6 +183,9 @@ def detail_hooks(ats: str):
     if ats == "oracle":
         from detector import oracle
         return oracle.enrich, oracle.live
+    if ats == "eightfold":
+        from detector import eightfold
+        return eightfold.enrich, eightfold.live
     return None
 
 

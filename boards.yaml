@@ -139,15 +139,21 @@ boards:
   - confirmed greenhouse ('databricks',)
 - name: Morgan Stanley
   careers_url: https://www.morganstanley.com/careers/career-opportunities-search
-  ats: custom
-  platform: eightfold
-  effort: custom-json
-  endpoint: https://morganstanley.eightfold.ai/api/pcsx/search?domain=morganstanley.com
-  total: unknown
+  ats: workday
+  effort: adapter
+  locator:
+  - ms
+  - wd5
+  - External
+  endpoint: https://ms.wd5.myworkdayjobs.com/wday/cxs/ms/External/jobs
+  total: 1144
   india: 83
+  india_facet:
+    param: Location_Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
   evidence:
-  - GET https://www.morganstanley.com/careers/career-opportunities-search -> 200 https://www.morganstanley.com/careers/career-opportunities-search
-  - confirmed eightfold JSON
+  - Eightfold front end (morganstanley.eightfold.ai); position_details applyUrl points to ms.wd5.myworkdayjobs.com/External
+  - confirmed workday ('ms', 'wd5', 'External'), checked 2026-11-21
 - name: Swiggy
   careers_url: https://careers.swiggy.in/
   ats: smartrecruiters
