@@ -3,6 +3,14 @@
   "fails": 0,
   "ok": true
  },
+ "Atlassian": {
+  "fails": 0,
+  "ok": true
+ },
+ "Bank of America": {
+  "fails": 0,
+  "ok": true
+ },
  "Barclays": {
   "fails": 0,
   "ok": true
@@ -23,11 +31,23 @@
   "fails": 0,
   "ok": true
  },
+ "Deutsche Bank": {
+  "fails": 0,
+  "ok": true
+ },
+ "HERE": {
+  "fails": 0,
+  "ok": true
+ },
  "JPMC": {
   "fails": 0,
   "ok": true
  },
  "LSEG": {
+  "fails": 0,
+  "ok": true
+ },
+ "MSCI": {
   "fails": 0,
   "ok": true
  },
