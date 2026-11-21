@@ -29,6 +29,8 @@ uv run python -m detector.run --dry-run --screen          # dry pass that also c
 uv run python -m detector.ledger list                     # unresolved (SHOWN) roles; --all for every mark
 uv run python -m detector.ledger applied <ref>            # or skipped / shown (undo); ref = board:id, job id or req id
 uv run python -m detector.remind --dry-run                # reminders/weekly lists due now, printed, nothing recorded
+uv run python -m detector.sweep JPMC                      # full India board now: counts, candidates, dropped title hits
+uv run python -m detector.sweep JPMC --screen             # also screen candidates (cached verdicts reused; --screen-limit 25)
 .\scripts\install_task.ps1                                 # register the 5-min Task Scheduler job (log: private/logs/sync.log)
 ```
 
@@ -41,7 +43,7 @@ To exercise the alert path without waiting for new postings, point `JOBWATCH_STA
 3. **Application kit** (Claude, same run): the fit verdict with gaps, plus a resume tweak when one is worth making, saved to a doc the alert links to. No drafted screening answers: target boards ask form fields, not essays. `private/answers.md` holds only the facts forms ask that Simplify doesn't fill (notice, CTC, relocation, start date, years). Outreach drafts only on request.
 4. **Submit** (user, ~2 min): Simplify autofill plus pasted kit answers.
 
-Also required: an on-demand **sweep**. Given a company, it enumerates the full India board (all pages), pulls JDs for candidates, reports total counts, and lists filtered-out title hits with the reason.
+Also required: an on-demand **sweep** (built: `detector/sweep.py`). Given a company, it enumerates the full India board (all pages), pulls JDs for candidates, reports total counts, and lists filtered-out title hits with the reason.
 
 Build order: M0 board map (done) → M1 detector for easy boards, hosted on the laptop every 5 min with public-repo GitHub Actions as the fallback (built; see `docs/hosting.md`) → M2 adapters, one company at a time, each with a fixture test (built for all 21 boards with a JSON source: Workday for 12 incl. Morgan Stanley, Deutsche Bank and Bank of America, Oracle for JPMC, Amazon, Eightfold for Microsoft, Jibe for MSCI and HERE, Atlassian; the 4 `custom-scrape` boards and SISC are not watched) → M3 screener (built; inputs `private/resume.md`, `private/answers.md`, the filter spec in `CLAUDE.local.md`) → M4 ledger, reminders, digests (built) → M5 optional Claude-in-Chrome prefill that stops before submit.
 
@@ -77,6 +79,13 @@ Build order: M0 board map (done) → M1 detector for easy boards, hosted on the 
 - Reply: one JSON object (`verdict` IN/STRETCH/OUT, `fit` 1-5, `location`, `experience_asked`, `one_line`, `gaps`, `out_reason`, `resume_tweak`, `skills`). The cached verdict also gets `screened_at` and `title`. Verdicts are cached in `private/verdicts.json` by `board:id`, so a retried push never re-screens.
 - IN/STRETCH: one push per role (title prefixed with the verdict, IN at priority 4), best fit first, and a kit in `private/kits/`. OUT: no push, state status `screened`, queued in `private/digest.json` and sent as one digest at the first laptop pass after 20:00 IST. Any screening failure (not logged in, timeout, bad reply) sends the plain alert with "Screening unavailable: <reason>"; a role is never dropped.
 - The task's time limit is 20 min (`scripts/install_task.ps1`) because a pass with several hits makes several Claude calls.
+
+## Sweep (`detector/sweep.py`)
+
+- Covers what the detector cannot: postings already open when a board was baselined never alert. A sweep fetches with `full=True`, no skip set, and an India-only location check (North India is fetched so it can be counted and reported), so Workday city-level tenants return every India city.
+- Report: postings fetched (and how many are outside India), India total (and how many state no location), candidates, title hits dropped by the prefilter with the reason (`Prefilter.title_hit`: the title matched an include pattern), and the count of other India titles. Candidates get the detail hook where the ATS has one (a failure lists the posting as not confirmed open; detail locations can move it to the dropped list), the JD via `detector/jd.py`, and a history label from `state/seen.json` and the ledger (baseline, alerted, APPLIED/SKIPPED, repost of a resolved requisition, or new).
+- Without `--screen`, each candidate shows the first phrase in its JD stating a number of years, quoted verbatim and not judged. With `--screen`, candidates without a cached verdict are screened (at most `--screen-limit`, default 25, Pro usage; the rest are named as not screened); APPLIED/SKIPPED roles and reposts of them are never screened. IN/STRETCH get a kit.
+- Pushes nothing and writes no `state/`. The report prints and is saved to `private/sweeps/<date>-<company>.md`. A board without a fetcher, or a name not in `boards.yaml`, prints as `unknown`. Names match exactly (any case), else by substring.
 
 ## Filter spec
 

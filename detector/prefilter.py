@@ -35,6 +35,11 @@ class Prefilter:
         rest = re.sub(r"\bindian?\b", " ", self.north.sub(" ", loc), flags=re.I)
         return bool(self.india.search(rest))  # another (non-north) Indian city remains
 
+    def title_hit(self, job: Job) -> bool:
+        """The title matches an include pattern (before exclusions): a role worth naming when filtered out."""
+        extra = [re.compile(p, re.I) for p in (self.boards.get(job.board) or {}).get("extra_include", [])]
+        return any(p.search(job.title) for p in self.include + extra)
+
     def check(self, job: Job) -> tuple[bool, str]:
         title = job.title
         for p in self.exclude:
