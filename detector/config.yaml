@@ -32,3 +32,6 @@ boards:
   Sarvam:
     # AI-native company: any engineering/science title is a candidate, not only ones that say ML.
     extra_include: ['\b(engineer|engineering|sde ?\d?|developer|scientist|researcher)\b']
+  Eightfold AI:
+    # AI-native company (talent intelligence): engineering/science titles are candidates, as for Sarvam.
+    extra_include: ['\b(engineer|engineering|sde ?\d?|developer|scientist|researcher)\b']

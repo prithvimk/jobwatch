@@ -6,6 +6,7 @@ summary:
   - Swiggy
   adapter:
   - JPMC
+  - Goldman Sachs
   - Cisco
   - Mastercard
   - Wells Fargo
@@ -17,6 +18,7 @@ summary:
   - Visa
   custom-json:
   - Amazon
+  - Eightfold AI
   - Microsoft
   - MSCI
   - Atlassian
@@ -389,3 +391,32 @@ boards:
   evidence:
   - India postings apply on ghr.wd1 lateral-ba_continuum (BA Continuum India); the site holds only India (126 = servlet India count, 2026-11-21)
   - no country facet: allowed-city location facets are used
+- name: Eightfold AI
+  careers_url: https://eightfold.ai/company/careers/
+  note: Added 2026-11-22. Its own Eightfold careers site (app.eightfold.ai)
+  ats: custom
+  platform: eightfold
+  effort: custom-json
+  endpoint: https://app.eightfold.ai/api/pcsx/search?domain=eightfold.ai
+  total: unknown
+  india: 20
+  evidence:
+  - from seed hints
+  - confirmed eightfold JSON (2026-11-22)
+- name: Goldman Sachs
+  careers_url: https://higher.gs.com/results?LOCATION=India
+  note: Added 2026-11-22. higher.gs.com is a front end (GraphQL at api-higher.gs.com) whose apply links go to
+    this Oracle site. It also lists roles Oracle has closed (15 of 132 India roles on 2026-11-22), so Oracle is
+    the source.
+  ats: oracle
+  effort: adapter
+  locator:
+  - hdpc.fa.us2.oraclecloud.com
+  - LateralHiring
+  endpoint: https://hdpc.fa.us2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?finder=findReqs;siteNumber=LateralHiring
+  total: 935
+  india: 122
+  india_method: LOCATIONS facet, country=India
+  evidence:
+  - from seed hints
+  - confirmed oracle ('hdpc.fa.us2.oraclecloud.com', 'LateralHiring')

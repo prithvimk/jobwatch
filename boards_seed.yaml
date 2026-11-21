@@ -97,4 +97,12 @@ boards:
     careers_url: https://careers.bankofamerica.com/en-us/job-search
     hints: {workday: "https://ghr.wd1.myworkdayjobs.com/lateral-ba_continuum"}
     note: "India postings live on this Workday site (BA Continuum India). The jobssearchservlet also lists them, with years of experience"
+  - name: Eightfold AI
+    careers_url: https://eightfold.ai/company/careers/
+    hints: {eightfold: "app.eightfold.ai|eightfold.ai"}
+    note: "Added 2026-11-22. Its own Eightfold careers site (app.eightfold.ai)"
+  - name: Goldman Sachs
+    careers_url: https://higher.gs.com/results?LOCATION=India
+    hints: {oracle: "https://hdpc.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/LateralHiring"}
+    note: "Added 2026-11-22. higher.gs.com is a front end (GraphQL at api-higher.gs.com); its apply links go to this Oracle site"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

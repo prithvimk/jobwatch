@@ -105,7 +105,7 @@ def call_claude(prompt: str) -> str:
     # Run outside the repo so no CLAUDE.md is loaded: the prompt carries everything, and no tools are allowed.
     work = Path(tempfile.gettempdir()) / "jobwatch-screen"
     work.mkdir(exist_ok=True)
-    model = os.environ.get("JOBWATCH_SCREEN_MODEL", "sonnet")  # Sonnet: spares the Pro plan's Opus limits
+    model = os.environ.get("JOBWATCH_SCREEN_MODEL", "haiku")  # Haiku: lightest on Pro usage; matched Sonnet on 30 JPMC verdicts
     args = [exe, "-p", "--output-format", "json", "--max-turns", "1", "--model", model,
             "--disallowedTools", "Bash,Edit,Write,Read,Glob,Grep,WebFetch,WebSearch,NotebookEdit,Task"]
     try:
