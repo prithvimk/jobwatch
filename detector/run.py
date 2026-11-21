@@ -13,12 +13,13 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
 from pathlib import Path
 
 import httpx
 import yaml
 
-from detector import notify, state
+from detector import notify, state, workday
 from detector.prefilter import Prefilter
 from detector.sources import FETCHERS, Job, client, enrich_smartrecruiters_urls
 
@@ -57,6 +58,8 @@ def live(c: httpx.Client, url: str) -> tuple[bool, str]:
 
 
 def liveness(c: httpx.Client, job: Job) -> tuple[bool, str]:
+    if "/wday/cxs/" in (job.check_urls or [""])[0]:
+        return workday.live(job)
     if job.check_urls and "smartrecruiters" in job.check_urls[0]:
         enrich_smartrecruiters_urls(c, job)
     for label, url in [("api", u) for u in job.check_urls] + [("JD", job.url), ("apply", job.apply_url)]:
@@ -81,14 +84,22 @@ def run(names: list[str] | None, dry_run: bool) -> int:
     seen, health = state.load_seen(), state.load_health()
     ts = state.now_iso()
     alerts: list[tuple[Job, str, str]] = []
+    pass_no = int(time.time() // 300)  # a 5-min slot number: rotates Workday full sweeps across boards
+    ats_of: dict[str, str] = {}
 
     with client() as c:
-        for b in load_boards(names):
-            name, slug = b["name"], b["locator"][0]
+        for i, b in enumerate(load_boards(names)):
+            name = b["name"]
+            ats_of[name] = b["ats"]
             # health.json changes only when a board starts/stops failing, so healthy runs commit nothing.
             h = health.setdefault(name, {"ok": True, "fails": 0})
+            bs = seen["boards"].setdefault(name, {"jobs": {}})
+            known = bs["jobs"]
+            baseline = "baseline_at" not in bs
+            full = baseline or (pass_no - i) % workday.FULL_SWEEP_EVERY == 0
+            skip = {k for k, e in known.items() if e.get("status") != "pending"}
             try:
-                jobs = FETCHERS[b["ats"]](c, name, slug)
+                jobs = FETCHERS[b["ats"]](c, b, skip=skip, location_ok=pf.location_ok, full=full)
             except Exception as e:
                 h.update(ok=False, error=f"{type(e).__name__}: {str(e)[:150]}", fails=h.get("fails", 0) + 1)
                 h.setdefault("failing_since", ts)
@@ -98,9 +109,6 @@ def run(names: list[str] | None, dry_run: bool) -> int:
                                 tags=["warning"], dry_run=dry_run)
                 continue
 
-            bs = seen["boards"].setdefault(name, {"jobs": {}})
-            known = bs["jobs"]
-            baseline = "baseline_at" not in bs
             new = [j for j in jobs if j.id not in known]
             retry = [j for j in jobs if known.get(j.id, {}).get("status") == "pending"]
             passed = 0
@@ -126,7 +134,20 @@ def run(names: list[str] | None, dry_run: bool) -> int:
         alerts.sort(key=lambda a: (a[0].posted_at or "", a[2]), reverse=True)
         for job, why, first_seen in alerts:
             entry = seen["boards"][job.board]["jobs"][job.id]
-            ok, live_why = liveness(c, job)
+            if ats_of.get(job.board) == "workday":
+                try:  # stated posting date and every location; the location check is redone with them
+                    workday.enrich(job)
+                except Exception as e:
+                    ok, live_why = False, f"detail API {type(e).__name__}: {str(e)[:100]}"
+                else:
+                    ok, why = pf.check(job)
+                    if not ok:
+                        entry["status"] = "filtered"
+                        print(f"  filtered after detail: {job.board} {job.id} {job.title!r}: {why}")
+                        continue
+                    ok, live_why = liveness(c, job)
+            else:
+                ok, live_why = liveness(c, job)
             if not ok:
                 entry["tries"] = entry.get("tries", 0) + 1
                 if entry["tries"] >= cfg["max_liveness_tries"]:

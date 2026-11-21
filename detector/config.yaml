@@ -20,8 +20,8 @@ title_exclude:
   - '\b(android|ios|mobile|full[- ]?stack|front[- ]?end)\b'
 
 # Location: anywhere in India except North India. A posting passes if ANY of its locations passes.
-india: '\bindia\b|\bindian\b|bengaluru|bangalore|mumbai|navi mumbai|thane|pune|hyderabad|secunderabad|chennai|kolkata|ahmedabad|gandhinagar|gift city|kochi|cochin|thiruvananthapuram|trivandrum|coimbatore|mysuru|mysore|mangaluru|mangalore|indore|bhopal|nagpur|vadodara|surat|bhubaneswar|visakhapatnam|vizag|vijayawada|goa|\bdelhi\b|new delhi|gurugram|gurgaon|noida|faridabad|ghaziabad|chandigarh|mohali|panchkula|jaipur|lucknow|dehradun|ludhiana|amritsar|kanpur'
-north: '\bdelhi\b|\bncr\b|gurugram|gurgaon|noida|faridabad|ghaziabad|chandigarh|mohali|panchkula|jaipur|jodhpur|udaipur|lucknow|kanpur|varanasi|agra|dehradun|ludhiana|amritsar|jalandhar|shimla|jammu|kashmir|srinagar|ladakh|punjab|haryana|himachal|uttarakhand|uttar pradesh|rajasthan'
+india: '\bIND-|\bindia\b|\bindian\b|bengaluru|bangalore|mumbai|navi mumbai|thane|pune|hyderabad|secunderabad|chennai|kolkata|ahmedabad|gandhinagar|gift city|kochi|cochin|thiruvananthapuram|trivandrum|coimbatore|mysuru|mysore|mangaluru|mangalore|indore|bhopal|nagpur|vadodara|surat|bhubaneswar|visakhapatnam|vizag|vijayawada|goa|\bdelhi\b|new delhi|gurugram|gurgaon|noida|faridabad|ghaziabad|chandigarh|mohali|panchkula|jaipur|lucknow|dehradun|ludhiana|amritsar|kanpur'
+north: '\bIND-(DEL|GGN|GUR|GRG|NOI|NDA|CHD|JAI|LKO)\b|\bdelhi\b|\bncr\b|gurugram|gurgaon|noida|faridabad|ghaziabad|chandigarh|mohali|panchkula|jaipur|jodhpur|udaipur|lucknow|kanpur|varanasi|agra|dehradun|ludhiana|amritsar|jalandhar|shimla|jammu|kashmir|srinagar|ladakh|punjab|haryana|himachal|uttarakhand|uttar pradesh|rajasthan'
 
 # Liveness: a pending posting (JD or apply page did not load) is retried this many runs, then marked dead.
 max_liveness_tries: 3

@@ -12,6 +12,8 @@ IST = timezone(timedelta(hours=5, minutes=30))
 
 
 def ist(ts: str) -> str:
+    if len(ts) == 10:  # date only (e.g. Workday startDate): no time to convert
+        return datetime.fromisoformat(ts).strftime("%d %b")
     return datetime.fromisoformat(ts.replace("Z", "+00:00")).astimezone(IST).strftime("%d %b %H:%M IST")
 
 

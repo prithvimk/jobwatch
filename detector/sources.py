@@ -21,6 +21,7 @@ class Job:
     posted_at: str | None   # only when the ATS states it; never inferred
     req_id: str | None = None   # employer requisition id when exposed (for repost matching in the ledger)
     check_urls: list[str] = field(default_factory=list)  # extra liveness URLs (e.g. ATS detail API)
+    open: bool = True           # ATS says applications are open (set by detail enrichment)
 
 
 def client() -> httpx.Client:
@@ -98,7 +99,20 @@ def smartrecruiters(c: httpx.Client, board: str, slug: str) -> list[Job]:
             return out
 
 
-FETCHERS = {"greenhouse": greenhouse, "lever": lever, "ashby": ashby, "smartrecruiters": smartrecruiters}
+def _workday(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import workday  # Workday goes through curl, not httpx (see detector/workday.py)
+    return workday.fetch(b, **ctx)
+
+
+# fetcher(client, board entry from boards.yaml, skip=set of settled IDs, location_ok=fn, full=bool).
+# Incremental fetchers (Workday) use the context to stop paging early; the JSON boards return everything.
+FETCHERS = {
+    "greenhouse": lambda c, b, **_: greenhouse(c, b["name"], b["locator"][0]),
+    "lever": lambda c, b, **_: lever(c, b["name"], b["locator"][0]),
+    "ashby": lambda c, b, **_: ashby(c, b["name"], b["locator"][0]),
+    "smartrecruiters": lambda c, b, **_: smartrecruiters(c, b["name"], b["locator"][0]),
+    "workday": _workday,
+}
 
 
 def enrich_smartrecruiters_urls(c: httpx.Client, job: Job) -> None:

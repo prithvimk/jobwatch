@@ -21,6 +21,7 @@ def job(title="ML Engineer", locs=("Bengaluru, India",), board="Databricks"):
     ("Bengaluru, India", True), ("Mumbai, MH, India", True), ("India", True), ("Remote - India", True),
     ("Gurugram, Haryana, India", False), ("Noida", False), ("New Delhi, India", False), ("Jaipur, India", False),
     ("Chandigarh", False), ("Bangalore / Gurgaon", True), ("Hyderabad; Noida", True),
+    ("IND-BLR-Divyasree Technopolis", True), ("IND-DEL-Okhla", False), ("IND-GGN-DLF", False), ("Indianapolis, IN-US", False),
     ("Tokyo, Japan", False), ("San Francisco, CA", False),
 ])
 def test_location(loc, ok):
@@ -96,7 +97,7 @@ def env(tmp_path, monkeypatch):
     live = {"ok": True}
     monkeypatch.setattr(runmod, "liveness", lambda c, j: (live["ok"], "test"))
     postings = []
-    monkeypatch.setitem(runmod.FETCHERS, "fake", lambda c, board, slug: list(postings))
+    monkeypatch.setitem(runmod.FETCHERS, "fake", lambda c, b, **k: list(postings))
     return tmp_path, postings, pushed, live
 
 
@@ -149,7 +150,20 @@ def test_dry_run_writes_nothing(env):
 
 def test_fetch_failure_is_visible(env, monkeypatch):
     tmp, *_ = env
-    monkeypatch.setitem(runmod.FETCHERS, "fake", lambda *a: (_ for _ in ()).throw(httpx.ConnectError("down")))
+    monkeypatch.setitem(runmod.FETCHERS, "fake", lambda *a, **k: (_ for _ in ()).throw(httpx.ConnectError("down")))
     runmod.run(None, dry_run=False)
     h = json.loads((tmp / "health.json").read_text())["Acme"]
     assert h["ok"] is False and h["fails"] == 1 and "ConnectError" in h["error"]
+
+
+def test_workday_rechecks_location_after_detail(env, monkeypatch):
+    tmp, postings, pushed, _ = env
+    monkeypatch.setattr(runmod, "load_boards", lambda names: [{"name": "Acme", "ats": "workday", "locator": ["x"]}])
+    monkeypatch.setitem(runmod.FETCHERS, "workday", lambda c, b, **k: list(postings))
+    details = {"7": ["Noida, India"], "8": ["Noida, India", "Pune, India"]}
+    monkeypatch.setattr(runmod.workday, "enrich", lambda j: setattr(j, "locations", details[j.id]))
+    runmod.run(None, dry_run=False)  # baseline
+    postings += [Job("Acme", i, "ML Engineer", [], "u", "a", None) for i in ("7", "8")]  # "2 Locations"
+    runmod.run(None, dry_run=False)
+    s = seen(tmp)
+    assert s["7"]["status"] == "filtered" and s["8"]["status"] == "alerted" and pushed == ["Acme: ML Engineer"]

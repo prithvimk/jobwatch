@@ -1,5 +1,33 @@
 {
+ "Barclays": {
+  "fails": 0,
+  "ok": true
+ },
+ "BlackRock": {
+  "fails": 0,
+  "ok": true
+ },
+ "Cisco": {
+  "fails": 0,
+  "ok": true
+ },
+ "Citi": {
+  "fails": 0,
+  "ok": true
+ },
  "Databricks": {
+  "fails": 0,
+  "ok": true
+ },
+ "LSEG": {
+  "fails": 0,
+  "ok": true
+ },
+ "Mastercard": {
+  "fails": 0,
+  "ok": true
+ },
+ "S&P Global": {
   "fails": 0,
   "ok": true
  },
@@ -8,6 +36,14 @@
   "ok": true
  },
  "Swiggy": {
+  "fails": 0,
+  "ok": true
+ },
+ "Visa": {
+  "fails": 0,
+  "ok": true
+ },
+ "Wells Fargo": {
   "fails": 0,
   "ok": true
  }
