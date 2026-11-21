@@ -36,5 +36,5 @@ The privacy cost is small by design: `state/` holds only IDs, timestamps and sta
 
 - **Schedule jitter.** GitHub delays scheduled runs under load, worst near the top of the hour, and can drop them. The cron uses minutes offset from :00. If measured latency is bad, an external free scheduler can call `workflow_dispatch` through the API.
 - **60-day auto-disable.** GitHub disables schedules in public repos with no activity for 60 days. State commits (any new posting on 26 boards) count as activity.
-- **Workday throttling (M2).** Workday returned 429 to Python TLS clients from the home IP. Runner IPs may behave differently, so this is untested. The fallback is a curl-based client, or running only the Workday adapters on local cron.
+- **Workday throttling (M2).** Workday answers Python TLS clients with 429, so the adapter uses `curl`, paced 1 s apart. Checked 2026-11-21: all 9 Workday boards fetched cleanly from both the home IP and an Actions runner. A normal pass is about 1 min (one page per board plus one rotating full sweep); the slowest full sweep (Citi, 47 pages) is about 2 min.
 - **Overlapping runs.** `concurrency: detector` serializes runs, and the commit step rebases before pushing.
