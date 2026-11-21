@@ -93,7 +93,8 @@ def format_alert(job: Job, first_seen: str, why: str, verdict: dict | None = Non
     if job.closes_at:
         when += f". Closes {notify.ist(job.closes_at)}"
     if verdict:
-        gaps = "; ".join(verdict["gaps"][:3]) or "none named"
+        clip = lambda g: g if len(g) <= 100 else g[:97].rstrip() + "..."  # full gaps are in the kit
+        gaps = "; ".join(clip(g) for g in verdict["gaps"][:3]) or "none named"
         body = (f"{verdict['verdict']} · fit {verdict['fit']}/5 · {verdict['location']}\n"
                 f"{verdict['one_line']}\nGaps: {gaps}\nAsks: {verdict['experience_asked']}\n{when}")
         return f"{verdict['verdict']} {title}", body

@@ -4,9 +4,16 @@ full job description, never the title alone. Use only the text below. Do not use
 Rules:
 - Quote requirements as the posting states them. If the posting does not state something (years,
   location, degree), say "not stated". Never guess.
-- Seniority follows the spec's bands. Read the experience floor from the required qualifications.
+- The verdict comes only from the spec's exclusion rules (location, seniority, track, excluded
+  employers). Missing skills, degrees and other hard bars never make a role OUT on their own: they
+  lower `fit` and are listed in `gaps`.
+- Seniority: take the lowest number of years the required qualifications ask for (the floor; for a
+  range like "4-7 years" the floor is 4; with several asks, use the overall-experience one).
+  Floor of 3 or less, or not stated: IN. Floor above 3 and up to 5 (e.g. "4+", "5+", "5 years"): STRETCH.
+  Floor of 6 or more: OUT. Apply this exactly; do not round 5+ up to OUT.
 - Hard bars (degree level, publications, patents, a specific tenure or duration) are named plainly as
-  gaps. Skill overlap is overlap, never "meets the bar".
+  gaps, first in the list. "Or equivalent experience" makes a degree bar soft; say so.
+  Skill overlap is overlap, never "meets the bar".
 - Location: name the allowed location from the posting's listed locations, or say why none is allowed.
 - The candidate's facts list states their years of experience and where they will relocate.
 

@@ -104,7 +104,8 @@ def call_claude(prompt: str) -> str:
     # Run outside the repo so no CLAUDE.md is loaded: the prompt carries everything, and no tools are allowed.
     work = Path(tempfile.gettempdir()) / "jobwatch-screen"
     work.mkdir(exist_ok=True)
-    args = [exe, "-p", "--output-format", "json", "--max-turns", "1",
+    model = os.environ.get("JOBWATCH_SCREEN_MODEL", "sonnet")  # Sonnet: spares the Pro plan's Opus limits
+    args = [exe, "-p", "--output-format", "json", "--max-turns", "1", "--model", model,
             "--disallowedTools", "Bash,Edit,Write,Read,Glob,Grep,WebFetch,WebSearch,NotebookEdit,Task"]
     try:
         p = subprocess.run(args, input=prompt, capture_output=True, text=True, encoding="utf-8", errors="replace",
