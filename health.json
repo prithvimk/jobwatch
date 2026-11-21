@@ -1,4 +1,8 @@
 {
+ "Adobe": {
+  "fails": 0,
+  "ok": true
+ },
  "Amazon": {
   "fails": 0,
   "ok": true
@@ -27,6 +31,10 @@
   "fails": 0,
   "ok": true
  },
+ "Coinbase": {
+  "fails": 0,
+  "ok": true
+ },
  "Databricks": {
   "fails": 0,
   "ok": true
@@ -47,6 +55,14 @@
   "fails": 0,
   "ok": true
  },
+ "HackerRank": {
+  "fails": 0,
+  "ok": true
+ },
+ "Intel": {
+  "fails": 0,
+  "ok": true
+ },
  "JPMC": {
   "fails": 0,
   "ok": true
@@ -63,6 +79,10 @@
   "fails": 0,
   "ok": true
  },
+ "Meesho": {
+  "fails": 0,
+  "ok": true
+ },
  "Microsoft": {
   "fails": 0,
   "ok": true
@@ -71,7 +91,27 @@
   "fails": 0,
   "ok": true
  },
+ "NVIDIA": {
+  "fails": 0,
+  "ok": true
+ },
+ "Netomi": {
+  "fails": 0,
+  "ok": true
+ },
+ "PayPal": {
+  "fails": 0,
+  "ok": true
+ },
+ "Rubrik": {
+  "fails": 0,
+  "ok": true
+ },
  "S&P Global": {
+  "fails": 0,
+  "ok": true
+ },
+ "Salesforce": {
   "fails": 0,
   "ok": true
  },
@@ -79,7 +119,19 @@
   "fails": 0,
   "ok": true
  },
+ "ServiceNow": {
+  "fails": 0,
+  "ok": true
+ },
+ "State Street": {
+  "fails": 0,
+  "ok": true
+ },
  "Swiggy": {
+  "fails": 0,
+  "ok": true
+ },
+ "Twilio": {
   "fails": 0,
   "ok": true
  },
@@ -88,6 +140,10 @@
   "ok": true
  },
  "Wells Fargo": {
+  "fails": 0,
+  "ok": true
+ },
+ "Zscaler": {
   "fails": 0,
   "ok": true
  }
