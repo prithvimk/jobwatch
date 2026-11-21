@@ -172,6 +172,27 @@ def jibe(c: httpx.Client, board: str, endpoint: str) -> list[Job]:
         page += 1
 
 
+def atlassian(c: httpx.Client, board: str) -> list[Job]:
+    """atlassian.com/endpoint/careers/listings: every posting worldwide in one call (~230); India kept here.
+    No posting date is stated (only the iCIMS `updatedDate`), so alerts say "first seen"."""
+    import re
+    r = c.get("https://www.atlassian.com/endpoint/careers/listings")
+    r.raise_for_status()
+    out = []
+    for j in r.json():
+        locs = [re.sub(r"\s+", " ", l).strip() for l in j.get("locations") or []]
+        if not any(re.search(r"\bindia\b", l, re.I) for l in locs):
+            continue
+        portal = (j.get("portalJobPost") or {}).get("portalUrl")
+        out.append(Job(
+            board=board, id=str(j["id"]), title=j["title"].strip(),
+            locations=[l for l in locs if re.search(r"\bindia\b", l, re.I)],
+            url=portal or f"https://www.atlassian.com/company/careers/details/{j['id']}",
+            apply_url=j.get("applyUrl") or portal or "", posted_at=None, req_id=str(j["id"]),
+        ))
+    return out
+
+
 def _workday(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     from detector import workday  # Workday goes through curl, not httpx (see detector/workday.py)
     return workday.fetch(b, **ctx)
@@ -199,6 +220,7 @@ FETCHERS = {
     "amazon": lambda c, b, skip=frozenset(), full=True, **_: amazon(c, b["name"], skip, full),
     "eightfold": _eightfold,
     "jibe": lambda c, b, **_: jibe(c, b["name"], b["endpoint"]),
+    "atlassian": lambda c, b, **_: atlassian(c, b["name"]),
 }
 
 

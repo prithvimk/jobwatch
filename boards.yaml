@@ -169,16 +169,21 @@ boards:
   - confirmed smartrecruiters ('Swiggy',)
 - name: Deutsche Bank
   careers_url: https://careers.db.com/
-  ats: custom
-  platform: beesite
-  effort: custom-json
-  endpoint: https://api-deutschebank.beesite.de/search/
-  total: 1872
-  india: 241
-  backend: workday
+  ats: workday
+  effort: adapter
+  locator:
+  - db
+  - wd3
+  - DBWebsite
+  endpoint: https://db.wd3.myworkdayjobs.com/wday/cxs/db/DBWebsite/jobs
+  total: 1173
+  india: 311
+  india_facet:
+    param: Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
   evidence:
-  - GET https://careers.db.com/ -> 200 https://careers.db.com/
-  - confirmed beesite JSON
+  - BeeSite (api-deutschebank.beesite.de) is the front end; its ApplyURI points to db.wd3.myworkdayjobs.com/DBWebsite
+  - Workday Country facet India = 311 vs 241 in BeeSite (checked 2026-11-21)
 - name: Cisco
   careers_url: https://jobs.cisco.com/
   ats: workday
@@ -372,13 +377,15 @@ boards:
   - confirmed jibe JSON
 - name: Bank of America
   careers_url: https://careers.bankofamerica.com/en-us/job-search
-  ats: custom
-  platform: boa
-  effort: custom-json
-  endpoint: https://careers.bankofamerica.com/services/jobssearchservlet
-  total: 2099
+  ats: workday
+  effort: adapter
+  locator:
+  - ghr
+  - wd1
+  - lateral-ba_continuum
+  endpoint: https://ghr.wd1.myworkdayjobs.com/wday/cxs/ghr/lateral-ba_continuum/jobs
+  total: 126
   india: 126
-  backend: workday
   evidence:
-  - GET https://careers.bankofamerica.com/en-us/job-search -> 200 https://careers.bankofamerica.com/en-us/job-search
-  - confirmed boa JSON
+  - India postings apply on ghr.wd1 lateral-ba_continuum (BA Continuum India); the site holds only India (126 = servlet India count, 2026-11-21)
+  - no country facet: allowed-city location facets are used

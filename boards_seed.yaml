@@ -47,8 +47,8 @@ boards:
     hints: {smartrecruiters: Swiggy}
   - name: Deutsche Bank
     careers_url: https://careers.db.com/
-    hints: {beesite: deutschebank}
-    backend: workday
+    hints: {workday: "https://db.wd3.myworkdayjobs.com/DBWebsite"}
+    note: "BeeSite front end (api-deutschebank.beesite.de) applies here; Workday lists more India postings (311 vs 241)"
   - name: Cisco
     careers_url: https://jobs.cisco.com/
     hints: {workday: "https://cisco.wd5.myworkdayjobs.com/Cisco_Careers"}
@@ -95,6 +95,6 @@ boards:
     backend: icims
   - name: Bank of America
     careers_url: https://careers.bankofamerica.com/en-us/job-search
-    hints: {boa: "1"}
-    backend: workday  # ghr.wd1.myworkdayjobs.com/lateral-us; the servlet is richer (country, postedDate, years)
+    hints: {workday: "https://ghr.wd1.myworkdayjobs.com/lateral-ba_continuum"}
+    note: "India postings live on this Workday site (BA Continuum India). The jobssearchservlet also lists them, with years of experience"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

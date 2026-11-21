@@ -238,3 +238,14 @@ def test_jibe_parse_and_pages():
     assert j.url == "https://careers.here.com/jobs/100" and j.apply_url == "https://careers-here.icims.com/jobs/100/login"
     assert j.posted_at == "2026-10-07T10:39:00+00:00" and j.closes_at == "2026-12-30T18:30:00+00:00"
     assert j.locations == ["Pune, India"] and PF.check(j)[0]
+
+
+def test_atlassian_keeps_india_only():
+    rows = [{"id": "1", "title": " Machine Learning Engineer ", "locations": ["Bengaluru - India -   Bengaluru,  560071 India", "Sydney - Australia"],
+             "portalJobPost": {"portalUrl": "https://careers-apac-atlassian.icims.com/jobs/1/ml/job"},
+             "applyUrl": "https://careers-apac-atlassian.icims.com/jobs/1/ml/job?mode=apply"},
+            {"id": "2", "title": "ML Engineer", "locations": ["Sydney - Australia"], "portalJobPost": {}, "applyUrl": "x"}]
+    c = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, json=rows)))
+    [j] = sources.atlassian(c, "Atlassian")
+    assert j.id == "1" and j.locations == ["Bengaluru - India - Bengaluru, 560071 India"] and j.posted_at is None
+    assert j.apply_url.endswith("?mode=apply") and PF.check(j)[0]
