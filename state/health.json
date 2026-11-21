@@ -1,4 +1,8 @@
 {
+ "Amazon": {
+  "fails": 0,
+  "ok": true
+ },
  "Barclays": {
   "fails": 0,
   "ok": true
