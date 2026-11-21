@@ -19,7 +19,7 @@ from pathlib import Path
 import httpx
 import yaml
 
-from detector import notify, state
+from detector import jd, notify, screen, state
 from detector.prefilter import Prefilter
 from detector.sources import FETCHERS, Job, client, detail_hooks, enrich_smartrecruiters_urls
 
@@ -85,18 +85,28 @@ def liveness(c: httpx.Client, job: Job) -> tuple[bool, str]:
     return True, "JD and apply pages load"
 
 
-def format_alert(job: Job, first_seen: str, why: str) -> tuple[str, str]:
+def format_alert(job: Job, first_seen: str, why: str, verdict: dict | None = None,
+                 note: str = "Screening pending.") -> tuple[str, str]:
     title = f"{job.board}: {job.title}"
     when = (f"Posted {notify.ist(job.posted_at)} (per ATS)" if job.posted_at
             else f"First seen {notify.ist(first_seen)} (posting date not stated)")
     if job.closes_at:
         when += f". Closes {notify.ist(job.closes_at)}"
+    if verdict:
+        gaps = "; ".join(verdict["gaps"][:3]) or "none named"
+        body = (f"{verdict['verdict']} · fit {verdict['fit']}/5 · {verdict['location']}\n"
+                f"{verdict['one_line']}\nGaps: {gaps}\nAsks: {verdict['experience_asked']}\n{when}")
+        return f"{verdict['verdict']} {title}", body
     loc = "; ".join(l for l in job.locations if l) or "location unknown"
-    body = f"{loc}\n{when}\nPrefilter: {why}. Screening pending."
+    body = f"{loc}\n{when}\nPrefilter: {why}. {note}"
     return title, body
 
 
-def run(names: list[str] | None, dry_run: bool) -> int:
+def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None) -> int:
+    """screen_roles: judge each live hit with Claude before alerting (laptop; default from JOBWATCH_SCREEN)."""
+    import os
+    if screen_roles is None:
+        screen_roles = os.environ.get("JOBWATCH_SCREEN") == "1"
     pf = Prefilter.load()
     cfg = yaml.safe_load((Path(__file__).with_name("config.yaml")).read_text(encoding="utf-8"))
     seen, health = state.load_seen(), state.load_health()
@@ -148,8 +158,7 @@ def run(names: list[str] | None, dry_run: bool) -> int:
             print(f"{name:<14} fetched={len(jobs):<4} new={len(new):<4} passed={passed:<3} "
                   + ("(baseline: recorded, no alerts)" if baseline else ""))
 
-        # Newest stated posting first, then first-seen. (Fit ordering is the screener's job.)
-        alerts.sort(key=lambda a: (a[0].posted_at or "", a[2]), reverse=True)
+        ready: list[tuple[Job, str, str, dict]] = []
         for job, why, first_seen in alerts:
             entry = seen["boards"][job.board]["jobs"][job.id]
             hooks = detail_hooks(ats_of.get(job.board, ""))
@@ -174,14 +183,48 @@ def run(names: list[str] | None, dry_run: bool) -> int:
                     entry["status"] = "dead"
                 print(f"  not live yet: {job.board} {job.id} {job.title!r}: {live_why} (try {entry['tries']})")
                 continue
-            title, body = format_alert(job, first_seen, why)
+            ready.append((job, why, first_seen, entry))
+
+        # Screen (laptop), then push best fit first, newest within a fit level. OUT roles are not pushed:
+        # they go to the daily digest. A screening failure sends the plain alert with the reason.
+        verdicts = screen.load_verdicts() if screen_roles else {}
+        results = []
+        for job, why, first_seen, entry in ready:
+            v, note = None, "Screening pending."
+            if screen_roles:
+                key = f"{job.board}:{job.id}"
+                v = verdicts.get(key)
+                if v is None:
+                    text, src = jd.get(c, job)
+                    try:
+                        v = screen.screen(job, text, src)
+                        verdicts[key] = v
+                    except screen.ScreenError as e:
+                        note = f"Screening unavailable: {str(e)[:120]}."
+                        print(f"  screening failed: {job.board} {job.id}: {e}")
+            results.append((job, why, first_seen, entry, v, note))
+        results.sort(key=lambda r: ((r[4] or {}).get("fit", 0), r[0].posted_at or "", r[2]), reverse=True)
+        for job, why, first_seen, entry, v, note in results:
+            if v and v["verdict"] == "OUT":
+                print(f"  OUT (digest): {job.board} {job.title!r}: {v['out_reason'] or v['one_line']}")
+                if not dry_run:
+                    screen.queue_out(job, v)
+                entry["status"] = "screened"
+                entry.pop("tries", None)
+                continue
+            title, body = format_alert(job, first_seen, why, v, note)
+            if v and not dry_run:
+                print(f"  kit: {screen.save_kit(job, v)}")
             sent = notify.push(title, body, click=job.url, tags=["briefcase"], dry_run=dry_run,
+                               priority=4 if v and v["verdict"] == "IN" else 3,
                                actions=[{"action": "view", "label": "Apply", "url": job.apply_url},
                                         {"action": "view", "label": "JD", "url": job.url}])
             if sent:
                 entry["status"] = "alerted"
                 entry["alerted_at"] = state.now_iso()
                 entry.pop("tries", None)
+        if screen_roles and not dry_run:
+            screen.save_verdicts(verdicts)
 
     if dry_run:
         print("dry-run: state not written")
@@ -195,11 +238,13 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--board", action="append")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--screen", action=argparse.BooleanOptionalAction, default=None,
+                    help="screen hits with the Claude Code CLI before alerting (default: JOBWATCH_SCREEN=1)")
     args = ap.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     load_env()
-    return run(args.board, args.dry_run)
+    return run(args.board, args.dry_run, args.screen)
 
 
 def load_env() -> None:

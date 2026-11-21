@@ -75,6 +75,9 @@ def enrich(c: httpx.Client, job: Job) -> None:
     d = items[0]
     job.posted_at = d.get("ExternalPostedStartDate") or job.posted_at
     job.closes_at = d.get("ExternalPostedEndDate")
+    from detector.jd import sections
+    job.jd = sections(("", d.get("ExternalDescriptionStr")), ("Responsibilities", d.get("ExternalResponsibilitiesStr")),
+                      ("Qualifications", d.get("ExternalQualificationsStr"))) or job.jd
 
 
 def live(c: httpx.Client, job: Job) -> tuple[bool, str]:

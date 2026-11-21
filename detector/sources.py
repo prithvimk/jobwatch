@@ -23,6 +23,12 @@ class Job:
     check_urls: list[str] = field(default_factory=list)  # extra liveness URLs (e.g. ATS detail API)
     open: bool = True           # ATS says applications are open (set by detail enrichment)
     closes_at: str | None = None  # closing date, only when the ATS states it
+    jd: str | None = None         # full JD text when the list/detail API carries it (see detector/jd.py)
+
+
+def _sections(*parts):
+    from detector.jd import sections  # late import: jd imports Job from here
+    return sections(*parts) or None
 
 
 def client() -> httpx.Client:
@@ -75,6 +81,7 @@ def ashby(c: httpx.Client, board: str, slug: str) -> list[Job]:
         out.append(Job(
             board=board, id=j["id"], title=j["title"].strip(), locations=[l for l in locs if l],
             url=j["jobUrl"], apply_url=j.get("applyUrl") or j["jobUrl"], posted_at=j.get("publishedAt"),
+            jd=j.get("descriptionPlain"),
         ))
     return out
 
@@ -136,6 +143,8 @@ def amazon(c: httpx.Client, board: str, skip: set[str] = frozenset(), full: bool
                 board=board, id=jid, title=j["title"].strip(), locations=locs,
                 url=f"https://www.amazon.jobs{j['job_path']}", apply_url=j.get("url_next_step") or "",
                 posted_at=posted, req_id=jid,
+                jd=_sections(("", j.get("description")), ("Basic qualifications", j.get("basic_qualifications")),
+                              ("Preferred qualifications", j.get("preferred_qualifications"))),
             ))
             fresh += jid not in skip
         offset += len(page)
@@ -166,6 +175,8 @@ def jibe(c: httpx.Client, board: str, endpoint: str) -> list[Job]:
                 url=f"{base}/jobs/{j['slug']}", apply_url=j.get("apply_url") or f"{base}/jobs/{j['slug']}",
                 posted_at=(j.get("posted_date") or "").replace("+0000", "+00:00") or None,
                 req_id=j.get("req_id"), closes_at=(j.get("posting_expiry_date") or "").replace("+0000", "+00:00") or None,
+                jd=_sections(("", j.get("description")), ("Responsibilities", j.get("responsibilities")),
+                              ("Qualifications", j.get("qualifications"))),
             ))
         if not rows or len(out) >= d.get("totalCount", 0) or page >= 20:
             return out
@@ -189,6 +200,7 @@ def atlassian(c: httpx.Client, board: str) -> list[Job]:
             locations=[l for l in locs if re.search(r"\bindia\b", l, re.I)],
             url=portal or f"https://www.atlassian.com/company/careers/details/{j['id']}",
             apply_url=j.get("applyUrl") or portal or "", posted_at=None, req_id=str(j["id"]),
+            jd=_sections(("", j.get("overview")), ("", j.get("responsibilities")), ("", j.get("qualifications"))),
         ))
     return out
 

@@ -20,6 +20,7 @@ from datetime import datetime
 from pathlib import Path
 
 from detector import run as detector
+from detector import notify, screen
 
 ROOT = Path(__file__).resolve().parent.parent
 LOG = ROOT / "private" / "logs" / "sync.log"
@@ -76,6 +77,18 @@ def heartbeat() -> None:
         print(f"heartbeat failed (Actions will also run): {r.stderr.strip()[:200]}")
 
 
+def send_digest() -> None:
+    """Once a day after 20:00 IST: the roles the screener judged OUT, one line each with the reason."""
+    due, d = screen.digest_due()
+    if not due:
+        return
+    n = len(d["pending"])
+    if notify.push(f"jobwatch: {n} role{'s' if n != 1 else ''} screened out today", screen.digest_text(d),
+                   tags=["clipboard"], priority=2):
+        screen.mark_digest_sent(d)
+        print(f"digest sent ({n} roles)")
+
+
 def sync() -> int:
     print(f"--- {datetime.now().astimezone():%Y-%m-%d %H:%M:%S %z}")
     branch = git("branch", "--show-current").stdout.strip()
@@ -85,7 +98,10 @@ def sync() -> int:
         register_merge_driver()
         pull(branch)
     detector.load_env()
-    rc = detector.run(None, dry_run=False)
+    ok, why = screen.available()
+    print(f"screening: {'on' if ok else 'off (' + why + ')'}")
+    rc = detector.run(None, dry_run=False, screen_roles=ok)
+    send_digest()
     if not on_main:
         print(f"on branch {branch!r}: state written but not committed")
         return rc

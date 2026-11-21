@@ -141,6 +141,8 @@ def enrich(_c, job: Job) -> None:
     if info.get("externalUrl"):
         job.url, job.apply_url = info["externalUrl"], info["externalUrl"] + "/apply"
     job.open = bool(info.get("canApply", True))
+    from detector.jd import html_to_text
+    job.jd = html_to_text(info.get("jobDescription")) or job.jd
 
 
 def live(_c, job: Job) -> tuple[bool, str]:

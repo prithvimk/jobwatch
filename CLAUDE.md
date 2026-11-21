@@ -24,7 +24,8 @@ uv run python -m detector.board_map                       # M0: boards_seed.yaml
 uv run python -m detector.board_map --only Citi --only Visa   # re-probe some boards, print only (no write)
 uv run python -m detector.run --dry-run                   # detector pass: prints pushes, writes no state
 uv run python -m detector.run                             # live pass: pushes via ntfy, writes state/
-uv run python -m detector.sync                            # laptop pass: pull, run, commit state, push, heartbeat
+uv run python -m detector.sync                            # laptop pass: pull, run (+screen), commit state, push, heartbeat, digest
+uv run python -m detector.run --dry-run --screen          # dry pass that also calls Claude on each hit (uses Pro usage)
 .\scripts\install_task.ps1                                 # register the 5-min Task Scheduler job (log: private/logs/sync.log)
 ```
 
@@ -39,7 +40,7 @@ To exercise the alert path without waiting for new postings, point `JOBWATCH_STA
 
 Also required: an on-demand **sweep**. Given a company, it enumerates the full India board (all pages), pulls JDs for candidates, reports total counts, and lists filtered-out title hits with the reason.
 
-Build order: M0 board map (done) → M1 detector for easy boards, hosted on the laptop every 5 min with public-repo GitHub Actions as the fallback (built; see `docs/hosting.md`) → M2 adapters, one company at a time, each with a fixture test (built for all 21 boards with a JSON source: Workday for 12 incl. Morgan Stanley, Deutsche Bank and Bank of America, Oracle for JPMC, Amazon, Eightfold for Microsoft, Jibe for MSCI and HERE, Atlassian; the 4 `custom-scrape` boards and SISC are not watched) → M3 screener (ask the user for `private/resume.md`; `private/answers.md` is a short facts list) → M4 ledger, reminders, digests → M5 optional Claude-in-Chrome prefill that stops before submit.
+Build order: M0 board map (done) → M1 detector for easy boards, hosted on the laptop every 5 min with public-repo GitHub Actions as the fallback (built; see `docs/hosting.md`) → M2 adapters, one company at a time, each with a fixture test (built for all 21 boards with a JSON source: Workday for 12 incl. Morgan Stanley, Deutsche Bank and Bank of America, Oracle for JPMC, Amazon, Eightfold for Microsoft, Jibe for MSCI and HERE, Atlassian; the 4 `custom-scrape` boards and SISC are not watched) → M3 screener (built; inputs `private/resume.md`, `private/answers.md`, the filter spec in `CLAUDE.local.md`) → M4 ledger, reminders, digests → M5 optional Claude-in-Chrome prefill that stops before submit.
 
 ## Board map (`detector/board_map.py`, `boards_seed.yaml` → `boards.yaml`)
 
@@ -64,6 +65,14 @@ Build order: M0 board map (done) → M1 detector for easy boards, hosted on the 
 - `state/health.json` changes only when a board starts or stops failing, so healthy passes commit nothing. After `board_fail_alert_after` failures in a row, it pushes an "unreachable" alert.
 - Two runners share `state/` through git: the laptop (`detector/sync.py`) and Actions. `state/*.json` merges by meaning via `detector/merge.py` (a git merge driver), so IDs are never lost when both commit. Actions skips while the repo variable `JOBWATCH_LOCAL_AT` (the laptop's heartbeat) is under 15 min old.
 - The ntfy topic is a secret: anyone who knows it can read the alerts. Locally it is read from `private/ntfy.env`; in Actions it comes from the `NTFY_TOPIC` secret. With no topic set, pushes print instead of sending and postings stay pending.
+
+## Screener (`detector/screen.py`, `prompts/screen.md`)
+
+- Runs only on the laptop: `sync.py` turns it on when `screen.available()` (the `claude` CLI at `~/.local/bin`, `private/resume.md`, `private/answers.md`, and a `## Filter spec` section in `CLAUDE.local.md`). Actions never screens; its alerts say "Screening pending."
+- One `claude -p --output-format json --max-turns 1` call per live hit, run in a temp dir outside the repo (so no CLAUDE.md is loaded) with tools disallowed. The prompt carries the spec, resume, facts and the full JD from `detector/jd.py` (ATS API text where available, else the JD page's text, and the source is named).
+- Reply: one JSON object (`verdict` IN/STRETCH/OUT, `fit` 1-5, `location`, `experience_asked`, `one_line`, `gaps`, `out_reason`, `resume_tweak`). Verdicts are cached in `private/verdicts.json` by `board:id`, so a retried push never re-screens.
+- IN/STRETCH: one push per role (title prefixed with the verdict, IN at priority 4), best fit first, and a kit in `private/kits/`. OUT: no push, state status `screened`, queued in `private/digest.json` and sent as one digest at the first laptop pass after 20:00 IST. Any screening failure (not logged in, timeout, bad reply) sends the plain alert with "Screening unavailable: <reason>"; a role is never dropped.
+- The task's time limit is 20 min (`scripts/install_task.ps1`) because a pass with several hits makes several Claude calls.
 
 ## Filter spec
 

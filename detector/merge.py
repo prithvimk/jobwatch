@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 # Higher wins. Terminal states beat in-progress ones; "alerted" beats all so nothing re-alerts.
-RANK = {"pending": 1, "baseline": 2, "filtered": 3, "dead": 4, "alerted": 5}
+RANK = {"pending": 1, "baseline": 2, "filtered": 3, "dead": 4, "screened": 5, "alerted": 5}
 
 
 def _job(a: dict, b: dict) -> dict:

@@ -12,7 +12,7 @@ $settings = New-ScheduledTaskSettingsSet `
     -StartWhenAvailable `
     -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
     -MultipleInstances IgnoreNew `
-    -ExecutionTimeLimit (New-TimeSpan -Minutes 4)
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 20)   # screening calls Claude: a busy pass can take minutes
 Register-ScheduledTask -TaskName "jobwatch-detector" -Action $action -Trigger $trigger -Settings $settings `
     -Description "jobwatch: poll job boards every 5 min (primary detector; GitHub Actions is the fallback)" -Force | Out-Null
 Get-ScheduledTask -TaskName "jobwatch-detector" | Select-Object TaskName, State

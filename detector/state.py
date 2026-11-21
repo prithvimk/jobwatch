@@ -5,6 +5,7 @@ state/seen.json  = union of every job ID ever seen, per board, with first_seen a
     filtered  failed the prefilter
     pending   passed the prefilter but liveness failed; retried up to max_liveness_tries
     alerted   pushed to the phone
+    screened  judged OUT by the screener: not pushed, listed in the daily digest
     dead      never became live
 state/health.json = per board: ok, consecutive failures, last error. Changes only on failure/recovery.
 IDs are never removed, so a repost under the same ID is never "new".

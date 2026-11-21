@@ -83,6 +83,8 @@ def enrich(c: httpx.Client, job: Job) -> None:
         raise EightfoldError(f"position_details HTTP {r.status_code}")
     d = r.json().get("data") or {}
     job.locations = list(d.get("locations") or job.locations)
+    from detector.jd import html_to_text
+    job.jd = html_to_text(d.get("jobDescription")) or job.jd
     apply = ((d.get("positionUserActions") or {}).get("applyAction") or {}).get("applyUrl")
     if apply:  # tenant hands off to another ATS
         job.apply_url = apply
