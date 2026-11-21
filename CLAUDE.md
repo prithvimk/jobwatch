@@ -34,12 +34,12 @@ To exercise the alert path without waiting for new postings, point `JOBWATCH_STA
 
 1. **Detector** (code, no LLM, every 10 min): polls each board in `boards.yaml`, diffs requisition IDs against the union of every ID ever seen (`state/`), applies a cheap title/location prefilter, checks that the apply URL is live, pushes title and link via ntfy, and commits only state.
 2. **Screener** (Claude, after new IDs appear, at least hourly): fetches the full JD, applies the filter spec below, scores fit, names gaps, and pushes a verdict. Prompts live in `prompts/`.
-3. **Application kit** (Claude, same run): a tailored resume variant, draft screening answers from the answer bank, and an outreach draft, saved to a doc the alert links to.
+3. **Application kit** (Claude, same run): the fit verdict with gaps, plus a resume tweak when one is worth making, saved to a doc the alert links to. No drafted screening answers: target boards ask form fields, not essays. `private/answers.md` holds only the facts forms ask that Simplify doesn't fill (notice, CTC, relocation, start date, years). Outreach drafts only on request.
 4. **Submit** (user, ~2 min): Simplify autofill plus pasted kit answers.
 
 Also required: an on-demand **sweep**. Given a company, it enumerates the full India board (all pages), pulls JDs for candidates, reports total counts, and lists filtered-out title hits with the reason.
 
-Build order: M0 board map (done) → M1 detector for easy boards, hosted on the laptop every 5 min with public-repo GitHub Actions as the fallback (built; see `docs/hosting.md`) → M2 adapters, one company at a time, each with a fixture test (built: Workday for 9 boards, Oracle for JPMC) → M3 screener (ask the user for `private/resume.md` and `private/answers.md` then) → M4 ledger, reminders, digests → M5 optional Claude-in-Chrome prefill that stops before submit.
+Build order: M0 board map (done) → M1 detector for easy boards, hosted on the laptop every 5 min with public-repo GitHub Actions as the fallback (built; see `docs/hosting.md`) → M2 adapters, one company at a time, each with a fixture test (built: Workday for 9 boards, Oracle for JPMC) → M3 screener (ask the user for `private/resume.md`; `private/answers.md` is a short facts list) → M4 ledger, reminders, digests → M5 optional Claude-in-Chrome prefill that stops before submit.
 
 ## Board map (`detector/board_map.py`, `boards_seed.yaml` → `boards.yaml`)
 
