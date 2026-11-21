@@ -9,3 +9,6 @@ CLAUDE.local.md
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# State lives on the `state` branch, checked out here as a git worktree by detector/sync.py
+/state/

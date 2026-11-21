@@ -4,10 +4,11 @@
 
 ## How the hybrid works
 
-- `detector/sync.py` (laptop): pull state, run the detector, commit only `state/`, push, then set the repo variable `JOBWATCH_LOCAL_AT` to now. Installed by `scripts/install_task.ps1` through the venv's `pythonw.exe` (no console window), logging to `private/logs/sync.log`. With no `origin` remote it runs and commits locally only.
+- State is its own branch, `state` (moved off `main` on 2026-11-22). Both runners check it out at `state/`: the laptop as a git worktree, Actions as a second checkout. Neither commits to `main`.
+- `detector/sync.py` (laptop): pull the `state` branch, run the detector, commit `seen.json`/`health.json` there, push it, then set the repo variable `JOBWATCH_LOCAL_AT` to now. Installed by `scripts/install_task.ps1` through the venv's `pythonw.exe` (no console window), logging to `private/logs/sync.log`. With no `origin` remote it runs and commits locally only.
 - The workflow's first step skips scheduled runs while `JOBWATCH_LOCAL_AT` is under 15 min old. Manual dispatches always run.
 - Missed passes lose nothing: every pass diffs against every ID ever seen, so the first pass after the laptop wakes catches what was posted meanwhile (with `first seen` set to that pass).
-- Concurrent state commits merge by meaning, not by text: `.gitattributes` routes `state/*.json` to `detector/merge.py` (union of IDs, the further-along status wins, earliest `first_seen` kept). The driver is registered in local git config by `sync.py` and by the workflow.
+- Concurrent state commits merge by meaning, not by text: the `state` branch's `.gitattributes` routes `*.json` to `detector/merge.py` (union of IDs, the further-along status wins, earliest `first_seen` kept). The driver is registered in local git config by `sync.py` and by the workflow.
 - Duplicate alerts are possible only in the window between the laptop going to sleep and its heartbeat expiring, and only if both runners see the same new posting before either pushes.
 
 ## Inputs (measured 2026-11-21)
@@ -35,6 +36,6 @@ The privacy cost is small by design: `state/` holds only IDs, timestamps and sta
 ## Known risks and mitigations
 
 - **Schedule jitter.** GitHub delays scheduled runs under load, worst near the top of the hour, and can drop them. The cron uses minutes offset from :00. If measured latency is bad, an external free scheduler can call `workflow_dispatch` through the API.
-- **60-day auto-disable.** GitHub disables schedules in public repos with no activity for 60 days. State commits (any new posting on 26 boards) count as activity.
+- **60-day auto-disable.** GitHub disables schedules in public repos with no activity for 60 days. State commits now go to the `state` branch, and it is not confirmed that commits to a non-default branch count as activity. If the workflow is ever disabled, re-enable it in the Actions tab; any push to `main` also resets the clock.
 - **Workday throttling (M2).** Workday answers Python TLS clients with 429, so the adapter uses `curl`, paced 1 s apart. Checked 2026-11-21: all 9 Workday boards fetched cleanly from both the home IP and an Actions runner. A normal pass is about 1 min (one page per board plus one rotating full sweep); the slowest full sweep (Citi, 47 pages) is about 2 min.
 - **Overlapping runs.** `concurrency: detector` serializes runs, and the commit step rebases before pushing.

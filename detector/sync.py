@@ -1,12 +1,16 @@
 """Laptop runner: pull state -> read phone ledger taps -> detector pass -> digest and reminders
--> commit state -> push -> heartbeat.
+-> commit state -> push state -> heartbeat.
 
 Run every 5 min by Windows Task Scheduler (scripts/install_task.ps1) through the venv's pythonw.exe,
 so no console window appears. Output goes to private/logs/sync.log.
 
+State lives on its own branch, `state`, checked out as a git worktree at state/ (gitignored on main).
+This runner commits and pushes only that branch: it never pulls, commits or pushes `main`, so code
+goes to GitHub only when the user pushes it. The worktree is created on the first pass if missing.
+
 The laptop is the primary detector. GitHub Actions is the fallback: when the laptop has run in the
 last 15 min it records that in the repo variable JOBWATCH_LOCAL_AT, and the scheduled workflow skips.
-With no `origin` remote (repo not published yet) it runs and commits locally only.
+With no `origin` remote it runs and commits locally only.
 
   uv run python -m detector.sync            # one pass, logs to stdout
 """
@@ -25,50 +29,83 @@ from detector import ledger, notify, remind, screen
 
 ROOT = Path(__file__).resolve().parent.parent
 LOG = ROOT / "private" / "logs" / "sync.log"
-STATE_FILES = ["state/seen.json", "state/health.json"]
+STATE = ROOT / "state"          # worktree of the `state` branch
+STATE_BRANCH = "state"
+STATE_FILES = ["seen.json", "health.json"]
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 
-def git(*args: str, check: bool = False) -> subprocess.CompletedProcess:
-    r = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, encoding="utf-8",
+class StateError(RuntimeError):
+    pass
+
+
+def git(*args: str, check: bool = False, cwd: Path = ROOT) -> subprocess.CompletedProcess:
+    r = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, encoding="utf-8",
                        creationflags=NO_WINDOW)
     if check and r.returncode:
         raise RuntimeError(f"git {' '.join(args)}: {r.stderr.strip()[:300]}")
     return r
 
 
+def sgit(*args: str, check: bool = False) -> subprocess.CompletedProcess:
+    """git inside the state worktree."""
+    return git(*args, check=check, cwd=STATE)
+
+
 def register_merge_driver() -> None:
-    """Local git config (not committed): merge state by meaning, using this venv's python."""
+    """Local git config (not committed, shared by the worktrees): merge state by meaning.
+    merge.py is run as a script, since git runs the driver from the state worktree."""
     py = Path(sys.executable).with_name("python.exe") if os.name == "nt" else Path(sys.executable)
-    driver = f'"{py.as_posix()}" -m detector.merge %O %A %B'
+    driver = f'"{py.as_posix()}" "{(ROOT / "detector" / "merge.py").as_posix()}" %O %A %B'
     if git("config", "merge.jobwatch-state.driver").stdout.strip() != driver:
         git("config", "merge.jobwatch-state.name", "union of jobwatch state", check=True)
         git("config", "merge.jobwatch-state.driver", driver, check=True)
 
 
-def pull(branch: str) -> None:
-    r = git("pull", "--rebase", "--autostash", "-q", "origin", branch)
+def ensure_state_worktree(remote: bool) -> None:
+    """state/ must be the `state` branch's worktree. Running without it would baseline every board
+    from empty state, so a missing or foreign state/ stops the pass instead."""
+    if (STATE / ".git").exists():
+        if sgit("branch", "--show-current").stdout.strip() != STATE_BRANCH:
+            raise StateError(f"{STATE} is not on branch {STATE_BRANCH!r}")
+        return
+    if STATE.exists() and any(STATE.iterdir()):
+        raise StateError(f"{STATE} exists but is not the {STATE_BRANCH!r} worktree; move it aside")
+    if git("rev-parse", "--verify", "-q", f"refs/heads/{STATE_BRANCH}").returncode:
+        if not remote or git("fetch", "-q", "origin", f"{STATE_BRANCH}:{STATE_BRANCH}").returncode:
+            raise StateError(f"no {STATE_BRANCH!r} branch locally or on origin")
+    git("worktree", "add", "-q", str(STATE), STATE_BRANCH, check=True)
+    print(f"created the {STATE_BRANCH!r} worktree at {STATE}")
+
+
+def pull() -> None:
+    r = sgit("pull", "--rebase", "--autostash", "-q", "origin", STATE_BRANCH)
     if r.returncode:
-        git("rebase", "--abort")
-        print(f"pull failed, running on local state: {r.stderr.strip()[:300]}")
+        sgit("rebase", "--abort")
+        print(f"state pull failed, running on local state: {r.stderr.strip()[:300]}")
 
 
 def commit_state() -> bool:
-    git("add", *STATE_FILES)
-    if git("diff", "--cached", "--quiet", "--", *STATE_FILES).returncode == 0:
+    sgit("add", "--", *STATE_FILES)
+    if sgit("diff", "--cached", "--quiet", "--", *STATE_FILES).returncode == 0:
         return False
-    # Commit only the state files, never anything else the user has staged.
-    git("commit", "-q", "-m", f"state: {datetime.now().astimezone():%Y-%m-%dT%H:%M%z} (laptop)",
-        "--", *STATE_FILES, check=True)
+    sgit("commit", "-q", "-m", f"state: {datetime.now().astimezone():%Y-%m-%dT%H:%M%z} (laptop)",
+         "--", *STATE_FILES, check=True)
     return True
 
 
-def push(branch: str) -> None:
+def unpushed() -> bool:
+    """Local state commits not on origin yet (or the branch is not on origin at all)."""
+    r = sgit("rev-list", "--count", f"origin/{STATE_BRANCH}..HEAD")
+    return r.returncode != 0 or r.stdout.strip() != "0"
+
+
+def push() -> None:
     for _ in range(3):
-        if git("push", "-q", "origin", branch).returncode == 0:
+        if sgit("push", "-q", "origin", f"HEAD:{STATE_BRANCH}").returncode == 0:
             return
-        pull(branch)
-    print("push failed 3 times; state stays committed locally and goes up next pass")
+        pull()
+    print("state push failed 3 times; it stays committed locally and goes up next pass")
 
 
 def heartbeat() -> None:
@@ -92,12 +129,15 @@ def send_digest() -> None:
 
 def sync() -> int:
     print(f"--- {datetime.now().astimezone():%Y-%m-%d %H:%M:%S %z}")
-    branch = git("branch", "--show-current").stdout.strip()
-    on_main = branch in ("main", "master")
-    remote = on_main and bool(git("remote", "get-url", "origin").stdout.strip())
+    remote = bool(git("remote", "get-url", "origin").stdout.strip())
+    register_merge_driver()
+    try:
+        ensure_state_worktree(remote)
+    except (StateError, RuntimeError) as e:
+        print(f"state unavailable, pass skipped: {e}")
+        return 1
     if remote:
-        register_merge_driver()
-        pull(branch)
+        pull()
     detector.load_env()
     ledger.pull()  # phone taps (Applied / Skip) before the pass, so a skipped role's repost is suppressed
     ok, why = screen.available()
@@ -108,11 +148,9 @@ def sync() -> int:
         remind.run()  # closing-date reminders, 5-day follow-ups, Sunday lists
     except Exception as e:  # a reminder bug must not stop state from being committed
         print(f"reminders failed: {type(e).__name__}: {e}")
-    if not on_main:
-        print(f"on branch {branch!r}: state written but not committed")
-        return rc
-    if commit_state() and remote:
-        push(branch)
+    commit_state()
+    if remote and unpushed():
+        push()
     if remote:
         heartbeat()
     return rc

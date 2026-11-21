@@ -2,6 +2,7 @@ name: detector
 
 # Fallback detector. The laptop (detector/sync.py, every 5 min) is primary and sets the repo variable
 # JOBWATCH_LOCAL_AT on each pass; scheduled runs skip while it is under 15 min old.
+# Code comes from main; state is the `state` branch, checked out at state/ and the only thing committed.
 
 on:
   schedule:
@@ -29,6 +30,12 @@ jobs:
           fi
       - if: steps.gate.outputs.skip != 'true'
         uses: actions/checkout@v4
+      - name: Check out state (the state branch, at state/)
+        if: steps.gate.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: state
+          path: state
       - if: steps.gate.outputs.skip != 'true'
         uses: astral-sh/setup-uv@v6
         with:
@@ -40,17 +47,18 @@ jobs:
         run: uv run python -m detector.run
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-      - name: Commit state (IDs and timestamps only)
+      - name: Commit state to the state branch (IDs and timestamps only)
         if: steps.gate.outputs.skip != 'true'
+        working-directory: state
         run: |
-          git add state/
+          git add seen.json health.json
           if git diff --cached --quiet; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config merge.jobwatch-state.driver "uv run --frozen python -m detector.merge %O %A %B"
+          git config merge.jobwatch-state.driver "python3 $GITHUB_WORKSPACE/detector/merge.py %O %A %B"
           git commit -m "state: $(date -u +%Y-%m-%dT%H:%MZ) (actions)"
           for i in 1 2 3; do
-            git pull --rebase --quiet && git push && exit 0
+            git pull --rebase --quiet origin state && git push origin HEAD:state && exit 0
             sleep 5
           done
           exit 1

@@ -11,7 +11,7 @@ jobwatch sends fast job alerts and builds an application kit for one user (who t
 - Only a Claude Pro subscription. No Anthropic API key, no paid infrastructure.
 - Code does all repetitive and fast work: board enumeration, diffing, prefiltering, liveness. Claude only judges *new* roles, which keeps Pro limits from running out.
 - The user always clicks the final submit. No auto-applications, no automatic outreach. Outreach goes out only after an explicit yes on recipient and wording, from a spare outreach inbox.
-- `private/` (resume, answer bank, ledger, drafts) and `CLAUDE.local.md` are gitignored and must never reach the public repo (github.com/prithvimk/jobwatch). `state/` holds IDs and timestamps only.
+- `private/` (resume, answer bank, ledger, drafts) and `CLAUDE.local.md` are gitignored and must never reach the public repo (github.com/prithvimk/jobwatch). `state/` holds IDs and timestamps only. It is the `state` branch, checked out as a git worktree at `state/` (gitignored on `main`), so `main` holds code alone.
 - An unreachable or ambiguous source shows as a visible `unknown`, never a guess. Report a posting date only when the page states it. Otherwise say "first seen <detector run timestamp>".
 
 ## Commands
@@ -24,7 +24,7 @@ uv run python -m detector.board_map                       # M0: boards_seed.yaml
 uv run python -m detector.board_map --only Citi --only Visa   # re-probe some boards, print only (no write)
 uv run python -m detector.run --dry-run                   # detector pass: prints pushes, writes no state
 uv run python -m detector.run                             # live pass: pushes via ntfy, writes state/
-uv run python -m detector.sync                            # laptop pass: pull, run (+screen), commit state, push, heartbeat, digest
+uv run python -m detector.sync                            # laptop pass: pull state branch, run (+screen), digest/reminders, commit and push state branch, heartbeat
 uv run python -m detector.run --dry-run --screen          # dry pass that also calls Claude on each hit (uses Pro usage)
 uv run python -m detector.ledger list                     # unresolved (SHOWN) roles; --all for every mark
 uv run python -m detector.ledger applied <ref>            # or skipped / shown (undo); ref = board:id, job id or req id
@@ -68,7 +68,7 @@ Build order: M0 board map (done) → M1 detector for easy boards, hosted on the 
 - Jibe (`sources.jibe`, MSCI and HERE): `<site>/api/jobs?location=India`, read in full every pass (tens of postings; `sortBy` returns 503). `posted_date` and, when present, `posting_expiry_date` are stated. A closed job's page returns 404 and the apply link is the iCIMS login page, so the generic liveness check works.
 - Atlassian (`sources.atlassian`): one call lists every posting worldwide (~230); India is kept by location text. No posting date is stated, so alerts say "first seen". A closed iCIMS job page returns 410.
 - `state/health.json` changes only when a board starts or stops failing, so healthy passes commit nothing. After `board_fail_alert_after` failures in a row, it pushes an "unreachable" alert.
-- Two runners share `state/` through git: the laptop (`detector/sync.py`) and Actions. `state/*.json` merges by meaning via `detector/merge.py` (a git merge driver), so IDs are never lost when both commit. Actions skips while the repo variable `JOBWATCH_LOCAL_AT` (the laptop's heartbeat) is under 15 min old.
+- Two runners share `state/` through git: the laptop (`detector/sync.py`) and Actions. Both commit and push only the `state` branch (root: `seen.json`, `health.json`, a `.gitattributes`); the laptop never pulls or pushes `main`, so code reaches GitHub only when the user pushes. `sync.py` creates the `state/` worktree if missing and skips the pass (never runs on empty state) if `state/` is something else. The JSON files merge by meaning via `detector/merge.py`, a git merge driver run as a plain script (stdlib only) because git calls it from the worktree, so IDs are never lost when both commit. Actions skips while the repo variable `JOBWATCH_LOCAL_AT` (the laptop's heartbeat) is under 15 min old.
 - The ntfy topic is a secret: anyone who knows it can read the alerts. Locally it is read from `private/ntfy.env`; in Actions it comes from the `NTFY_TOPIC` secret. With no topic set, pushes print instead of sending and postings stay pending.
 
 ## Screener (`detector/screen.py`, `prompts/screen.md`)
