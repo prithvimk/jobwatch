@@ -144,6 +144,34 @@ def amazon(c: httpx.Client, board: str, skip: set[str] = frozenset(), full: bool
         time.sleep(0.5)
 
 
+def jibe(c: httpx.Client, board: str, endpoint: str) -> list[Job]:
+    """Jibe career sites (iCIMS front end): <site>/api/jobs. India boards are small (tens of postings),
+    so every pass reads them in full. `sortBy` is rejected (503), so no newest-first paging."""
+    base = endpoint.rsplit("/api/", 1)[0]
+    out, page = [], 1
+    while True:
+        r = c.get(endpoint, params={"location": "India", "limit": 100, "page": page})
+        r.raise_for_status()
+        d = r.json()
+        rows = d.get("jobs") or []
+        for row in rows:
+            j = row["data"]
+            if (j.get("country") or "India") != "India":
+                continue
+            locs = [j.get("full_location") or ", ".join(x for x in (j.get("city"), j.get("country")) if x)]
+            locs += [l.get("full_location") or l.get("city") or "" for l in j.get("additional_locations") or []
+                     if isinstance(l, dict)]
+            out.append(Job(
+                board=board, id=str(j["slug"]), title=j["title"].strip(), locations=[l for l in locs if l],
+                url=f"{base}/jobs/{j['slug']}", apply_url=j.get("apply_url") or f"{base}/jobs/{j['slug']}",
+                posted_at=(j.get("posted_date") or "").replace("+0000", "+00:00") or None,
+                req_id=j.get("req_id"), closes_at=(j.get("posting_expiry_date") or "").replace("+0000", "+00:00") or None,
+            ))
+        if not rows or len(out) >= d.get("totalCount", 0) or page >= 20:
+            return out
+        page += 1
+
+
 def _workday(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     from detector import workday  # Workday goes through curl, not httpx (see detector/workday.py)
     return workday.fetch(b, **ctx)
@@ -170,6 +198,7 @@ FETCHERS = {
     "oracle": _oracle,
     "amazon": lambda c, b, skip=frozenset(), full=True, **_: amazon(c, b["name"], skip, full),
     "eightfold": _eightfold,
+    "jibe": lambda c, b, **_: jibe(c, b["name"], b["endpoint"]),
 }
 
 

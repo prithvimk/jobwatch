@@ -219,3 +219,22 @@ def test_signin_apply_link_checks_first_hop_only():
     c = httpx.Client(transport=httpx.MockTransport(handler), follow_redirects=True)
     ok, why = runmod.live(c, "https://account.amazon.jobs/jobs/1/apply")
     assert ok and "sign-in" in why
+
+
+def test_jibe_parse_and_pages():
+    def handler(req):
+        assert req.url.params["location"] == "India"
+        page = int(req.url.params["page"])
+        rows = [{"data": {"slug": str(100 * page + i), "req_id": str(100 * page + i), "title": " Data Scientist ",
+                          "full_location": "Pune, India", "country": "India", "posted_date": "2026-10-07T10:39:00+0000",
+                          "posting_expiry_date": "2026-12-30T18:30:00+0000",
+                          "apply_url": f"https://careers-here.icims.com/jobs/{100 * page + i}/login"}}
+                for i in range(100 if page == 1 else 20)]
+        return httpx.Response(200, json={"totalCount": 120, "jobs": rows})
+    c = httpx.Client(transport=httpx.MockTransport(handler))
+    jobs = sources.jibe(c, "HERE", "https://careers.here.com/api/jobs")
+    assert len(jobs) == 120
+    j = jobs[0]
+    assert j.url == "https://careers.here.com/jobs/100" and j.apply_url == "https://careers-here.icims.com/jobs/100/login"
+    assert j.posted_at == "2026-10-07T10:39:00+00:00" and j.closes_at == "2026-12-30T18:30:00+00:00"
+    assert j.locations == ["Pune, India"] and PF.check(j)[0]
