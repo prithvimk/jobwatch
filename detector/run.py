@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CLOSED_URL = ("error=true", "/404", "job-not-found", "jobnotfound")  # closed jobs redirect here
 APPLY_ENTRY = ("/oneclick-ui/",)  # ATS application entry paths that refuse non-browser clients
 SIGNIN_APPLY_HOSTS = ("account.amazon.jobs",)  # apply links that always go to a sign-in (see live())
+SCREEN_WORKERS = 4     # parallel Claude calls per pass
 FULL_SWEEP_EVERY = 12  # passes; incremental fetchers (Workday) fully re-enumerate one board per pass
 CLOSED_TEXT = ("this job is no longer", "position has been filled", "no longer accepting applications",
                "job you are looking for is no longer")
@@ -189,21 +190,36 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
         # Screen (laptop), then push best fit first, newest within a fit level. OUT roles are not pushed:
         # they go to the daily digest. A screening failure sends the plain alert with the reason.
         verdicts = screen.load_verdicts() if screen_roles else {}
+        # JDs are fetched in order (shared HTTP client, paced sites); the Claude calls run in parallel.
+        todo = []
+        if screen_roles:
+            for job, *_ in ready:
+                if f"{job.board}:{job.id}" not in verdicts:
+                    todo.append((job, *jd.get(c, job)))
+        notes: dict[str, str] = {}
+
+        def _screen(item):
+            job, text, src = item
+            try:
+                return job, screen.screen(job, text, src), None
+            except screen.ScreenError as e:
+                return job, None, e
+
+        if todo:
+            from concurrent.futures import ThreadPoolExecutor
+            with ThreadPoolExecutor(max_workers=min(SCREEN_WORKERS, len(todo))) as pool:
+                for job, v, err in pool.map(_screen, todo):
+                    key = f"{job.board}:{job.id}"
+                    if v is not None:
+                        verdicts[key] = v
+                    else:
+                        notes[key] = f"Screening unavailable: {str(err)[:120]}."
+                        print(f"  screening failed: {job.board} {job.id}: {err}")
         results = []
         for job, why, first_seen, entry in ready:
-            v, note = None, "Screening pending."
-            if screen_roles:
-                key = f"{job.board}:{job.id}"
-                v = verdicts.get(key)
-                if v is None:
-                    text, src = jd.get(c, job)
-                    try:
-                        v = screen.screen(job, text, src)
-                        verdicts[key] = v
-                    except screen.ScreenError as e:
-                        note = f"Screening unavailable: {str(e)[:120]}."
-                        print(f"  screening failed: {job.board} {job.id}: {e}")
-            results.append((job, why, first_seen, entry, v, note))
+            key = f"{job.board}:{job.id}"
+            v = verdicts.get(key) if screen_roles else None
+            results.append((job, why, first_seen, entry, v, notes.get(key, "Screening pending.")))
         results.sort(key=lambda r: ((r[4] or {}).get("fit", 0), r[0].posted_at or "", r[2]), reverse=True)
         for job, why, first_seen, entry, v, note in results:
             if v and v["verdict"] == "OUT":
