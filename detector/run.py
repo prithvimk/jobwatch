@@ -19,7 +19,7 @@ from pathlib import Path
 import httpx
 import yaml
 
-from detector import jd, notify, screen, state
+from detector import jd, ledger, notify, screen, state
 from detector.prefilter import Prefilter
 from detector.sources import FETCHERS, Job, client, detail_hooks, enrich_smartrecruiters_urls
 
@@ -187,6 +187,25 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
                 continue
             ready.append((job, why, first_seen, entry))
 
+        # Ledger (laptop): a repost of a role the user already applied to or skipped is never shown again.
+        led = ledger.load() if ledger.enabled() else None
+        reposts: dict[str, dict] = {}
+        led_changed = False
+        if led is not None:
+            kept = []
+            for item in ready:
+                job, entry = item[0], item[3]
+                prior = ledger.same_req(led, job)
+                if prior and prior["status"] in ledger.RESOLVED:
+                    print(f"  repost of a {prior['status']} role, not shown: {job.board} {job.id} {job.title!r} (req {job.req_id})")
+                    entry["status"] = "repost"
+                    entry.pop("tries", None)
+                    continue
+                if prior:
+                    reposts[f"{job.board}:{job.id}"] = prior
+                kept.append(item)
+            ready = kept
+
         # Screen (laptop), then push best fit first, newest within a fit level. OUT roles are not pushed:
         # they go to the daily digest. A screening failure sends the plain alert with the reason.
         verdicts = screen.load_verdicts() if screen_roles else {}
@@ -230,18 +249,26 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
                 entry.pop("tries", None)
                 continue
             title, body = format_alert(job, first_seen, why, v, note)
+            prior = reposts.get(f"{job.board}:{job.id}")
+            if prior:
+                body += (f"\nRepost: same requisition first shown {notify.ist(prior['shown_at'])}"
+                         if prior.get("shown_at") else "\nRepost of a requisition shown before")
             if v and not dry_run:
                 print(f"  kit: {screen.save_kit(job, v)}")
             sent = notify.push(title, body, click=job.url, tags=["briefcase"], dry_run=dry_run,
                                priority=4 if v and v["verdict"] == "IN" else 3,
-                               actions=[{"action": "view", "label": "Apply", "url": job.apply_url},
-                                        {"action": "view", "label": "JD", "url": job.url}])
+                               actions=ledger.actions(job))
             if sent:
                 entry["status"] = "alerted"
                 entry["alerted_at"] = state.now_iso()
                 entry.pop("tries", None)
+                if led is not None:
+                    ledger.record_shown(led, job, v, entry["alerted_at"])
+                    led_changed = True
         if screen_roles and not dry_run:
             screen.save_verdicts(verdicts)
+        if led_changed and not dry_run:
+            ledger.save(led)
 
     if dry_run:
         print("dry-run: state not written")

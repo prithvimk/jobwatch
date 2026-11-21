@@ -92,6 +92,7 @@ def parse(result: str) -> dict:
     except (TypeError, ValueError):
         v["fit"] = 1
     v["gaps"] = [str(g) for g in v.get("gaps") or []]
+    v["skills"] = [str(s).strip() for s in v.get("skills") or [] if str(s).strip()][:12]
     for k in ("location", "experience_asked", "one_line", "out_reason", "resume_tweak"):
         v[k] = str(v.get(k) or "")
     return v
@@ -124,6 +125,8 @@ def call_claude(prompt: str) -> str:
 def screen(job: Job, jd: str, jd_source: str) -> dict:
     v = parse(call_claude(build_prompt(job, jd, jd_source)))
     v["jd_source"] = jd_source
+    v["screened_at"] = datetime.now(IST).isoformat(timespec="minutes")
+    v["title"] = job.title
     return v
 
 

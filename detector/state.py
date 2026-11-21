@@ -7,6 +7,7 @@ state/seen.json  = union of every job ID ever seen, per board, with first_seen a
     alerted   pushed to the phone
     screened  judged OUT by the screener: not pushed, listed in the daily digest
     dead      never became live
+    repost    same requisition as a role already applied to or skipped (private ledger): not pushed
 state/health.json = per board: ok, consecutive failures, last error. Changes only on failure/recovery.
 IDs are never removed, so a repost under the same ID is never "new".
 """

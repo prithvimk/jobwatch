@@ -1,4 +1,5 @@
-"""Laptop runner: pull state -> detector pass -> commit state -> push -> heartbeat.
+"""Laptop runner: pull state -> read phone ledger taps -> detector pass -> digest and reminders
+-> commit state -> push -> heartbeat.
 
 Run every 5 min by Windows Task Scheduler (scripts/install_task.ps1) through the venv's pythonw.exe,
 so no console window appears. Output goes to private/logs/sync.log.
@@ -20,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 from detector import run as detector
-from detector import notify, screen
+from detector import ledger, notify, remind, screen
 
 ROOT = Path(__file__).resolve().parent.parent
 LOG = ROOT / "private" / "logs" / "sync.log"
@@ -98,10 +99,15 @@ def sync() -> int:
         register_merge_driver()
         pull(branch)
     detector.load_env()
+    ledger.pull()  # phone taps (Applied / Skip) before the pass, so a skipped role's repost is suppressed
     ok, why = screen.available()
     print(f"screening: {'on' if ok else 'off (' + why + ')'}")
     rc = detector.run(None, dry_run=False, screen_roles=ok)
     send_digest()
+    try:
+        remind.run()  # closing-date reminders, 5-day follow-ups, Sunday lists
+    except Exception as e:  # a reminder bug must not stop state from being committed
+        print(f"reminders failed: {type(e).__name__}: {e}")
     if not on_main:
         print(f"on branch {branch!r}: state written but not committed")
         return rc
