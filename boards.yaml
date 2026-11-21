@@ -1,0 +1,378 @@
+generated_at: '2026-11-21T11:45:14+00:00'
+summary:
+  easy:
+  - Sarvam
+  - Databricks
+  - Swiggy
+  adapter:
+  - JPMC
+  - Cisco
+  - Mastercard
+  - Wells Fargo
+  - Citi
+  - BlackRock
+  - S&P Global
+  - LSEG
+  - Barclays
+  - Visa
+  custom-json:
+  - Amazon
+  - Microsoft
+  - MSCI
+  - Atlassian
+  - Morgan Stanley
+  - Deutsche Bank
+  - HERE
+  - Bank of America
+  custom-scrape:
+  - Google
+  - Teradata
+  - Sony Research India
+  - Moody's
+  unknown:
+  - Sony India Software Centre
+boards:
+- name: Amazon
+  careers_url: https://www.amazon.jobs/en/search?country=IND
+  ats: custom
+  platform: amazon
+  effort: custom-json
+  endpoint: https://www.amazon.jobs/en/search.json
+  total: 10000+
+  india: 2026
+  evidence:
+  - GET https://www.amazon.jobs/en/search?country=IND -> 200 https://www.amazon.jobs/en/search?country=IND
+  - confirmed amazon JSON
+- name: JPMC
+  careers_url: https://careers.jpmorgan.com/in/en/home
+  ats: oracle
+  effort: adapter
+  locator:
+  - jpmc.fa.oraclecloud.com
+  - CX_1001
+  endpoint: https://jpmc.fa.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?finder=findReqs;siteNumber=CX_1001
+  total: 6866
+  india: 278
+  india_method: LOCATIONS facet, country=India
+  evidence:
+  - from seed hints
+  - GET https://careers.jpmorgan.com/in/en/home -> 200 https://www.jpmorganchase.com/careers?redirect=careers_jpm
+  - confirmed oracle ('jpmc.fa.oraclecloud.com', 'CX_1001')
+- name: Google
+  careers_url: https://www.google.com/about/careers/applications/jobs/results/?location=India
+  ats: custom
+  platform: google-careers
+  effort: custom-scrape
+  total: unknown
+  india: unknown
+  evidence:
+  - GET https://www.google.com/about/careers/applications/jobs/results/?location=India -> 200 https://www.google.com/about/careers/applications/jobs/results/?location=India
+- name: Microsoft
+  careers_url: https://jobs.careers.microsoft.com/global/en/search?lc=India
+  ats: custom
+  platform: eightfold
+  effort: custom-json
+  endpoint: https://apply.careers.microsoft.com/api/pcsx/search?domain=microsoft.com
+  total: unknown
+  india: 230
+  evidence:
+  - GET https://jobs.careers.microsoft.com/global/en/search?lc=India -> 200 https://apply.careers.microsoft.com/careers?lc=India
+  - confirmed eightfold JSON
+- name: Teradata
+  careers_url: https://careers.teradata.com/jobs
+  ats: custom
+  platform: nextjs-in-house
+  effort: custom-scrape
+  total: unknown
+  india: unknown
+  evidence:
+  - GET https://careers.teradata.com/jobs -> 200 https://careers.teradata.com/jobs
+- name: MSCI
+  careers_url: https://careers.msci.com/
+  ats: custom
+  platform: jibe
+  effort: custom-json
+  endpoint: https://msci.jibeapply.com/api/jobs
+  total: 128
+  india: 23
+  backend: icims
+  evidence:
+  - GET https://careers.msci.com/ -> 200 https://careers.msci.com/
+  - confirmed jibe JSON
+- name: Atlassian
+  careers_url: https://www.atlassian.com/company/careers/all-jobs
+  ats: custom
+  platform: atlassian
+  effort: custom-json
+  endpoint: https://www.atlassian.com/endpoint/careers/listings
+  total: 233
+  india: 16
+  backend: icims
+  evidence:
+  - GET https://www.atlassian.com/company/careers/all-jobs -> 200 https://www.atlassian.com/company/careers/all-jobs
+  - confirmed atlassian JSON
+- name: Sarvam
+  careers_url: https://www.sarvam.ai/careers
+  ats: ashby
+  effort: easy
+  locator:
+  - sarvam
+  endpoint: https://api.ashbyhq.com/posting-api/job-board/sarvam
+  total: 42
+  india: 42
+  evidence:
+  - from seed hints
+  - GET https://www.sarvam.ai/careers -> 200 https://www.sarvam.ai/careers
+  - confirmed ashby ('sarvam',)
+- name: Databricks
+  careers_url: https://www.databricks.com/company/careers/open-positions
+  ats: greenhouse
+  effort: easy
+  locator:
+  - databricks
+  endpoint: https://boards-api.greenhouse.io/v1/boards/databricks/jobs
+  total: 897
+  india: 77
+  evidence:
+  - from seed hints
+  - GET https://www.databricks.com/company/careers/open-positions -> 200 https://www.databricks.com/company/careers/open-positions
+  - confirmed greenhouse ('databricks',)
+- name: Morgan Stanley
+  careers_url: https://www.morganstanley.com/careers/career-opportunities-search
+  ats: custom
+  platform: eightfold
+  effort: custom-json
+  endpoint: https://morganstanley.eightfold.ai/api/pcsx/search?domain=morganstanley.com
+  total: unknown
+  india: 83
+  evidence:
+  - GET https://www.morganstanley.com/careers/career-opportunities-search -> 200 https://www.morganstanley.com/careers/career-opportunities-search
+  - confirmed eightfold JSON
+- name: Swiggy
+  careers_url: https://careers.swiggy.in/
+  ats: smartrecruiters
+  effort: easy
+  locator:
+  - Swiggy
+  endpoint: https://api.smartrecruiters.com/v1/companies/Swiggy/postings
+  total: 173
+  india: 172
+  evidence:
+  - from seed hints
+  - GET https://careers.swiggy.in/ -> 200 https://careers.swiggy.in/
+  - confirmed smartrecruiters ('Swiggy',)
+- name: Deutsche Bank
+  careers_url: https://careers.db.com/
+  ats: custom
+  platform: beesite
+  effort: custom-json
+  endpoint: https://api-deutschebank.beesite.de/search/
+  total: 1872
+  india: 241
+  backend: workday
+  evidence:
+  - GET https://careers.db.com/ -> 200 https://careers.db.com/
+  - confirmed beesite JSON
+- name: Cisco
+  careers_url: https://jobs.cisco.com/
+  ats: workday
+  effort: adapter
+  locator:
+  - cisco
+  - wd5
+  - Cisco_Careers
+  endpoint: https://cisco.wd5.myworkdayjobs.com/wday/cxs/cisco/Cisco_Careers/jobs
+  total: 1417
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://jobs.cisco.com/ -> 200 https://careers.cisco.com/global/en
+  - confirmed workday ('cisco', 'wd5', 'Cisco_Careers')
+- name: Mastercard
+  careers_url: https://careers.mastercard.com/us/en
+  ats: workday
+  effort: adapter
+  locator:
+  - mastercard
+  - wd1
+  - CorporateCareers
+  endpoint: https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers/jobs
+  total: 719
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.mastercard.com/us/en -> 200 https://careers.mastercard.com/us/en
+  - confirmed workday ('mastercard', 'wd1', 'CorporateCareers')
+- name: Wells Fargo
+  careers_url: https://www.wellsfargojobs.com/en/
+  ats: workday
+  effort: adapter
+  locator:
+  - wd1
+  - wf
+  - WellsFargoJobs
+  endpoint: https://wd1.myworkdaysite.com/wday/cxs/wf/WellsFargoJobs/jobs
+  total: 1545
+  india: 59
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://www.wellsfargojobs.com/en/ -> 403 https://www.wellsfargojobs.com/en/
+  - confirmed workday ('wd1', 'wf', 'WellsFargoJobs')
+- name: Citi
+  careers_url: https://jobs.citi.com/
+  ats: workday
+  effort: adapter
+  locator:
+  - citi
+  - wd5
+  - '2'
+  endpoint: https://citi.wd5.myworkdayjobs.com/wday/cxs/citi/2/jobs
+  total: 2000
+  india: 940
+  india_facet:
+    param: Country_and_Jurisdiction
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://jobs.citi.com/ -> 200 https://jobs.citi.com/
+  - confirmed workday ('citi', 'wd5', '2')
+- name: BlackRock
+  careers_url: https://careers.blackrock.com/
+  ats: workday
+  effort: adapter
+  locator:
+  - blackrock
+  - wd1
+  - BlackRock_Professional
+  endpoint: https://blackrock.wd1.myworkdayjobs.com/wday/cxs/blackrock/BlackRock_Professional/jobs
+  total: 285
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.blackrock.com/ -> 200 https://careers.blackrock.com/
+  - confirmed workday ('blackrock', 'wd1', 'BlackRock_Professional')
+- name: S&P Global
+  careers_url: https://careers.spglobal.com/
+  ats: workday
+  effort: adapter
+  locator:
+  - spgi
+  - wd5
+  - SPGI_Careers
+  endpoint: https://spgi.wd5.myworkdayjobs.com/wday/cxs/spgi/SPGI_Careers/jobs
+  total: 355
+  india: 56
+  india_facet:
+    param: Location_Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://careers.spglobal.com/ -> 200 https://careers.spglobal.com/jobs
+  - confirmed workday ('spgi', 'wd5', 'SPGI_Careers')
+- name: LSEG
+  careers_url: https://www.lseg.com/en/careers
+  ats: workday
+  effort: adapter
+  locator:
+  - lseg
+  - wd3
+  - Careers
+  endpoint: https://lseg.wd3.myworkdayjobs.com/wday/cxs/lseg/Careers/jobs
+  total: 665
+  india: 209
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://www.lseg.com/en/careers -> 200 https://www.lseg.com/en/careers
+  - confirmed workday ('lseg', 'wd3', 'Careers')
+- name: Barclays
+  careers_url: https://search.jobs.barclays/
+  ats: workday
+  effort: adapter
+  locator:
+  - barclays
+  - wd3
+  - External_Career_Site_Barclays
+  endpoint: https://barclays.wd3.myworkdayjobs.com/wday/cxs/barclays/External_Career_Site_Barclays/jobs
+  total: 652
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://search.jobs.barclays/ -> 200 https://search.jobs.barclays/
+  - confirmed workday ('barclays', 'wd3', 'External_Career_Site_Barclays')
+- name: Sony Research India
+  careers_url: https://www.sonyresearchindia.com/careers/
+  note: Openings are LinkedIn job links (linkedin.com/jobs/view/<id>) on a WordPress page; poll the page, diff the IDs.
+  ats: custom
+  platform: wordpress-linkedin
+  effort: custom-scrape
+  total: unknown
+  india: unknown
+  evidence:
+  - GET https://www.sonyresearchindia.com/careers/ -> 200 https://www.sonyresearchindia.com/careers/
+- name: Sony India Software Centre
+  careers_url: https://www.sony.co.in/en/sony-india-software-centre
+  note: No public careers board found; roles appear only on third-party mirrors (builtin.com, mncjobsindia). Left unknown.
+  ats: unknown
+  effort: unknown
+  total: unknown
+  india: unknown
+  evidence:
+  - GET https://www.sony.co.in/en/sony-india-software-centre -> 403 https://www.sony.co.in/en/sony-india-software-centre
+- name: Visa
+  careers_url: https://corporate.visa.com/en/jobs/
+  ats: workday
+  effort: adapter
+  locator:
+  - visa
+  - wd5
+  - Visa
+  endpoint: https://visa.wd5.myworkdayjobs.com/wday/cxs/visa/Visa/jobs
+  total: 919
+  india: 100
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://corporate.visa.com/en/jobs/ -> 429 https://visa.wd5.myworkdayjobs.com/Visa
+  - confirmed workday ('visa', 'wd5', 'Visa')
+- name: Moody's
+  careers_url: https://careers.moodys.com/
+  ats: custom
+  platform: radancy
+  effort: custom-scrape
+  total: unknown
+  india: unknown
+  backend: successfactors
+  evidence:
+  - GET https://careers.moodys.com/ -> 200 https://careers.moodys.com/en
+- name: HERE
+  careers_url: https://careers.here.com/
+  ats: custom
+  platform: jibe
+  effort: custom-json
+  endpoint: https://careers.here.com/api/jobs
+  total: 56
+  india: 16
+  backend: icims
+  evidence:
+  - GET https://careers.here.com/ -> 200 https://careers.here.com/join/talentcommunity/form
+  - confirmed jibe JSON
+- name: Bank of America
+  careers_url: https://careers.bankofamerica.com/en-us/job-search
+  ats: custom
+  platform: boa
+  effort: custom-json
+  endpoint: https://careers.bankofamerica.com/services/jobssearchservlet
+  total: 2099
+  india: 126
+  backend: workday
+  evidence:
+  - GET https://careers.bankofamerica.com/en-us/job-search -> 200 https://careers.bankofamerica.com/en-us/job-search
+  - confirmed boa JSON

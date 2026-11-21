@@ -1,0 +1,34 @@
+# Detector prefilter. Cheap and deliberately inclusive: a false negative costs an application,
+# a false positive only costs one screener look. The real filter spec runs on the full JD (M3).
+
+# A title must match one of these (or a board's extra_include).
+title_include:
+  - '\b(ai|a\.i\.|genai|gen ai|gen-ai|ml|llms?|nlp|mlops|ai/ml|ml/ai)\b'
+  - 'machine learning|deep learning|generative|agentic|computer vision|foundation model|transformer'
+  - 'data scien|applied scien|research (engineer|scientist)|scientist'
+  - '\b(speech|asr|tts|vision|perception|recommend\w*|ranking|personali[sz]ation|inference)\b'
+  # Kept for the spec's exception: a DE-titled role stays in if a required qualification is GenAI/ML.
+  - 'data engineer'
+
+# Any match drops the title, even if it matched title_include.
+title_exclude:
+  - '\b(intern|internship|apprentice|trainee)\b'
+  - '\b(principal|director|vice president|vp|head of|staff|distinguished|chief|fellow)\b'
+  - '\b(sales|account executive|account manager|business development|recruit\w*|talent acquisition|marketing|counsel|legal|accountant|payroll)\b'
+  - '\b(product manager|program manager|project manager|product owner)\b'
+  - '\b(qa|quality assurance|sdet|test engineer|tester)\b'
+  - '\b(android|ios|mobile|full[- ]?stack|front[- ]?end)\b'
+
+# Location: anywhere in India except North India. A posting passes if ANY of its locations passes.
+india: '\bindia\b|\bindian\b|bengaluru|bangalore|mumbai|navi mumbai|thane|pune|hyderabad|secunderabad|chennai|kolkata|ahmedabad|gandhinagar|gift city|kochi|cochin|thiruvananthapuram|trivandrum|coimbatore|mysuru|mysore|mangaluru|mangalore|indore|bhopal|nagpur|vadodara|surat|bhubaneswar|visakhapatnam|vizag|vijayawada|goa|\bdelhi\b|new delhi|gurugram|gurgaon|noida|faridabad|ghaziabad|chandigarh|mohali|panchkula|jaipur|lucknow|dehradun|ludhiana|amritsar|kanpur'
+north: '\bdelhi\b|\bncr\b|gurugram|gurgaon|noida|faridabad|ghaziabad|chandigarh|mohali|panchkula|jaipur|jodhpur|udaipur|lucknow|kanpur|varanasi|agra|dehradun|ludhiana|amritsar|jalandhar|shimla|jammu|kashmir|srinagar|ladakh|punjab|haryana|himachal|uttarakhand|uttar pradesh|rajasthan'
+
+# Liveness: a pending posting (JD or apply page did not load) is retried this many runs, then marked dead.
+max_liveness_tries: 3
+# Alert once when a board has failed this many runs in a row (visible "unknown" instead of silence).
+board_fail_alert_after: 3
+
+boards:
+  Sarvam:
+    # AI-native company: any engineering/science title is a candidate, not only ones that say ML.
+    extra_include: ['\b(engineer|engineering|sde ?\d?|developer|scientist|researcher)\b']

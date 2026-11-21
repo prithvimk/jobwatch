@@ -1,0 +1,56 @@
+name: detector
+
+# Fallback detector. The laptop (detector/sync.py, every 5 min) is primary and sets the repo variable
+# JOBWATCH_LOCAL_AT on each pass; scheduled runs skip while it is under 15 min old.
+
+on:
+  schedule:
+    - cron: "3-59/10 * * * *"   # every 10 min, offset from :00 when Actions is busiest
+  workflow_dispatch: {}          # manual runs never skip
+
+concurrency:
+  group: detector
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Skip if the laptop ran recently
+        id: gate
+        run: |
+          last="${{ vars.JOBWATCH_LOCAL_AT }}"; now=$(date +%s)
+          if [ "${{ github.event_name }}" = schedule ] && [ -n "$last" ] && [ $((now - last)) -lt 900 ]; then
+            echo "laptop ran $((now - last))s ago; skipping"; echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.gate.outputs.skip != 'true'
+        uses: actions/checkout@v4
+      - if: steps.gate.outputs.skip != 'true'
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - if: steps.gate.outputs.skip != 'true'
+        run: uv sync --frozen --no-dev
+      - name: Detector pass
+        if: steps.gate.outputs.skip != 'true'
+        run: uv run python -m detector.run
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+      - name: Commit state (IDs and timestamps only)
+        if: steps.gate.outputs.skip != 'true'
+        run: |
+          git add state/
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config merge.jobwatch-state.driver "uv run --frozen python -m detector.merge %O %A %B"
+          git commit -m "state: $(date -u +%Y-%m-%dT%H:%MZ) (actions)"
+          for i in 1 2 3; do
+            git pull --rebase --quiet && git push && exit 0
+            sleep 5
+          done
+          exit 1

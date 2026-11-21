@@ -1,0 +1,2 @@
+# Merge concurrent laptop/Actions state by meaning (detector/merge.py); driver registered in local git config.
+state/*.json text eol=lf merge=jobwatch-state

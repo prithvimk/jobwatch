@@ -1,0 +1,112 @@
+"""Per-ATS fetchers that normalize postings into `Job`. One function per ATS type in boards.yaml."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+import httpx
+
+UA = "jobwatch/0.1 (personal job alerts)"
+TIMEOUT = httpx.Timeout(20.0, connect=10.0)
+
+
+@dataclass
+class Job:
+    board: str              # company name as in boards.yaml
+    id: str                 # ATS job id: the state key
+    title: str
+    locations: list[str]
+    url: str                # public JD page
+    apply_url: str          # application entry page
+    posted_at: str | None   # only when the ATS states it; never inferred
+    req_id: str | None = None   # employer requisition id when exposed (for repost matching in the ledger)
+    check_urls: list[str] = field(default_factory=list)  # extra liveness URLs (e.g. ATS detail API)
+
+
+def client() -> httpx.Client:
+    return httpx.Client(headers={"User-Agent": UA}, timeout=TIMEOUT, follow_redirects=True)
+
+
+def greenhouse(c: httpx.Client, board: str, slug: str) -> list[Job]:
+    r = c.get(f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs")
+    r.raise_for_status()
+    out = []
+    for j in r.json()["jobs"]:
+        jid = str(j["id"])
+        page = f"https://job-boards.greenhouse.io/{slug}/jobs/{jid}"
+        out.append(Job(
+            board=board, id=jid, title=j["title"].strip(),
+            locations=[(j.get("location") or {}).get("name", "")],
+            url=j.get("absolute_url") or page, apply_url=page,
+            posted_at=j.get("first_published"), req_id=j.get("requisition_id"),
+            check_urls=[f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs/{jid}"],
+        ))
+    return out
+
+
+def lever(c: httpx.Client, board: str, slug: str) -> list[Job]:
+    r = c.get(f"https://api.lever.co/v0/postings/{slug}", params={"mode": "json"})
+    r.raise_for_status()
+    out = []
+    for j in r.json():
+        cats = j.get("categories") or {}
+        locs = cats.get("allLocations") or [cats.get("location", "")]
+        out.append(Job(
+            board=board, id=j["id"], title=j["text"].strip(), locations=[l for l in locs if l],
+            url=j["hostedUrl"], apply_url=j.get("applyUrl") or j["hostedUrl"],
+            posted_at=None,  # Lever's createdAt is the internal create time, not a stated posting date
+        ))
+    return out
+
+
+def ashby(c: httpx.Client, board: str, slug: str) -> list[Job]:
+    r = c.get(f"https://api.ashbyhq.com/posting-api/job-board/{slug}")
+    r.raise_for_status()
+    out = []
+    for j in r.json()["jobs"]:
+        if j.get("isListed") is False:
+            continue
+        addr = ((j.get("address") or {}).get("postalAddress") or {})
+        locs = [j.get("location", "")] + [s.get("location", "") for s in j.get("secondaryLocations") or []]
+        if addr.get("addressCountry"):
+            locs[0] = f"{locs[0]}, {addr['addressCountry']}"
+        out.append(Job(
+            board=board, id=j["id"], title=j["title"].strip(), locations=[l for l in locs if l],
+            url=j["jobUrl"], apply_url=j.get("applyUrl") or j["jobUrl"], posted_at=j.get("publishedAt"),
+        ))
+    return out
+
+
+def smartrecruiters(c: httpx.Client, board: str, slug: str) -> list[Job]:
+    base = f"https://api.smartrecruiters.com/v1/companies/{slug}/postings"
+    out, offset = [], 0
+    while True:  # paginate; country filter applied server-side
+        r = c.get(base, params={"limit": 100, "offset": offset, "country": "in"})
+        r.raise_for_status()
+        d = r.json()
+        for j in d["content"]:
+            loc = (j.get("location") or {})
+            full = loc.get("fullLocation") or ", ".join(x for x in (loc.get("city"), loc.get("country")) if x)
+            url = f"https://jobs.smartrecruiters.com/{slug}/{j['id']}"
+            out.append(Job(
+                board=board, id=str(j["id"]), title=j["name"].strip(), locations=[full],
+                url=url, apply_url=url, posted_at=j.get("releasedDate"), req_id=j.get("refNumber"),
+                check_urls=[f"{base}/{j['id']}"],
+            ))
+        offset += len(d["content"])
+        if not d["content"] or offset >= d["totalFound"]:
+            return out
+
+
+FETCHERS = {"greenhouse": greenhouse, "lever": lever, "ashby": ashby, "smartrecruiters": smartrecruiters}
+
+
+def enrich_smartrecruiters_urls(c: httpx.Client, job: Job) -> None:
+    """SmartRecruiters exposes the canonical posting and apply URLs only on the detail endpoint."""
+    if not job.check_urls:
+        return
+    r = c.get(job.check_urls[0])
+    if r.is_success:
+        d = r.json()
+        job.url = d.get("postingUrl") or job.url
+        job.apply_url = d.get("applyUrl") or job.apply_url

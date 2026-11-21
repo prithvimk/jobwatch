@@ -1,0 +1,14 @@
+{
+ "Databricks": {
+  "fails": 0,
+  "ok": true
+ },
+ "Sarvam": {
+  "fails": 0,
+  "ok": true
+ },
+ "Swiggy": {
+  "fails": 0,
+  "ok": true
+ }
+}

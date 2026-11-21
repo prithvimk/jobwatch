@@ -1,0 +1,11 @@
+# Private: resume, answer bank, ledger, drafts. Never commit, never public.
+private/
+CLAUDE.local.md
+.env
+*.env
+
+# Python / tooling
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/

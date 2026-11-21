@@ -1,0 +1,99 @@
+# Input to `uv run python -m detector.board_map`.
+# careers_url: the company's public careers entry point.
+# hints: explicit locators, tried before fingerprinting the page. Keys:
+#   greenhouse/lever/ashby/smartrecruiters: board slug
+#   workday: "https://<tenant>.<wdN>.myworkdayjobs.com/<site>"
+#   oracle:  "https://<host>/hcmUI/CandidateExperience/en/sites/<siteNumber>"
+#   jibe: site base URL | eightfold: "<host>|<domain>" | beesite: tenant | amazon / atlassian: any value
+# platform: scrape-only front end (no JSON found yet). backend: the ATS the apply button goes to.
+# confirm: the company identity itself is a guess and needs the user to confirm.
+# Hints were found by reading each careers page / sample job page on 2026-11-21.
+boards:
+  - name: Amazon
+    careers_url: https://www.amazon.jobs/en/search?country=IND
+    hints: {amazon: "1"}
+  - name: JPMC
+    careers_url: https://careers.jpmorgan.com/in/en/home
+    hints: {oracle: "https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001"}
+  - name: Google
+    careers_url: https://www.google.com/about/careers/applications/jobs/results/?location=India
+    platform: google-careers  # server-rendered HTML, job IDs in page; no public JSON
+  - name: Microsoft
+    careers_url: https://jobs.careers.microsoft.com/global/en/search?lc=India
+    hints: {eightfold: "apply.careers.microsoft.com|microsoft.com"}
+  - name: Teradata
+    careers_url: https://careers.teradata.com/jobs
+    platform: nextjs-in-house  # jobs embedded in __NEXT_DATA__
+  - name: MSCI
+    careers_url: https://careers.msci.com/
+    hints: {jibe: "https://msci.jibeapply.com"}
+    backend: icims
+  - name: Atlassian
+    careers_url: https://www.atlassian.com/company/careers/all-jobs
+    hints: {atlassian: "1"}
+    backend: icims
+  - name: Sarvam
+    careers_url: https://www.sarvam.ai/careers
+    hints: {ashby: sarvam}
+  - name: Databricks
+    careers_url: https://www.databricks.com/company/careers/open-positions
+    hints: {greenhouse: databricks}
+  - name: Morgan Stanley
+    careers_url: https://www.morganstanley.com/careers/career-opportunities-search
+    hints: {eightfold: "morganstanley.eightfold.ai|morganstanley.com"}
+  - name: Swiggy
+    careers_url: https://careers.swiggy.in/
+    hints: {smartrecruiters: Swiggy}
+  - name: Deutsche Bank
+    careers_url: https://careers.db.com/
+    hints: {beesite: deutschebank}
+    backend: workday
+  - name: Cisco
+    careers_url: https://jobs.cisco.com/
+    hints: {workday: "https://cisco.wd5.myworkdayjobs.com/Cisco_Careers"}
+  - name: Mastercard
+    careers_url: https://careers.mastercard.com/us/en
+    hints: {workday: "https://mastercard.wd1.myworkdayjobs.com/CorporateCareers"}
+  - name: Wells Fargo
+    careers_url: https://www.wellsfargojobs.com/en/
+    hints: {workday: "https://wd1.myworkdaysite.com/recruiting/wf/WellsFargoJobs"}
+  - name: Citi
+    careers_url: https://jobs.citi.com/
+    hints: {workday: "https://citi.wd5.myworkdayjobs.com/2"}
+  - name: BlackRock
+    careers_url: https://careers.blackrock.com/
+    hints: {workday: "https://blackrock.wd1.myworkdayjobs.com/BlackRock_Professional"}
+  - name: S&P Global
+    careers_url: https://careers.spglobal.com/
+    hints: {workday: "https://spgi.wd5.myworkdayjobs.com/SPGI_Careers", jibe: "https://careers.spglobal.com"}
+  - name: LSEG
+    careers_url: https://www.lseg.com/en/careers
+    hints: {workday: "https://lseg.wd3.myworkdayjobs.com/Careers"}
+  - name: Barclays
+    careers_url: https://search.jobs.barclays/
+    hints: {workday: "https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays"}
+  # Sony: user wants SISC + Sony Research India. Neither posts on Sony's global Workday
+  # (sonyglobal.wd1 SonyGlobalCareers has no India roles, checked 2026-11-21).
+  - name: Sony Research India
+    careers_url: https://www.sonyresearchindia.com/careers/
+    platform: wordpress-linkedin
+    note: "Openings are LinkedIn job links (linkedin.com/jobs/view/<id>) on a WordPress page; poll the page, diff the IDs."
+  - name: Sony India Software Centre
+    careers_url: https://www.sony.co.in/en/sony-india-software-centre
+    note: "No public careers board found; roles appear only on third-party mirrors (builtin.com, mncjobsindia). Left unknown."
+  - name: Visa
+    careers_url: https://corporate.visa.com/en/jobs/
+    hints: {workday: "https://visa.wd5.myworkdayjobs.com/Visa"}
+  - name: Moody's
+    careers_url: https://careers.moodys.com/
+    platform: radancy
+    backend: successfactors
+  - name: HERE
+    careers_url: https://careers.here.com/
+    hints: {jibe: "https://careers.here.com"}
+    backend: icims
+  - name: Bank of America
+    careers_url: https://careers.bankofamerica.com/en-us/job-search
+    hints: {boa: "1"}
+    backend: workday  # ghr.wd1.myworkdayjobs.com/lateral-us; the servlet is richer (country, postedDate, years)
+# Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.
