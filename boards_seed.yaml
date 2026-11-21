@@ -105,4 +105,60 @@ boards:
     careers_url: https://higher.gs.com/results?LOCATION=India
     hints: {oracle: "https://hdpc.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/LateralHiring"}
     note: "Added 2026-11-22. higher.gs.com is a front end (GraphQL at api-higher.gs.com); its apply links go to this Oracle site"
+  - name: Rubrik
+    careers_url: https://www.rubrik.com/company/careers
+    hints: {greenhouse: "rubrik"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Meesho
+    careers_url: https://www.meesho.io/jobs
+    hints: {lever: "meesho"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: HackerRank
+    careers_url: https://www.hackerrank.com/careers/
+    hints: {greenhouse: "hackerrank"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Zscaler
+    careers_url: https://www.zscaler.com/careers
+    hints: {greenhouse: "zscaler"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Coinbase
+    careers_url: https://www.coinbase.com/careers/positions
+    hints: {greenhouse: "coinbase"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Twilio
+    careers_url: https://www.twilio.com/en-us/company/jobs
+    hints: {greenhouse: "twilio"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Netomi
+    careers_url: https://www.netomi.com/careers
+    hints: {lever: "netomi"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: ServiceNow
+    careers_url: https://careers.servicenow.com/
+    hints: {smartrecruiters: "ServiceNow"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: NVIDIA
+    careers_url: https://www.nvidia.com/en-us/about-nvidia/careers/
+    hints: {workday: "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: State Street
+    careers_url: https://careers.statestreet.com/
+    hints: {workday: "https://statestreet.wd1.myworkdayjobs.com/Global"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Salesforce
+    careers_url: https://careers.salesforce.com/
+    hints: {workday: "https://salesforce.wd12.myworkdayjobs.com/External_Career_Site"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Adobe
+    careers_url: https://careers.adobe.com/
+    hints: {workday: "https://adobe.wd5.myworkdayjobs.com/external_experienced"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: PayPal
+    careers_url: https://careers.pypl.com/
+    hints: {workday: "https://paypal.wd1.myworkdayjobs.com/jobs"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Intel
+    careers_url: https://jobs.intel.com/
+    hints: {workday: "https://intel.wd1.myworkdayjobs.com/External"}
+    note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

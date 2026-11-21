@@ -4,6 +4,14 @@ summary:
   - Sarvam
   - Databricks
   - Swiggy
+  - Rubrik
+  - Meesho
+  - HackerRank
+  - Zscaler
+  - Coinbase
+  - Twilio
+  - Netomi
+  - ServiceNow
   adapter:
   - JPMC
   - Goldman Sachs
@@ -16,6 +24,12 @@ summary:
   - LSEG
   - Barclays
   - Visa
+  - NVIDIA
+  - State Street
+  - Salesforce
+  - Adobe
+  - PayPal
+  - Intel
   custom-json:
   - Amazon
   - Eightfold AI
@@ -420,3 +434,223 @@ boards:
   evidence:
   - from seed hints
   - confirmed oracle ('hdpc.fa.us2.oraclecloud.com', 'LateralHiring')
+- name: Rubrik
+  careers_url: https://www.rubrik.com/company/careers
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: greenhouse
+  effort: easy
+  locator:
+  - rubrik
+  endpoint: https://boards-api.greenhouse.io/v1/boards/rubrik/jobs
+  total: 208
+  india: 42
+  evidence:
+  - from seed hints
+  - confirmed greenhouse ('rubrik',)
+  - probed 2026-11-22
+- name: Meesho
+  careers_url: https://www.meesho.io/jobs
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: lever
+  effort: easy
+  locator:
+  - meesho
+  endpoint: https://api.lever.co/v0/postings/meesho?mode=json
+  total: 48
+  india: 47
+  evidence:
+  - from seed hints
+  - confirmed lever ('meesho',)
+  - probed 2026-11-22
+- name: HackerRank
+  careers_url: https://www.hackerrank.com/careers/
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: greenhouse
+  effort: easy
+  locator:
+  - hackerrank
+  endpoint: https://boards-api.greenhouse.io/v1/boards/hackerrank/jobs
+  total: 31
+  india: 16
+  evidence:
+  - from seed hints
+  - confirmed greenhouse ('hackerrank',)
+  - probed 2026-11-22
+- name: Zscaler
+  careers_url: https://www.zscaler.com/careers
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: greenhouse
+  effort: easy
+  locator:
+  - zscaler
+  endpoint: https://boards-api.greenhouse.io/v1/boards/zscaler/jobs
+  total: 387
+  india: 88
+  evidence:
+  - from seed hints
+  - confirmed greenhouse ('zscaler',)
+  - probed 2026-11-22
+- name: Coinbase
+  careers_url: https://www.coinbase.com/careers/positions
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: greenhouse
+  effort: easy
+  locator:
+  - coinbase
+  endpoint: https://boards-api.greenhouse.io/v1/boards/coinbase/jobs
+  total: 252
+  india: 9
+  evidence:
+  - from seed hints
+  - confirmed greenhouse ('coinbase',)
+  - probed 2026-11-22
+- name: Twilio
+  careers_url: https://www.twilio.com/en-us/company/jobs
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: greenhouse
+  effort: easy
+  locator:
+  - twilio
+  endpoint: https://boards-api.greenhouse.io/v1/boards/twilio/jobs
+  total: 109
+  india: 15
+  evidence:
+  - from seed hints
+  - confirmed greenhouse ('twilio',)
+  - probed 2026-11-22
+- name: Netomi
+  careers_url: https://www.netomi.com/careers
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: lever
+  effort: easy
+  locator:
+  - netomi
+  endpoint: https://api.lever.co/v0/postings/netomi?mode=json
+  total: 18
+  india: 6
+  evidence:
+  - from seed hints
+  - confirmed lever ('netomi',)
+  - probed 2026-11-22
+- name: ServiceNow
+  careers_url: https://careers.servicenow.com/
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: smartrecruiters
+  effort: easy
+  locator:
+  - ServiceNow
+  endpoint: https://api.smartrecruiters.com/v1/companies/ServiceNow/postings
+  total: 998
+  india: 80
+  evidence:
+  - from seed hints
+  - confirmed smartrecruiters ('ServiceNow',)
+  - probed 2026-11-22
+- name: NVIDIA
+  careers_url: https://www.nvidia.com/en-us/about-nvidia/careers/
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: workday
+  effort: adapter
+  locator:
+  - nvidia
+  - wd5
+  - NVIDIAExternalCareerSite
+  endpoint: https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs
+  total: 2000
+  india: 237
+  india_facet:
+    param: locationHierarchy1
+    id: 2fcb99c455831013ea52b82135ba3266
+  evidence:
+  - from seed hints
+  - confirmed workday ('nvidia', 'wd5', 'NVIDIAExternalCareerSite')
+  - probed 2026-11-22
+- name: State Street
+  careers_url: https://careers.statestreet.com/
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: workday
+  effort: adapter
+  locator:
+  - statestreet
+  - wd1
+  - Global
+  endpoint: https://statestreet.wd1.myworkdayjobs.com/wday/cxs/statestreet/Global/jobs
+  total: 1165
+  india: 231
+  india_facet:
+    param: Location_Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - confirmed workday ('statestreet', 'wd1', 'Global')
+  - probed 2026-11-22
+- name: Salesforce
+  careers_url: https://careers.salesforce.com/
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: workday
+  effort: adapter
+  locator:
+  - salesforce
+  - wd12
+  - External_Career_Site
+  endpoint: https://salesforce.wd12.myworkdayjobs.com/wday/cxs/salesforce/External_Career_Site/jobs
+  total: 1610
+  india: 95
+  india_facet:
+    param: CF_-_REC_-_LRV_-_Job_Posting_Anchor_-_Country_from_Job_Posting_Location_Extended
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - confirmed workday ('salesforce', 'wd12', 'External_Career_Site')
+  - probed 2026-11-22
+- name: Adobe
+  careers_url: https://careers.adobe.com/
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: workday
+  effort: adapter
+  locator:
+  - adobe
+  - wd5
+  - external_experienced
+  endpoint: https://adobe.wd5.myworkdayjobs.com/wday/cxs/adobe/external_experienced/jobs
+  total: 252
+  india: 37
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - confirmed workday ('adobe', 'wd5', 'external_experienced')
+  - probed 2026-11-22
+- name: PayPal
+  careers_url: https://careers.pypl.com/
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: workday
+  effort: adapter
+  locator:
+  - paypal
+  - wd1
+  - jobs
+  endpoint: https://paypal.wd1.myworkdayjobs.com/wday/cxs/paypal/jobs/jobs
+  total: 369
+  india: unknown
+  evidence:
+  - from seed hints
+  - confirmed workday ('paypal', 'wd1', 'jobs')
+  - probed 2026-11-22
+- name: Intel
+  careers_url: https://jobs.intel.com/
+  note: Added 2026-11-22 (recommended after a live probe of India ML postings)
+  ats: workday
+  effort: adapter
+  locator:
+  - intel
+  - wd1
+  - External
+  endpoint: https://intel.wd1.myworkdayjobs.com/wday/cxs/intel/External/jobs
+  total: 935
+  india: unknown
+  evidence:
+  - from seed hints
+  - confirmed workday ('intel', 'wd1', 'External')
+  - probed 2026-11-22
