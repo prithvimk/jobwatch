@@ -56,8 +56,10 @@
   "ok": true
  },
  "HackerRank": {
-  "fails": 0,
-  "ok": true
+  "error": "ConnectError: [WinError 10054] An existing connection was forcibly closed by the remote host",
+  "failing_since": "2026-11-21T23:12:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Intel": {
   "fails": 0,
