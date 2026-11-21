@@ -6,7 +6,7 @@ Facts this relies on (checked live 2026-11-21):
   across all tenants).
 - `POST .../jobs` returns postings newest first (`postedOn`: "Posted Today", "Posted Yesterday", ...),
   20 per page, and `total` only on the offset-0 page. So a normal pass reads pages only until one
-  has nothing unseen or pending; each board also gets a full sweep about once an hour as a safety net.
+  has nothing unseen or pending; each board also gets a full sweep about once an hour as a safety net (run.FULL_SWEEP_EVERY).
 - Tenants filter India either by a country facet (`india_facet` in boards.yaml) or only by city
   location facets. For the latter, the allowed-city location values are read from each pass's first
   response, and North India cities are left out at the source.
@@ -29,7 +29,6 @@ from detector.sources import Job
 
 PAGE = 20
 PACE_S = 1.0               # seconds between Workday requests (all tenants share one IP budget)
-FULL_SWEEP_EVERY = 12      # passes; at a 5-min cadence each board gets a full sweep about hourly
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 _last_call = 0.0
 
@@ -133,7 +132,7 @@ def fetch(board: dict, skip: set[str], location_ok, full: bool) -> list[Job]:
             return out
 
 
-def enrich(job: Job) -> None:
+def enrich(_c, job: Job) -> None:
     """Detail API: stated posting date, every location, canonical URLs. Raises if the posting is gone."""
     info = _json(job.check_urls[0])["jobPostingInfo"]
     job.posted_at = info.get("startDate") or job.posted_at
@@ -144,7 +143,7 @@ def enrich(job: Job) -> None:
     job.open = bool(info.get("canApply", True))
 
 
-def live(job: Job) -> tuple[bool, str]:
+def live(_c, job: Job) -> tuple[bool, str]:
     if not getattr(job, "open", True):
         return False, "detail API says canApply=false"
     for label, url in (("JD", job.url), ("apply", job.apply_url)):

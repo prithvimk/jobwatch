@@ -161,7 +161,8 @@ def test_workday_rechecks_location_after_detail(env, monkeypatch):
     monkeypatch.setattr(runmod, "load_boards", lambda names: [{"name": "Acme", "ats": "workday", "locator": ["x"]}])
     monkeypatch.setitem(runmod.FETCHERS, "workday", lambda c, b, **k: list(postings))
     details = {"7": ["Noida, India"], "8": ["Noida, India", "Pune, India"]}
-    monkeypatch.setattr(runmod.workday, "enrich", lambda j: setattr(j, "locations", details[j.id]))
+    monkeypatch.setattr(runmod, "detail_hooks", lambda ats: (lambda c, j: setattr(j, "locations", details[j.id]),
+                                                            lambda c, j: (True, "ok")) if ats == "workday" else None)
     runmod.run(None, dry_run=False)  # baseline
     postings += [Job("Acme", i, "ML Engineer", [], "u", "a", None) for i in ("7", "8")]  # "2 Locations"
     runmod.run(None, dry_run=False)

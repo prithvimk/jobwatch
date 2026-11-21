@@ -22,6 +22,7 @@ class Job:
     req_id: str | None = None   # employer requisition id when exposed (for repost matching in the ledger)
     check_urls: list[str] = field(default_factory=list)  # extra liveness URLs (e.g. ATS detail API)
     open: bool = True           # ATS says applications are open (set by detail enrichment)
+    closes_at: str | None = None  # closing date, only when the ATS states it
 
 
 def client() -> httpx.Client:
@@ -104,6 +105,11 @@ def _workday(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     return workday.fetch(b, **ctx)
 
 
+def _oracle(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import oracle
+    return oracle.fetch(c, b, **ctx)
+
+
 # fetcher(client, board entry from boards.yaml, skip=set of settled IDs, location_ok=fn, full=bool).
 # Incremental fetchers (Workday) use the context to stop paging early; the JSON boards return everything.
 FETCHERS = {
@@ -112,7 +118,21 @@ FETCHERS = {
     "ashby": lambda c, b, **_: ashby(c, b["name"], b["locator"][0]),
     "smartrecruiters": lambda c, b, **_: smartrecruiters(c, b["name"], b["locator"][0]),
     "workday": _workday,
+    "oracle": _oracle,
 }
+
+
+def detail_hooks(ats: str):
+    """(enrich, live) for ATSs whose list lacks something an alert needs, or whose JD page is a JS shell
+    that loads even when closed. enrich(c, job) fills it in from the detail API and raises when the
+    posting is gone; live(c, job) replaces the generic page check. None for the plain JSON boards."""
+    if ats == "workday":
+        from detector import workday
+        return workday.enrich, workday.live
+    if ats == "oracle":
+        from detector import oracle
+        return oracle.enrich, oracle.live
+    return None
 
 
 def enrich_smartrecruiters_urls(c: httpx.Client, job: Job) -> None:

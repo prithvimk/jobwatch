@@ -97,9 +97,9 @@ def test_multi_location_filled_by_detail(fake):
                         skip=set(), location_ok=PF.location_ok, full=True)
     j.locations = []  # as when the list says "2 Locations"
     assert PF.check(j)[0]  # kept until the detail says where
-    workday.enrich(j)
+    workday.enrich(None, j)
     assert j.posted_at == "2026-11-20" and j.locations == ["Gurugram, India", "Pune Maharashtra India"]
-    assert PF.check(j)[0] and workday.live(j)[0]
+    assert PF.check(j)[0] and workday.live(None, j)[0]
     assert j.apply_url.endswith("ML-Engineer_R0/apply")
 
 
@@ -108,7 +108,7 @@ def test_closed_posting_detail_404_raises(fake):
     [j] = workday.fetch({"name": "Acme", "endpoint": EP, "india_facet": {"param": "c", "id": "IN"}},
                         skip=set(), location_ok=PF.location_ok, full=True)
     with pytest.raises(workday.WorkdayError):
-        workday.enrich(j)
+        workday.enrich(None, j)
 
 
 def test_list_multi_location_text_left_empty(fake):

@@ -19,13 +19,14 @@ from pathlib import Path
 import httpx
 import yaml
 
-from detector import notify, state, workday
+from detector import notify, state
 from detector.prefilter import Prefilter
-from detector.sources import FETCHERS, Job, client, enrich_smartrecruiters_urls
+from detector.sources import FETCHERS, Job, client, detail_hooks, enrich_smartrecruiters_urls
 
 ROOT = Path(__file__).resolve().parent.parent
 CLOSED_URL = ("error=true", "/404", "job-not-found", "jobnotfound")  # closed jobs redirect here
 APPLY_ENTRY = ("/oneclick-ui/",)  # ATS application entry paths that refuse non-browser clients
+FULL_SWEEP_EVERY = 12  # passes; incremental fetchers (Workday) fully re-enumerate one board per pass
 CLOSED_TEXT = ("this job is no longer", "position has been filled", "no longer accepting applications",
                "job you are looking for is no longer")
 
@@ -58,8 +59,6 @@ def live(c: httpx.Client, url: str) -> tuple[bool, str]:
 
 
 def liveness(c: httpx.Client, job: Job) -> tuple[bool, str]:
-    if "/wday/cxs/" in (job.check_urls or [""])[0]:
-        return workday.live(job)
     if job.check_urls and "smartrecruiters" in job.check_urls[0]:
         enrich_smartrecruiters_urls(c, job)
     for label, url in [("api", u) for u in job.check_urls] + [("JD", job.url), ("apply", job.apply_url)]:
@@ -73,6 +72,8 @@ def format_alert(job: Job, first_seen: str, why: str) -> tuple[str, str]:
     title = f"{job.board}: {job.title}"
     when = (f"Posted {notify.ist(job.posted_at)} (per ATS)" if job.posted_at
             else f"First seen {notify.ist(first_seen)} (posting date not stated)")
+    if job.closes_at:
+        when += f". Closes {notify.ist(job.closes_at)}"
     loc = "; ".join(l for l in job.locations if l) or "location unknown"
     body = f"{loc}\n{when}\nPrefilter: {why}. Screening pending."
     return title, body
@@ -96,7 +97,7 @@ def run(names: list[str] | None, dry_run: bool) -> int:
             bs = seen["boards"].setdefault(name, {"jobs": {}})
             known = bs["jobs"]
             baseline = "baseline_at" not in bs
-            full = baseline or (pass_no - i) % workday.FULL_SWEEP_EVERY == 0
+            full = baseline or (pass_no - i) % FULL_SWEEP_EVERY == 0
             skip = {k for k, e in known.items() if e.get("status") != "pending"}
             try:
                 jobs = FETCHERS[b["ats"]](c, b, skip=skip, location_ok=pf.location_ok, full=full)
@@ -134,9 +135,11 @@ def run(names: list[str] | None, dry_run: bool) -> int:
         alerts.sort(key=lambda a: (a[0].posted_at or "", a[2]), reverse=True)
         for job, why, first_seen in alerts:
             entry = seen["boards"][job.board]["jobs"][job.id]
-            if ats_of.get(job.board) == "workday":
-                try:  # stated posting date and every location; the location check is redone with them
-                    workday.enrich(job)
+            hooks = detail_hooks(ats_of.get(job.board, ""))
+            if hooks:
+                enrich, check_live = hooks
+                try:  # stated dates and every location; the location check is redone with them
+                    enrich(c, job)
                 except Exception as e:
                     ok, live_why = False, f"detail API {type(e).__name__}: {str(e)[:100]}"
                 else:
@@ -145,7 +148,7 @@ def run(names: list[str] | None, dry_run: bool) -> int:
                         entry["status"] = "filtered"
                         print(f"  filtered after detail: {job.board} {job.id} {job.title!r}: {why}")
                         continue
-                    ok, live_why = liveness(c, job)
+                    ok, live_why = check_live(c, job)
             else:
                 ok, live_why = liveness(c, job)
             if not ok:
