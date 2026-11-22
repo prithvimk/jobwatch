@@ -92,8 +92,10 @@
   "ok": true
  },
  "NVIDIA": {
-  "fails": 0,
-  "ok": true
+  "error": "KeyError: 'externalPath'",
+  "failing_since": "2026-11-22T09:37:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Netomi": {
   "fails": 0,
