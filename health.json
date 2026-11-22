@@ -50,7 +50,7 @@
  "Goldman Sachs": {
   "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://hdpc.fa.us2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=t",
   "failing_since": "2026-11-22T03:02:37+00:00",
-  "fails": 2,
+  "fails": 3,
   "ok": false
  },
  "HERE": {
