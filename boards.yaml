@@ -40,11 +40,11 @@ summary:
   - Deutsche Bank
   - HERE
   - Bank of America
+  - Teradata
+  - Moody's
   custom-scrape:
   - Google
-  - Teradata
   - Sony Research India
-  - Moody's
   unknown:
   - Sony India Software Centre
 boards:
@@ -96,13 +96,16 @@ boards:
   - confirmed eightfold JSON
 - name: Teradata
   careers_url: https://careers.teradata.com/jobs
+  note: gr8 People career site (Next.js over GraphQL). Added 2026-11-22
   ats: custom
-  platform: nextjs-in-house
-  effort: custom-scrape
-  total: unknown
-  india: unknown
+  platform: gr8people
+  effort: custom-json
+  endpoint: https://careers.teradata.com/graphql
+  total: 204
+  india: 82
   evidence:
   - GET https://careers.teradata.com/jobs -> 200 https://careers.teradata.com/jobs
+  - confirmed gr8people JSON
 - name: MSCI
   careers_url: https://careers.msci.com/
   ats: custom
@@ -371,14 +374,17 @@ boards:
   - confirmed workday ('visa', 'wd5', 'Visa')
 - name: Moody's
   careers_url: https://careers.moodys.com/
+  note: Radancy front end; apply goes to SuccessFactors (MoodysProd). Added 2026-11-22
   ats: custom
   platform: radancy
-  effort: custom-scrape
+  effort: custom-json
+  endpoint: https://careers.moodys.com/en/search-jobs/results
   total: unknown
-  india: unknown
+  india: 51
   backend: successfactors
   evidence:
   - GET https://careers.moodys.com/ -> 200 https://careers.moodys.com/en
+  - confirmed radancy JSON
 - name: HERE
   careers_url: https://careers.here.com/
   ats: custom

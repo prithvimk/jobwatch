@@ -23,7 +23,8 @@ boards:
     hints: {eightfold: "apply.careers.microsoft.com|microsoft.com"}
   - name: Teradata
     careers_url: https://careers.teradata.com/jobs
-    platform: nextjs-in-house  # jobs embedded in __NEXT_DATA__
+    hints: {gr8people: "https://careers.teradata.com"}
+    note: "gr8 People career site (Next.js over GraphQL). Added 2026-11-22"
   - name: MSCI
     careers_url: https://careers.msci.com/
     hints: {jibe: "https://msci.jibeapply.com"}
@@ -87,8 +88,9 @@ boards:
     hints: {workday: "https://visa.wd5.myworkdayjobs.com/Visa"}
   - name: Moody's
     careers_url: https://careers.moodys.com/
-    platform: radancy
+    hints: {radancy: "https://careers.moodys.com/en"}
     backend: successfactors
+    note: "Radancy front end; apply goes to SuccessFactors (MoodysProd). Added 2026-11-22"
   - name: HERE
     careers_url: https://careers.here.com/
     hints: {jibe: "https://careers.here.com"}

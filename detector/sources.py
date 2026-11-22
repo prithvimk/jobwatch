@@ -220,6 +220,16 @@ def _oracle(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     return oracle.fetch(c, b, **ctx)
 
 
+def _gr8people(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import gr8people
+    return gr8people.fetch(c, b, **ctx)
+
+
+def _radancy(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import radancy
+    return radancy.fetch(c, b, **ctx)
+
+
 # fetcher(client, board entry from boards.yaml, skip=set of settled IDs, location_ok=fn, full=bool).
 # Incremental fetchers (Workday) use the context to stop paging early; the JSON boards return everything.
 FETCHERS = {
@@ -233,6 +243,8 @@ FETCHERS = {
     "eightfold": _eightfold,
     "jibe": lambda c, b, **_: jibe(c, b["name"], b["endpoint"]),
     "atlassian": lambda c, b, **_: atlassian(c, b["name"]),
+    "gr8people": _gr8people,
+    "radancy": _radancy,
 }
 
 
@@ -249,6 +261,12 @@ def detail_hooks(ats: str):
     if ats == "eightfold":
         from detector import eightfold
         return eightfold.enrich, eightfold.live
+    if ats == "gr8people":
+        from detector import gr8people
+        return gr8people.enrich, gr8people.live
+    if ats == "radancy":
+        from detector import radancy
+        return radancy.enrich, radancy.live
     return None
 
 

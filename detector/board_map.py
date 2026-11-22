@@ -224,8 +224,30 @@ def probe_boa(c: httpx.Client, _: str) -> dict:
     return {"endpoint": url, "total": d["totalMatches"], "india": sum(j.get("country") == "India" for j in d["jobsList"])}
 
 
+def probe_gr8people(c: httpx.Client, base: str) -> dict:
+    """gr8 People career sites: GraphQL at <base>/graphql (see detector/gr8people.py). There is no country
+    filter, and the site's location aggregation counts a multi-location posting once per place, so India
+    is counted from the postings themselves."""
+    from detector import gr8people
+    url = f"{base.rstrip('/')}/graphql"
+    india = gr8people.fetch(c, {"name": "probe", "endpoint": url})
+    q = "query q { s: searchJobPostings(first: 1) { results { totalCount } } }"
+    d = c.post(url, json={"query": q}).raise_for_status().json()
+    return {"endpoint": url, "total": d["data"]["s"]["results"]["totalCount"], "india": len(india)}
+
+
+def probe_radancy(c: httpx.Client, base: str) -> dict:
+    """Radancy (TalentBrew) sites: <base>/search-jobs/results with the India country facet (see detector/radancy.py)."""
+    from detector import radancy
+    url = f"{base.rstrip('/')}/search-jobs/results"
+    r = c.get(url, params=radancy.params(1), headers={"X-Requested-With": "XMLHttpRequest"}).raise_for_status()
+    india = radancy.TOTAL.search(r.json()["results"])
+    return {"endpoint": url, "total": "unknown", "india": int(india.group(1)) if india else "unknown"}
+
+
 CUSTOM_PROBES = {"jibe": probe_jibe, "eightfold": probe_eightfold, "amazon": probe_amazon,
-                 "atlassian": probe_atlassian, "beesite": probe_beesite, "boa": probe_boa}
+                 "atlassian": probe_atlassian, "beesite": probe_beesite, "boa": probe_boa,
+                 "gr8people": probe_gr8people, "radancy": probe_radancy}
 
 
 class RateLimited(Exception):

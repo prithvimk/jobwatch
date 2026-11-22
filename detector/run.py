@@ -171,6 +171,8 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
                 except Exception as e:
                     ok, live_why = False, f"detail API {type(e).__name__}: {str(e)[:100]}"
                 else:
+                    if job.req_id:  # some ATSs state the requisition only on the detail page (Radancy)
+                        entry["req"] = job.req_id
                     ok, why = pf.check(job)
                     if not ok:
                         entry["status"] = "filtered"
