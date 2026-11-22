@@ -87,6 +87,10 @@
   "fails": 0,
   "ok": true
  },
+ "Moody's": {
+  "fails": 0,
+  "ok": true
+ },
  "Morgan Stanley": {
   "fails": 0,
   "ok": true
@@ -128,6 +132,10 @@
   "ok": true
  },
  "Swiggy": {
+  "fails": 0,
+  "ok": true
+ },
+ "Teradata": {
   "fails": 0,
   "ok": true
  },
