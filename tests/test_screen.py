@@ -42,11 +42,12 @@ def test_prompt_carries_spec_resume_facts_and_jd(tmp_path, monkeypatch):
 def test_digest_once_a_day_after_8pm(tmp_path, monkeypatch):
     monkeypatch.setattr(screen, "DIGEST", tmp_path / "digest.json")
     job = Job("Acme", "1", "Data Engineer", ["Pune"], "u", "a", None)
-    screen.queue_out(job, {**V_IN, "verdict": "OUT", "out_reason": "data-engineering track"})
+    screen.queue_out(job, {**V_IN, "verdict": "OUT", "out_reason": "Track: data-engineering role, pipelines and ETL.",
+                           "out_short": "data-engineering track"})
     evening = datetime(2026, 11, 22, 20, 5, tzinfo=screen.IST)
     assert not screen.digest_due(datetime(2026, 11, 22, 19, 0, tzinfo=screen.IST))[0]
     due, d = screen.digest_due(evening)
-    assert due and "Acme: Data Engineer (data-engineering track)" in screen.digest_text(d)
+    assert due and screen.digest_text(d) == "Acme · Data Engineer\ndata-engineering track"
     screen.mark_digest_sent(d, evening)
     assert not screen.digest_due(evening)[0]
 
@@ -120,3 +121,30 @@ def test_cached_verdict_used_when_push_retries(env, monkeypatch):
     ok["v"] = True
     runmod.run(None, dry_run=False, screen_roles=True)
     assert calls == [1] and pushed == ["IN Acme: ML Engineer"]
+
+
+LONG = ("Seniority: required floor is 7+ years, which is 6+ and therefore OUT. Track: required qualifications "
+        "are compliance, audit and risk management, not GenAI/ML or data science.")
+
+
+def test_digest_layout_and_fallback_for_entries_without_short():
+    d = {"pending": [{"board": "Amazon", "title": "Senior Risk Manager, AI Assurance & Inspections, FORGE, Hyderabad Office", "reason": LONG},
+                     {"board": "Teradata", "title": "Staff Data Scientist", "reason": LONG, "short": "8+ yrs"}]}
+    blocks = screen.digest_text(d).split("\n\n")
+    assert len(blocks) == 2 and blocks[1] == "Teradata · Staff Data Scientist\n8+ yrs"
+    title, reason = blocks[0].split("\n")
+    assert len(title) <= len("Amazon · ") + 60 and title.endswith("…")
+    assert len(reason) <= 80 and reason.startswith("Seniority: required floor is 7+ years") and reason.endswith("…")
+
+
+@pytest.mark.parametrize("n", [1, 17, 18, 40, 200])
+def test_digest_stays_a_message_under_ntfy_limit(n):
+    rows = [{"board": "Amazon", "title": f"Senior Risk Manager, AI Assurance & Inspections {i}", "reason": LONG}
+            for i in range(n)]
+    text = screen.digest_text({"pending": rows})
+    assert len(text.encode()) <= 4096
+    shown = text.count("Amazon · ")
+    if shown < n:
+        assert text.endswith(f"…and {n - shown} more (full reasons on the status page)")
+    else:
+        assert "more (full" not in text

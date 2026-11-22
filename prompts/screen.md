@@ -50,6 +50,7 @@ Reply with exactly one JSON object and nothing else:
   "one_line": "one sentence on fit, at most 25 words",
   "gaps": ["each required qualification the resume does not show; hard bars first"],
   "out_reason": "the spec rule that excludes it, or empty if not OUT",
+  "out_short": "if OUT: every excluding rule in at most 60 characters, e.g. '7+ yrs; compliance/audit, not ML'; else empty",
   "resume_tweak": "one concrete edit to the resume worth making for this role, or empty",
   "skills": ["each skill, tool or framework the posting asks for, short common name (e.g. 'PyTorch', 'RAG'), at most 12"]
 }}

@@ -93,7 +93,7 @@ def parse(result: str) -> dict:
         v["fit"] = 1
     v["gaps"] = [str(g) for g in v.get("gaps") or []]
     v["skills"] = [str(s).strip() for s in v.get("skills") or [] if str(s).strip()][:12]
-    for k in ("location", "experience_asked", "one_line", "out_reason", "resume_tweak"):
+    for k in ("location", "experience_asked", "one_line", "out_reason", "out_short", "resume_tweak"):
         v[k] = str(v.get(k) or "")
     return v
 
@@ -162,7 +162,8 @@ Experience asked: {v['experience_asked']}
 def queue_out(job: Job, v: dict) -> None:
     d = json.loads(DIGEST.read_text(encoding="utf-8")) if DIGEST.exists() else {"pending": [], "last_sent": ""}
     d["pending"].append({"board": job.board, "title": job.title, "url": job.url,
-                         "reason": v["out_reason"] or v["one_line"], "at": datetime.now(IST).isoformat(timespec="minutes")})
+                         "reason": v["out_reason"] or v["one_line"], "short": v.get("out_short", ""),
+                         "at": datetime.now(IST).isoformat(timespec="minutes")})
     DIGEST.write_text(json.dumps(d, indent=1, ensure_ascii=False), encoding="utf-8")
 
 
@@ -173,9 +174,35 @@ def digest_due(now: datetime | None = None, hour: int = 20) -> tuple[bool, dict]
     return (bool(d["pending"]) and now.hour >= hour and d.get("last_sent") != now.date().isoformat()), d
 
 
+DIGEST_MAX_BYTES = 3800  # ntfy turns a message over 4,096 bytes into a file attachment
+
+
+def clip(s: str, n: int) -> str:
+    s = " ".join(s.split())
+    return s if len(s) <= n else s[:n - 1].rstrip(" ,;:.-") + "…"
+
+
+def short_reason(x: dict) -> str:
+    """The screener's `out_short`; entries queued before it existed fall back to the clipped full reason."""
+    return clip(x.get("short") or x.get("reason", ""), 80)
+
+
 def digest_text(d: dict) -> str:
-    lines = [f"{x['board']}: {x['title']} ({x['reason']})" for x in d["pending"]]
-    return "\n".join(lines[:30]) + (f"\n...and {len(lines) - 30} more" if len(lines) > 30 else "")
+    """One block per role (company and title, then the short reason), blank lines between, capped by
+    size so ntfy delivers it as a message. Full reasons stay in digest.json and on the status page."""
+    rows, out, size = d["pending"], [], 0
+    more = lambda n: f"…and {n} more (full reasons on the status page)"
+    for i, x in enumerate(rows):
+        block = f"{x['board']} · {clip(x['title'], 60)}\n{short_reason(x)}"
+        add = len(block.encode()) + (2 if out else 0)
+        left = len(rows) - i - 1
+        tail = len(more(left).encode()) + 2 if left else 0
+        if out and size + add + tail > DIGEST_MAX_BYTES:
+            out.append(more(len(rows) - i))
+            break
+        out.append(block)
+        size += add
+    return "\n\n".join(out)
 
 
 def mark_digest_sent(d: dict, now: datetime | None = None) -> None:
