@@ -248,8 +248,7 @@ def digest_section() -> str:
 # ---------------------------------------------------------------- page
 
 CSS = """
-:root{--fg:#1a1a1a;--muted:#6b6b6b;--bg:#fff;--line:#e3e3e3;--head:#f5f6f8;--accent:#1f3a5f}
-@media (prefers-color-scheme:dark){:root{--fg:#e6e6e6;--muted:#9a9a9a;--bg:#161616;--line:#333;--head:#202226;--accent:#8fb3e0}}
+:root{color-scheme:light;--fg:#1a1a1a;--muted:#6b6b6b;--bg:#fff;--line:#e3e3e3;--head:#f5f6f8;--accent:#1f3a5f}
 body{font:14px/1.45 system-ui,Segoe UI,sans-serif;color:var(--fg);background:var(--bg);margin:24px auto;max-width:1300px;padding:0 16px}
 h1{font-size:20px;margin:0 0 4px;color:var(--accent)} h2{font-size:16px;margin:28px 0 8px;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px}
 table{border-collapse:collapse;width:100%} th,td{text-align:left;vertical-align:top;padding:6px 8px;border-bottom:1px solid var(--line)}
