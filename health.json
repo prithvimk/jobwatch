@@ -48,9 +48,9 @@
   "ok": true
  },
  "Goldman Sachs": {
-  "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://hdpc.fa.us2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=t",
+  "error": "HTTPStatusError: Redirect response '302 Moved Temporarily' for url 'https://hdpc.fa.us2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyDat",
   "failing_since": "2026-11-22T03:02:37+00:00",
-  "fails": 5,
+  "fails": 6,
   "ok": false
  },
  "HERE": {
