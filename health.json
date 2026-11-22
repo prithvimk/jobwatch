@@ -140,10 +140,8 @@
   "ok": true
  },
  "Wells Fargo": {
-  "error": "KeyError: 'externalPath'",
-  "failing_since": "2026-11-22T07:27:36+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Zscaler": {
   "fails": 0,
