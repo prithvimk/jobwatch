@@ -128,10 +128,8 @@
   "ok": true
  },
  "State Street": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-23T15:52:37+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Swiggy": {
   "fails": 0,
