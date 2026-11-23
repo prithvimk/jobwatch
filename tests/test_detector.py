@@ -37,6 +37,8 @@ def test_multi_location_any_allowed():
 @pytest.mark.parametrize("title,ok", [
     ("Machine Learning Engineer", True), ("Senior GenAI Engineer", True), ("Applied Scientist II", True),
     ("Data Engineer", True),  # spec exception: screener decides from required quals
+    ("Applied AIML Associate Senior, AWM Predictive Science", True), ("Applied AI/ML Associate", True),
+    ("Predictive Modeling Analyst", True), ("Associate, Predictive Science", True),
     ("Software Engineer, Backend", False), ("Principal ML Engineer", False), ("Staff AI Engineer", False),
     ("AI Product Manager", False), ("ML Intern", False), ("Android Engineer - AI", False), ("AI Sales Lead", False),
 ])

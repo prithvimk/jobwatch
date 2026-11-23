@@ -4,6 +4,8 @@
 # A title must match one of these (or a board's extra_include).
 title_include:
   - '\b(ai|a\.i\.|genai|gen ai|gen-ai|ml|llms?|nlp|mlops|ai/ml|ml/ai)\b'
+  # Run-together forms (JPMC titles say "Applied AIML Associate"): the word-bounded ml above cannot match inside them.
+  - '\b(aiml|genaiml|aiops|predictive)\b'
   - 'machine learning|deep learning|generative|agentic|computer vision|foundation model|transformer'
   - 'data scien|applied scien|research (engineer|scientist)|scientist'
   - '\b(speech|asr|tts|vision|perception|recommend\w*|ranking|personali[sz]ation|inference)\b'
