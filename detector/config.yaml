@@ -7,6 +7,10 @@ title_include:
   # Run-together forms (JPMC titles say "Applied AIML Associate"): the word-bounded ml above cannot match inside them.
   - '\b(aiml|genaiml|aiops|predictive)\b'
   - 'machine learning|deep learning|generative|agentic|computer vision|foundation model|transformer'
+  # From the applications tracker (2026-11-23): spelled-out AI, agent roles and forward-deployed engineers.
+  - 'artificial intelligence|forward[- ]deploy|\bagents?\b'
+  # Quant/modeling and analytics roles: the screener decides (fraud-risk quant and pure BI stay OUT there).
+  - '\bquant\w*|\bmodell?ing\b|\banalytics\b|\bdata (analyst|product|management)\b|\bstatistic\w*'
   - 'data scien|applied scien|research (engineer|scientist)|scientist'
   - '\b(speech|asr|tts|vision|perception|recommend\w*|ranking|personali[sz]ation|inference)\b'
   # Kept for the spec's exception: a DE-titled role stays in if a required qualification is GenAI/ML.
@@ -15,11 +19,16 @@ title_include:
 # Any match drops the title, even if it matched title_include.
 title_exclude:
   - '\b(intern|internship|apprentice|trainee)\b'
-  - '\b(principal|director|vice president|vp|head of|staff|distinguished|chief|fellow)\b'
+  # "Member of Technical Staff" is the ordinary engineer title at AI labs, not a seniority level.
+  - '\b(principal|director|vice president|vp|head of|(?<!technical )staff|distinguished|chief|fellow)\b'
   - '\b(sales|account executive|account manager|business development|recruit\w*|talent acquisition|marketing|counsel|legal|accountant|payroll)\b'
   - '\b(product manager|program manager|project manager|product owner)\b'
+  # Support titles that "analytics" lets in on Amazon's Last Mile Analytics teams.
+  - '\b(executive assistant|administrative assistant|quality associate)\b'
   - '\b(qa|quality assurance|sdet|test engineer|tester)\b'
-  - '\b(android|ios|mobile|full[- ]?stack|front[- ]?end)\b'
+  - '\b(android|ios|mobile|front[- ]?end)\b'
+  # Full-stack is dropped only when the title names no AI work ("Full Stack Developer (AI Agents)" goes to the screener).
+  - '^(?!.*\b(ai|genai|gen ai|agents?|agentic|llms?|ml|machine learning|generative)\b).*?\bfull[- ]?stack\b'
 
 # Location: anywhere in India except North India. A posting passes if ANY of its locations passes.
 india: '\bIND-|\bindia\b|\bindian\b|bengaluru|bangalore|mumbai|navi mumbai|thane|pune|hyderabad|secunderabad|chennai|kolkata|ahmedabad|gandhinagar|gift city|kochi|cochin|thiruvananthapuram|trivandrum|coimbatore|mysuru|mysore|mangaluru|mangalore|indore|bhopal|nagpur|vadodara|surat|bhubaneswar|visakhapatnam|vizag|vijayawada|goa|\bdelhi\b|new delhi|gurugram|gurgaon|noida|faridabad|ghaziabad|chandigarh|mohali|panchkula|jaipur|lucknow|dehradun|ludhiana|amritsar|kanpur'
