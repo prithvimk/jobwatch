@@ -117,7 +117,14 @@ def fetch(board: dict, skip: set[str], location_ok, full: bool) -> list[Job]:
         page = d.get("jobPostings") or []
         fresh = 0
         for p in page:
-            path = p["externalPath"]
+            path = p.get("externalPath")
+            if not path or not p.get("title"):
+                # Seen live (LSEG, Citi): a row holding only bulletFields, no title or link, likely a
+                # posting mid-edit. It can't be linked or alerted, so it is logged as unknown, not guessed.
+                print(f"{name}: Workday list row with no link, unknown "
+                      f"({', '.join(map(str, p.get('bulletFields') or [])) or 'no req id'})")
+                continue
+
             jid = job_id(path)
             loc = p.get("locationsText") or ""
             out.append(Job(

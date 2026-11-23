@@ -111,6 +111,22 @@ def test_closed_posting_detail_404_raises(fake):
         workday.enrich(None, j)
 
 
+def test_row_without_link_is_skipped_and_logged(fake, monkeypatch, capsys):
+    f = fake(total=25)
+    orig = f.__call__
+    def stub_row(url, body=None):
+        code, u, text = orig(url, body)
+        d = json.loads(text)
+        if body and body["offset"] == 0:
+            d["jobPostings"][5] = {"bulletFields": ["R0124147"]}  # as LSEG returned, 2026-11-23
+        return code, u, json.dumps(d)
+    monkeypatch.setattr(workday, "curl", stub_row)
+    jobs = workday.fetch({"name": "Acme", "endpoint": EP, "india_facet": {"param": "c", "id": "IN"}},
+                         skip=set(), location_ok=PF.location_ok, full=True)
+    assert len(jobs) == 24 and "R5" not in {j.id for j in jobs} and "R24" in {j.id for j in jobs}
+    assert "no link, unknown (R0124147)" in capsys.readouterr().out
+
+
 def test_list_multi_location_text_left_empty(fake):
     fake(total=0)
     f = workday.curl
