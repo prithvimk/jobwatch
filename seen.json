@@ -25551,6 +25551,11 @@
      "first_seen": "2026-11-21T11:59:32+00:00",
      "req": "FEQ427R145",
      "status": "baseline"
+    },
+    "8959562002": {
+     "first_seen": "2026-11-24T03:27:36+00:00",
+     "req": "FEQ427R444",
+     "status": "filtered"
     }
    }
   },
@@ -35547,6 +35552,11 @@
      "first_seen": "2026-11-21T20:12:36+00:00",
      "req": "JR2030308",
      "status": "baseline"
+    },
+    "JR2030487": {
+     "first_seen": "2026-11-24T03:27:36+00:00",
+     "req": "JR2030487",
+     "status": "filtered"
     }
    }
   },
