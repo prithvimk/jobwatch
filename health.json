@@ -64,10 +64,8 @@
   "ok": true
  },
  "JPMC": {
-  "error": "ConnectTimeout: timed out",
-  "failing_since": "2026-11-24T12:12:36+00:00",
-  "fails": 5,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "LSEG": {
   "fails": 0,
