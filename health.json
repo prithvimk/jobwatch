@@ -104,10 +104,8 @@
   "ok": true
  },
  "PayPal": {
-  "error": "WorkdayError: HTTP 0 from https://paypal.wd1.myworkdayjobs.com",
-  "failing_since": "2026-11-24T04:07:36+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Rubrik": {
   "fails": 0,
