@@ -28,10 +28,8 @@
   "ok": true
  },
  "Citi": {
-  "error": "WorkdayError: HTTP 0 from https://citi.wd5.myworkdayjobs.com",
-  "failing_since": "2026-11-24T06:07:37+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Coinbase": {
   "fails": 0,
@@ -150,10 +148,8 @@
   "ok": true
  },
  "Wells Fargo": {
-  "error": "WorkdayError: HTTP 0 from https://wd1.myworkdaysite.com",
-  "failing_since": "2026-11-24T06:07:37+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Zscaler": {
   "fails": 0,
