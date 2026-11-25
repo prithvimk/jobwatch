@@ -33698,6 +33698,18 @@
      "req": "JR0289483",
      "status": "filtered"
     },
+    "JR0289536": {
+     "first_seen": "2026-11-25T10:42:36+00:00",
+     "jd_score": 0,
+     "req": "JR0289536",
+     "status": "filtered"
+    },
+    "JR0289537": {
+     "first_seen": "2026-11-25T10:42:36+00:00",
+     "jd_score": 0,
+     "req": "JR0289537",
+     "status": "filtered"
+    },
     "JR0289542": {
      "first_seen": "2026-11-23T06:52:37+00:00",
      "req": "JR0289542",
@@ -35563,10 +35575,22 @@
      "req": "210811890",
      "status": "alerted"
     },
+    "210811927": {
+     "first_seen": "2026-11-25T10:42:36+00:00",
+     "jd_score": 0,
+     "req": "210811927",
+     "status": "filtered"
+    },
     "210812231": {
      "first_seen": "2026-11-25T10:22:38+00:00",
      "jd_score": 0,
      "req": "210812231",
+     "status": "filtered"
+    },
+    "210812233": {
+     "first_seen": "2026-11-25T10:42:36+00:00",
+     "jd_score": 1,
+     "req": "210812233",
      "status": "filtered"
     }
    }
@@ -44670,6 +44694,11 @@
      "req": "JR363642",
      "status": "baseline"
     },
+    "JR363721": {
+     "first_seen": "2026-11-25T10:42:36+00:00",
+     "req": "JR363721",
+     "status": "filtered"
+    },
     "JR363804": {
      "first_seen": "2026-11-21T20:12:36+00:00",
      "req": "JR363804",
@@ -49922,6 +49951,11 @@
      "first_seen": "2026-11-25T09:52:36+00:00",
      "jd_score": 3,
      "req": "R-577545",
+     "status": "filtered"
+    },
+    "R-577570-1": {
+     "first_seen": "2026-11-25T10:42:36+00:00",
+     "req": "R-577570",
      "status": "filtered"
     },
     "R-577571-1": {
