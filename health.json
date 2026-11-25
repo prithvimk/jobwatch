@@ -152,8 +152,10 @@
   "ok": true
  },
  "Teradata": {
-  "fails": 0,
-  "ok": true
+  "error": "Gr8Error: graphql NOT_FOUND",
+  "failing_since": "2026-11-25T15:22:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Twilio": {
   "fails": 0,
