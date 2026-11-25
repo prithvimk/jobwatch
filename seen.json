@@ -22796,6 +22796,11 @@
      "req": "23928",
      "status": "baseline"
     },
+    "8327965": {
+     "first_seen": "2026-11-25T15:12:37+00:00",
+     "req": "Alon (Digital Native) - GTM_PIPELINE_AMER CA DN W#24233",
+     "status": "filtered"
+    },
     "8328089": {
      "first_seen": "2026-11-25T05:52:36+00:00",
      "status": "baseline"
