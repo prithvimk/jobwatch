@@ -12,6 +12,7 @@ summary:
   - Twilio
   - Netomi
   - ServiceNow
+  - Cloudflare
   adapter:
   - JPMC
   - Goldman Sachs
@@ -30,6 +31,8 @@ summary:
   - Adobe
   - PayPal
   - Intel
+  - Maersk
+  - FactSet
   custom-json:
   - Amazon
   - Eightfold AI
@@ -42,6 +45,7 @@ summary:
   - Bank of America
   - Teradata
   - Moody's
+  - HSBC
   custom-scrape:
   - Google
   - Sony Research India
@@ -660,3 +664,66 @@ boards:
   - from seed hints
   - confirmed workday ('intel', 'wd1', 'External')
   - probed 2026-11-22
+- name: Maersk
+  careers_url: https://www.maersk.com/careers
+  note: Added 2026-11-25
+  ats: workday
+  effort: adapter
+  locator:
+  - maersk
+  - wd3
+  - Maersk_Careers
+  endpoint: https://maersk.wd3.myworkdayjobs.com/wday/cxs/maersk/Maersk_Careers/jobs
+  total: 1244
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://www.maersk.com/careers -> 200 https://www.maersk.com/careers
+  - confirmed workday ('maersk', 'wd3', 'Maersk_Careers')
+  - probed 2026-11-25
+- name: FactSet
+  careers_url: https://www.factset.com/careers
+  note: Added 2026-11-25
+  ats: workday
+  effort: adapter
+  locator:
+  - factset
+  - wd108
+  - FactSetCareers
+  endpoint: https://factset.wd108.myworkdayjobs.com/wday/cxs/factset/FactSetCareers/jobs
+  total: 101
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://www.factset.com/careers -> 200 https://www.factset.com/careers
+  - confirmed workday ('factset', 'wd108', 'FactSetCareers')
+  - probed 2026-11-25
+- name: Cloudflare
+  careers_url: https://www.cloudflare.com/careers/jobs/
+  note: Added 2026-11-25
+  ats: greenhouse
+  effort: easy
+  locator:
+  - cloudflare
+  endpoint: https://boards-api.greenhouse.io/v1/boards/cloudflare/jobs
+  total: 513
+  india: 24
+  evidence:
+  - from seed hints
+  - GET https://www.cloudflare.com/careers/jobs/ -> 200 https://www.cloudflare.com/careers/jobs/
+  - confirmed greenhouse ('cloudflare',)
+  - probed 2026-11-25
+- name: HSBC
+  careers_url: https://portal.careers.hsbc.com/careers
+  note: Added 2026-11-25. Eightfold site on the older v2 API (no PCSX); apply goes to SuccessFactors (hsbcholdin)
+  ats: custom
+  platform: eightfold
+  effort: custom-json
+  endpoint: https://portal.careers.hsbc.com/api/apply/v2/jobs?domain=hsbc.com
+  total: unknown
+  india: 205
+  backend: successfactors
+  evidence:
+  - GET https://portal.careers.hsbc.com/careers -> 200 https://portal.careers.hsbc.com/careers
+  - confirmed eightfold JSON
+  - probed 2026-11-25

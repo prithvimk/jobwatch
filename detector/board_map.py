@@ -73,7 +73,9 @@ def probe_greenhouse(c: httpx.Client, slug: str) -> dict:
     url = f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs"
     r = c.get(url); r.raise_for_status()
     jobs = r.json()["jobs"]
-    return {"endpoint": url, "total": len(jobs), "india": sum(bool(INDIA.search((j.get("location") or {}).get("name", ""))) for j in jobs)}
+    from detector.sources import _gh_meta_locations
+    locs = lambda j: " ".join([(j.get("location") or {}).get("name", "")] + _gh_meta_locations(j))
+    return {"endpoint": url, "total": len(jobs), "india": sum(bool(INDIA.search(locs(j))) for j in jobs)}
 
 
 def probe_lever(c: httpx.Client, slug: str) -> dict:
@@ -188,7 +190,12 @@ def probe_eightfold(c: httpx.Client, spec: str) -> dict:
     """Eightfold PCSX search. spec = '<host>|<domain>'."""
     host, domain = spec.split("|")
     url = f"https://{host}/api/pcsx/search"
-    india = c.get(url, params={"domain": domain, "location": "India", "start": 0}).raise_for_status().json()["data"]["count"]
+    r = c.get(url, params={"domain": domain, "location": "India", "start": 0})
+    if r.status_code == 200 and "json" in r.headers.get("content-type", "") and "data" in r.json():
+        return {"endpoint": f"{url}?domain={domain}", "total": "unknown", "india": r.json()["data"]["count"]}
+    # older tenants (HSBC): "PCSX is not enabled", the v2 API answers instead
+    url = f"https://{host}/api/apply/v2/jobs"
+    india = c.get(url, params={"domain": domain, "location": "India", "start": 0}).raise_for_status().json()["count"]
     return {"endpoint": f"{url}?domain={domain}", "total": "unknown", "india": india}
 
 

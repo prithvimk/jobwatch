@@ -35,6 +35,17 @@ def client() -> httpx.Client:
     return httpx.Client(headers={"User-Agent": UA}, timeout=TIMEOUT, follow_redirects=True)
 
 
+def _gh_meta_locations(j: dict) -> list[str]:
+    """Cities some boards keep in a custom field while `location` says only "Hybrid" (Cloudflare's
+    "Job Posting Location": ["Bengaluru, India"])."""
+    out = []
+    for m in j.get("metadata") or []:
+        if "location" in (m.get("name") or "").lower():
+            v = m.get("value")
+            out += [x for x in (v if isinstance(v, list) else [v]) if isinstance(x, str) and x]
+    return out
+
+
 def greenhouse(c: httpx.Client, board: str, slug: str) -> list[Job]:
     r = c.get(f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs")
     r.raise_for_status()
@@ -44,7 +55,7 @@ def greenhouse(c: httpx.Client, board: str, slug: str) -> list[Job]:
         page = f"https://job-boards.greenhouse.io/{slug}/jobs/{jid}"
         out.append(Job(
             board=board, id=jid, title=j["title"].strip(),
-            locations=[(j.get("location") or {}).get("name", "")],
+            locations=[(j.get("location") or {}).get("name", "")] + _gh_meta_locations(j),
             url=j.get("absolute_url") or page, apply_url=page,
             posted_at=j.get("first_published"), req_id=j.get("requisition_id"),
             check_urls=[f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs/{jid}"],

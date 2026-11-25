@@ -76,3 +76,76 @@ def test_closed_position_detail_404_raises():
     [j] = eightfold.fetch(c, BOARD)
     with pytest.raises(eightfold.EightfoldError):
         eightfold.enrich(c, j)
+
+
+# --- v2 API (HSBC, recorded 2026-11-25) ---
+V2 = {"name": "HSBC", "endpoint": "https://portal.careers.hsbc.com/api/apply/v2/jobs?domain=hsbc.com"}
+
+
+def v2_row(i):
+    pid = 563774612545977 + i
+    return {"id": pid, "name": "Data Scientist", "posting_name": " Data Scientist / Assistant Vice President ",
+            "location": "Pune, Maharashtra, India", "locations": ["Pune, Maharashtra, India"],
+            "t_create": 1795525596, "ats_job_id": str(64903 + i), "display_job_id": str(64903 + i),
+            "canonicalPositionUrl": f"https://portal.careers.hsbc.com/careers/job/{pid}",
+            "custom_data": {"postedDate": None}}
+
+
+def v2_client(total, detail=None, sf_title="Career Opportunities: Data Scientist (64903)"):
+    calls = []
+
+    def handler(req: httpx.Request):
+        calls.append(req)
+        if req.url.path == "/api/apply/v2/jobs":
+            assert req.url.params["location"] == "India" and req.url.params["sort_by"] == "timestamp"
+            s = int(req.url.params["start"])
+            return httpx.Response(200, json={"count": total, "positions": [v2_row(i) for i in range(s, min(s + 10, total))]})
+        if req.url.path.startswith("/api/apply/v2/jobs/"):
+            return httpx.Response(200, json=detail) if detail else httpx.Response(404, text="not found")
+        if "successfactors" in req.url.host:
+            return httpx.Response(200, text=f"<html><title>{sf_title}</title></html>")
+        return httpx.Response(200, text="<html></html>")
+    return httpx.Client(transport=httpx.MockTransport(handler)), calls
+
+
+def test_v2_fetch_parses_rows_without_a_stated_date():
+    c, calls = v2_client(15)
+    jobs = eightfold.fetch(c, V2)
+    assert len(jobs) == 15 and len(calls) == 2
+    j = jobs[0]
+    assert j.title == "Data Scientist / Assistant Vice President" and j.req_id == "64903"
+    assert j.posted_at is None  # t_create is Eightfold's record time, not a stated date
+    assert j.url == "https://portal.careers.hsbc.com/careers/job/563774612545977"
+    assert j.check_urls == ["https://portal.careers.hsbc.com/api/apply/v2/jobs/563774612545977?domain=hsbc.com"]
+
+
+def test_v2_incremental_reads_past_pinned_first_page():
+    c, calls = v2_client(205)
+    eightfold.fetch(c, V2, skip={str(563774612545977 + i) for i in range(205)}, full=False)
+    assert len(calls) == 2
+
+
+SF = "https://career2.successfactors.eu/careers?company=hsbcholdin&career_ns=job_application&career_job_req_id=64903"
+
+
+def test_v2_enrich_and_successfactors_liveness():
+    c, _ = v2_client(1, detail={"locations": ["Pune, Maharashtra, India"], "job_description": "<p>Python</p>",
+                                "apply_redirect_url": SF})
+    [j] = eightfold.fetch(c, V2)
+    eightfold.enrich(c, j)
+    assert j.apply_url == SF and "Python" in j.jd
+    assert eightfold.live(c, j)[0]
+
+
+def test_v2_successfactors_signin_page_is_not_live():
+    c, _ = v2_client(1, detail={"apply_redirect_url": SF}, sf_title="Career Opportunities: Sign In")
+    [j] = eightfold.fetch(c, V2)
+    eightfold.enrich(c, j)
+    assert not eightfold.live(c, j)[0]
+
+
+def test_v2_closed_detail_404_raises():
+    c, _ = v2_client(1)
+    [j] = eightfold.fetch(c, V2)
+    with pytest.raises(eightfold.EightfoldError):
+        eightfold.enrich(c, j)

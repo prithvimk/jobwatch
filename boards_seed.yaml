@@ -163,4 +163,21 @@ boards:
     careers_url: https://jobs.intel.com/
     hints: {workday: "https://intel.wd1.myworkdayjobs.com/External"}
     note: "Added 2026-11-22 (recommended after a live probe of India ML postings)"
+  - name: Maersk
+    careers_url: https://www.maersk.com/careers
+    hints: {workday: "https://maersk.wd3.myworkdayjobs.com/Maersk_Careers"}
+    note: "Added 2026-11-25"
+  - name: FactSet
+    careers_url: https://www.factset.com/careers
+    hints: {workday: "https://factset.wd108.myworkdayjobs.com/FactSetCareers"}
+    note: "Added 2026-11-25"
+  - name: Cloudflare
+    careers_url: https://www.cloudflare.com/careers/jobs/
+    hints: {greenhouse: cloudflare}
+    note: "Added 2026-11-25"
+  - name: HSBC
+    careers_url: https://portal.careers.hsbc.com/careers
+    hints: {eightfold: "portal.careers.hsbc.com|hsbc.com"}
+    backend: successfactors
+    note: "Added 2026-11-25. Eightfold site on the older v2 API (no PCSX); apply goes to SuccessFactors (hsbcholdin)"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

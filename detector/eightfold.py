@@ -11,10 +11,20 @@ Facts this relies on (checked live on Microsoft, 2026-11-21):
   JS shell that loads for any id, so the details API decides liveness. Microsoft applies on Eightfold
   itself (`/careers/apply?pid=`). Some tenants hand off to another ATS (Morgan Stanley -> Workday);
   track those on the backend instead.
+
+Older tenants (HSBC, checked 2026-11-25) answer "PCSX is not enabled" and serve the v2 API instead:
+boards.yaml `endpoint` = https://<host>/api/apply/v2/jobs?domain=<domain>.
+- `/api/apply/v2/jobs?location=India&sort_by=timestamp`: 10 per page (`num` ignored), "hot" postings
+  pinned first, then newest first. Rows carry `t_create`/`t_update` (Eightfold's own record times) and
+  `custom_data.postedDate` (null for HSBC); only a non-null postedDate is used as a stated date.
+- `/api/apply/v2/jobs/<id>` gives the JD and `apply_redirect_url`; it and the job page 404 once closed.
+- HSBC applies on SuccessFactors (`career2.successfactors.eu`), which answers 200 for any requisition,
+  showing a sign-in page for unknown ones. An open one's title names the requisition "(<id>)".
 """
 
 from __future__ import annotations
 
+import re
 import time
 from datetime import datetime, timezone
 from urllib.parse import parse_qs, urlsplit
@@ -49,7 +59,13 @@ def config(board: dict) -> tuple[str, str]:
     return u.netloc, parse_qs(u.query)["domain"][0]
 
 
+def is_v2(board: dict) -> bool:
+    return "/api/apply/v2/jobs" in board["endpoint"]
+
+
 def fetch(c: httpx.Client, board: dict, skip: set[str] = frozenset(), full: bool = True, **_) -> list[Job]:
+    if is_v2(board):
+        return fetch_v2(c, board, skip=skip, full=full)
     host, domain = config(board)
     out, start = [], 0
     while True:
@@ -76,8 +92,38 @@ def fetch(c: httpx.Client, board: dict, skip: set[str] = frozenset(), full: bool
             return out
 
 
+def fetch_v2(c: httpx.Client, board: dict, skip: set[str] = frozenset(), full: bool = True) -> list[Job]:
+    host, domain = config(board)
+    out, start = [], 0
+    while True:
+        r = get(c, f"https://{host}/api/apply/v2/jobs", domain=domain, location="India", start=start, sort_by="timestamp")
+        if r.status_code != 200 or "json" not in r.headers.get("content-type", ""):
+            raise EightfoldError(f"v2 jobs HTTP {r.status_code}")
+        d = r.json()
+        page = d.get("positions") or []
+        fresh = 0
+        for p in page:
+            pid = str(p["id"])
+            posted = (p.get("custom_data") or {}).get("postedDate")
+            out.append(Job(
+                board=board["name"], id=pid, title=(p.get("posting_name") or p["name"]).strip(),
+                locations=list(p.get("locations") or ([p["location"]] if p.get("location") else [])),
+                url=p.get("canonicalPositionUrl") or f"https://{host}/careers/job/{pid}",
+                apply_url=f"https://{host}/careers/apply?pid={pid}&domain={domain}",
+                posted_at=posted or None,
+                req_id=p.get("display_job_id") or p.get("ats_job_id"),
+                check_urls=[f"https://{host}/api/apply/v2/jobs/{pid}?domain={domain}"],
+            ))
+            fresh += pid not in skip
+        start += len(page)
+        if not page or start >= d.get("count", 0) or (not full and fresh == 0 and start > 10):
+            return out  # the first page also holds pinned "hot" rows, so read at least two
+
+
 def enrich(c: httpx.Client, job: Job) -> None:
     """Full location list from the details API. Raises when the position is closed or unknown."""
+    if "/api/apply/v2/jobs/" in job.check_urls[0]:
+        return enrich_v2(c, job)
     r = get(c, job.check_urls[0])
     if r.status_code != 200:
         raise EightfoldError(f"position_details HTTP {r.status_code}")
@@ -90,7 +136,31 @@ def enrich(c: httpx.Client, job: Job) -> None:
         job.apply_url = apply
 
 
+def enrich_v2(c: httpx.Client, job: Job) -> None:
+    r = get(c, job.check_urls[0])
+    if r.status_code != 200 or "json" not in r.headers.get("content-type", ""):
+        raise EightfoldError(f"v2 job HTTP {r.status_code}")
+    d = r.json()
+    job.locations = list(d.get("locations") or job.locations)
+    from detector.jd import html_to_text
+    job.jd = html_to_text(d.get("job_description")) or job.jd
+    if d.get("apply_redirect_url"):
+        job.apply_url = d["apply_redirect_url"]
+
+
 def live(c: httpx.Client, job: Job) -> tuple[bool, str]:
+    if "successfactors" in job.apply_url and job.req_id:
+        try:
+            jd = get(c, job.url).status_code
+            r = get(c, job.apply_url)
+        except httpx.HTTPError as e:
+            return False, f"{type(e).__name__}"
+        if jd != 200:
+            return False, f"JD HTTP {jd}"
+        title = re.search(r"<title>([^<]*)", r.text)  # ~300 KB into a ~600 KB page
+        if r.status_code != 200 or not title or f"({job.req_id})" not in title.group(1):
+            return False, f"SuccessFactors page does not name requisition {job.req_id}"
+        return True, "details API open; JD loads; SuccessFactors names the requisition"
     for label, url in (("JD", job.url), ("apply", job.apply_url)):
         try:
             code = get(c, url).status_code

@@ -23,6 +23,7 @@ def job(title="ML Engineer", locs=("Bengaluru, India",), board="Databricks"):
     ("Chandigarh", False), ("Bangalore / Gurgaon", True), ("Hyderabad; Noida", True),
     ("IND-BLR-Divyasree Technopolis", True), ("IND-DEL-Okhla", False), ("IND-GGN-DLF", False), ("Indianapolis, IN-US", False),
     ("Tokyo, Japan", False), ("San Francisco, CA", False),
+    ("ITGOA01 - Genoa - Magazzini del Cotone", False), ("Panaji, Goa, India", True),  # Maersk, 2026-11-25
 ])
 def test_location(loc, ok):
     assert PF.location_ok(loc) is ok
@@ -74,6 +75,15 @@ def test_greenhouse_parse():
     [j] = sources.greenhouse(c, "Acme", "acme")
     assert (j.id, j.title, j.locations, j.posted_at, j.req_id) == ("42", "ML Engineer", ["Pune, India"], "2026-11-20T10:00:00-04:00", "R-7")
     assert j.apply_url == "https://job-boards.greenhouse.io/acme/jobs/42"
+
+
+def test_greenhouse_reads_location_metadata():
+    # Cloudflare: `location` is only the work style; cities are in a "Job Posting Location" field
+    c = mock_client({"boards/cf/jobs": {"jobs": [{"id": 7, "title": "ML Engineer", "location": {"name": "Hybrid"},
+        "metadata": [{"name": "Cost Center", "value": "5150"},
+                     {"name": "Job Posting Location", "value": ["Bengaluru, India", "Lisbon, Portugal"]}]}]}})
+    [j] = sources.greenhouse(c, "Cloudflare", "cf")
+    assert j.locations == ["Hybrid", "Bengaluru, India", "Lisbon, Portugal"]
 
 
 def test_ashby_parse_skips_unlisted_and_adds_country():
