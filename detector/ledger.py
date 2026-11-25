@@ -77,7 +77,9 @@ def record_shown(d: dict, job: Job, verdict: dict | None = None, at: str | None 
         if v:
             e[k] = v
     if verdict:
-        e.update(verdict=verdict["verdict"], fit=verdict["fit"])
+        # coverage fields let the shared sort key (screen.rank) order ledger entries like verdicts
+        e.update(verdict=verdict["verdict"], fit=verdict["fit"], coverage=verdict.get("coverage"),
+                 pref_coverage=verdict.get("pref_coverage"))
     return e
 
 
@@ -211,7 +213,7 @@ def pull(c: httpx.Client | None = None) -> list[tuple[str, str]]:
 # ---------------------------------------------------------------- CLI
 
 def _line(k: str, e: dict) -> str:
-    v = f" {e['verdict']} fit {e['fit']}" if e.get("verdict") else ""
+    v = f" {e['verdict']} fit {e['fit'] if e.get('fit') is not None else '?'}" if e.get("verdict") else ""
     closes = f" closes {e['closes_at'][:10]}" if e.get("closes_at") else ""
     shown = (e.get("shown_at") or "")[:10]
     return f"{e['status']:<8} {shown:<10} {k}  {e.get('title', '(title unknown: alerted from Actions)')}{v}{closes}"

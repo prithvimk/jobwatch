@@ -96,7 +96,7 @@ def format_alert(job: Job, first_seen: str, why: str, verdict: dict | None = Non
     if verdict:
         clip = lambda g: g if len(g) <= 100 else g[:97].rstrip() + "..."  # full gaps are in the kit
         gaps = "; ".join(clip(g) for g in verdict["gaps"][:3]) or "none named"
-        body = (f"{verdict['verdict']} · fit {verdict['fit']}/5 · {verdict['location']}\n"
+        body = (f"{verdict['verdict']} · {screen.fit_text(verdict)} · {verdict['location']}\n"
                 f"{verdict['one_line']}\nGaps: {gaps}\nAsks: {verdict['experience_asked']}\n{when}")
         return f"{verdict['verdict']} {title}", body
     loc = "; ".join(l for l in job.locations if l) or "location unknown"
@@ -306,7 +306,7 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
             key = f"{job.board}:{job.id}"
             v = verdicts.get(key) if screen_roles else None
             results.append((job, why, first_seen, entry, v, notes.get(key, "Screening pending.")))
-        results.sort(key=lambda r: ((r[4] or {}).get("fit", 0), r[0].posted_at or "", r[2]), reverse=True)
+        results.sort(key=lambda r: (screen.rank(r[4]), r[0].posted_at or "", r[2]), reverse=True)
         for job, why, first_seen, entry, v, note in results:
             if v and v["verdict"] == "OUT":
                 print(f"  OUT (digest): {job.board} {job.title!r}: {v['out_reason'] or v['one_line']}")

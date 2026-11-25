@@ -29,6 +29,17 @@ IST = timezone(timedelta(hours=5, minutes=30))
 TIMEOUT_S = 240
 NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 VERDICTS = ("IN", "STRETCH", "OUT")
+# Fit is computed here from the requirements checklist Claude fills in, never asked of Claude directly, so the
+# same marks always give the same score. Coverage = (shown + half of partial) / required items.
+STATUS_CREDIT = {"shown": 1.0, "partial": 0.5, "missing": 0.0}
+FIT_BANDS = ((0.9, 5), (0.75, 4), (0.55, 3), (0.35, 2))  # coverage at or above -> fit; below the last band: 1
+# An unmet hard bar (degree-only, publications, skill-specific duration) caps fit: missing -> 2, partly shown -> 3.
+HARD_BAR_CAP = {"missing": 2, "partial": 3}
+# Haiku sometimes renames the fields; these are read as the same thing rather than dropping the item.
+REQ_KEYS = ("req", "requirement", "text", "item", "name", "qualification")
+STATUS_ALIASES = {"met": "shown", "yes": "shown", "partially shown": "partial", "partly shown": "partial",
+                  "partially": "partial", "not shown": "missing", "no": "missing", "unmet": "missing"}
+MAX_ITEMS = 15
 
 
 class ScreenError(RuntimeError):
@@ -87,15 +98,88 @@ def parse(result: str) -> dict:
     v["verdict"] = str(v.get("verdict", "")).upper()
     if v["verdict"] not in VERDICTS:
         raise ScreenError(f"unknown verdict {v.get('verdict')!r}")
-    try:
-        v["fit"] = max(1, min(5, int(v.get("fit", 1))))
-    except (TypeError, ValueError):
-        v["fit"] = 1
-    v["gaps"] = [str(g) for g in v.get("gaps") or []]
+    raw_n = len(v["required"]) if isinstance(v.get("required"), list) else 0
+    v["required"], v["preferred"] = items(v.get("required")), items(v.get("preferred"))
+    if raw_n > len(v["required"]):
+        v["checklist_note"] = f"{raw_n - len(v['required'])} of {raw_n} required items unreadable"
+    score(v)
     v["skills"] = [str(s).strip() for s in v.get("skills") or [] if str(s).strip()][:12]
     for k in ("location", "experience_asked", "one_line", "out_reason", "out_short", "resume_tweak"):
         v[k] = str(v.get(k) or "")
     return v
+
+
+def items(raw) -> list[dict]:
+    """Checklist items, validated. An item with no text or an unknown status is dropped (it cannot be scored);
+    the caller records how many were dropped so an unreadable checklist is visible, never a silent '?'."""
+    out = []
+    for x in raw if isinstance(raw, list) else []:
+        if not isinstance(x, dict):
+            continue
+        req = next((str(x[k]).strip() for k in REQ_KEYS if x.get(k)), "")
+        status = str(x.get("status") or "").strip().lower()
+        status = STATUS_ALIASES.get(status, status)
+        if req and status in STATUS_CREDIT:
+            out.append({"req": req, "status": status, "hard": str(x.get("hard")).lower() == "true",
+                        "evidence": str(x.get("evidence") or "").strip()})
+    return out[:MAX_ITEMS]
+
+
+def coverage(xs: list[dict]) -> float | None:
+    return round(sum(STATUS_CREDIT[x["status"]] for x in xs) / len(xs), 3) if xs else None
+
+
+def basis(v: dict) -> tuple[list[dict], str]:
+    """The items fit is scored on: the required list, or the preferred list when the required section held only
+    the overall years and degree (which the checklist leaves out), as in some Visa and Wells Fargo postings."""
+    if v.get("required"):
+        return v["required"], "required"
+    return v.get("preferred") or [], "preferred"
+
+
+def score(v: dict) -> dict:
+    """Set fit (1-5, or None = unknown when no requirement could be read), coverage, pref_coverage and gaps
+    from the checklist. OUT is always fit 1. Gaps: unmet hard bars first, then missing, then partial."""
+    req, v["fit_basis"] = basis(v)
+    v["coverage"], v["pref_coverage"] = coverage(req), coverage(v.get("preferred") or [])
+    unmet_hard = [x for x in req if x["hard"] and x["status"] != "shown"]
+    if v["verdict"] == "OUT":
+        v["fit"] = 1
+    elif v["coverage"] is None:
+        v["fit"] = None
+    else:
+        v["fit"] = next((f for low, f in FIT_BANDS if v["coverage"] >= low), 1)
+        for x in unmet_hard:
+            v["fit"] = min(v["fit"], HARD_BAR_CAP[x["status"]])
+    v["gaps"] = ([f"Hard bar: {x['req']}" + (" (partly shown)" if x["status"] == "partial" else "") for x in unmet_hard]
+                 + [x["req"] for x in req if x["status"] == "missing" and not x["hard"]]
+                 + [f"partial: {x['req']}" for x in req if x["status"] == "partial" and not x["hard"]])
+    return v
+
+
+def fit_text(v: dict | None) -> str:
+    """'fit 3/5 (5 of 8 required, 1 partial)'. Verdicts from before the checklist show just the fit."""
+    if not v:
+        return "not screened"
+    f = v.get("fit")
+    head = f"fit {f if f is not None else '?'}/5"
+    if v.get("verdict") == "OUT" or v.get("required") is None:
+        return head
+    req, kind = basis(v)
+    if not req:
+        return head + f" ({v.get('checklist_note') or 'requirements unknown'})"
+    shown = sum(x["status"] == "shown" for x in req)
+    part = sum(x["status"] == "partial" for x in req)
+    return head + f" ({shown} of {len(req)} {kind}" + (f", {part} partial)" if part else ")")
+
+
+def rank(v: dict | None) -> tuple:
+    """Sort key, highest first, used by alerts, the status page, reminders and sweeps: fit, then IN before
+    STRETCH at equal fit, then coverage and preferred coverage. Unscreened and unknown fit sort last."""
+    if not v:
+        return (-1, 0, 0.0, 0.0)
+    return (v.get("fit") or 0, 1 if v.get("verdict") == "IN" else 0, v.get("coverage") or 0.0,
+            v.get("pref_coverage") or 0.0)
 
 
 def call_claude(prompt: str) -> str:
@@ -130,6 +214,18 @@ def screen(job: Job, jd: str, jd_source: str) -> dict:
     return v
 
 
+def checklist(v: dict) -> str:
+    """The requirements checklist as Markdown tables for the kit (empty for verdicts without one)."""
+    mark = {"shown": "✓", "partial": "½", "missing": "✗"}
+    out = []
+    for head, xs in (("Required", v.get("required") or []), ("Preferred", v.get("preferred") or [])):
+        if xs:
+            rows = [f"| {mark[x['status']]} | {x['req']}{' (hard bar)' if x['hard'] else ''} | {x['evidence']} |"
+                    for x in xs]
+            out.append(f"\n## {head}\n| | Requirement | Your evidence |\n|---|---|---|\n" + "\n".join(rows) + "\n")
+    return "".join(out)
+
+
 def save_kit(job: Job, v: dict) -> Path:
     KITS.mkdir(parents=True, exist_ok=True)
     safe = re.sub(r"[^A-Za-z0-9]+", "-", f"{job.board}-{job.id}").strip("-")
@@ -137,14 +233,14 @@ def save_kit(job: Job, v: dict) -> Path:
     gaps = "\n".join(f"- {g}" for g in v["gaps"]) or "- none named"
     path.write_text(f"""# {job.board}: {job.title}
 
-**{v['verdict']}** · fit {v['fit']}/5 · {v['location']}
+**{v['verdict']}** · {fit_text(v)} · {v['location']}
 Experience asked: {v['experience_asked']}
 
 {v['one_line']}
 
 ## Gaps
 {gaps}
-
+{checklist(v)}
 ## Resume tweak
 {v['resume_tweak'] or 'None needed.'}
 

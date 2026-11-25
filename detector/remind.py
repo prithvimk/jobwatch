@@ -112,13 +112,14 @@ def unresolved(d: dict, now: datetime) -> list[tuple[str, dict]]:
         if (e["status"] == ledger.SHOWN and not e.get("closed_at") and shown and shown >= now - WEEKLY_LOOKBACK
                 and not (close and close <= now)):
             rows.append((k, e))
-    return sorted(rows, key=lambda r: (r[1].get("fit", 0), r[1].get("shown_at", "")), reverse=True)
+    return sorted(rows, key=lambda r: (screen.rank(r[1] if r[1].get("verdict") else None), r[1].get("shown_at", "")),
+                  reverse=True)
 
 
 def weekly_text(rows: list[tuple[str, dict]]) -> str:
     lines = []
     for k, e in rows[:25]:
-        v = f" · {e['verdict']} fit {e['fit']}" if e.get("verdict") else ""
+        v = f" · {e['verdict']} {screen.fit_text(e)}" if e.get("verdict") else ""
         closes = f" · closes {notify.ist(e['closes_at'])}" if e.get("closes_at") else ""
         lines.append(f"{e.get('board', k)}: {e.get('title', k)}{v} · shown {notify.ist(e['shown_at'])}{closes}")
     more = f"\n...and {len(rows) - 25} more (uv run python -m detector.ledger list)" if len(rows) > 25 else ""
@@ -164,7 +165,7 @@ def run(now: datetime | None = None, c: httpx.Client | None = None, dry_run: boo
                 continue
             hours = int((close - now).total_seconds() // 3600)
             left = f"{hours} h" if hours < 48 else "2 days"
-            v = f"{e['verdict']} fit {e['fit']}/5. " if e.get("verdict") else ""
+            v = f"{e['verdict']} {screen.fit_text(e)}. " if e.get("verdict") else ""
             body = (f"Closes {notify.ist(e['closes_at'])} (in about {left}). {v}No Applied/Skip recorded."
                     + ("" if ok else f"\nCould not confirm it is still open: {why}."))
             title = f"Closing soon: {e.get('board')}: {e.get('title', k)}"

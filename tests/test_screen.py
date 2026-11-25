@@ -12,9 +12,97 @@ V_IN = {"verdict": "IN", "fit": 4, "location": "Pune", "experience_asked": "3+ y
         "gaps": ["Spark"], "out_reason": "", "resume_tweak": "Lead with LangGraph."}
 
 
-def test_parse_takes_first_json_object_and_clamps():
-    v = screen.parse('Here you go:\n{"verdict": "stretch", "fit": 9, "gaps": ["PhD"], "location": "Mumbai"} trailing')
-    assert v["verdict"] == "STRETCH" and v["fit"] == 5 and v["gaps"] == ["PhD"] and v["one_line"] == ""
+def item(req, status="shown", hard=False, evidence=""):
+    return {"req": req, "status": status, "hard": hard, "evidence": evidence}
+
+
+def test_parse_takes_first_json_object_and_computes_fit():
+    reply = ('Here you go:\n{"verdict": "stretch", "fit": 5, "location": "Mumbai", "required": ['
+             '{"req": "Python", "status": "Shown", "hard": false, "evidence": "Python, 3 yrs"},'
+             '{"req": "PyTorch", "status": "partial", "hard": "false"},'
+             '{"req": "Spark", "status": "missing"},'
+             '{"req": "bad item", "status": "maybe"}, "not a dict"]} trailing')
+    v = screen.parse(reply)
+    assert v["verdict"] == "STRETCH" and v["one_line"] == ""
+    assert [x["req"] for x in v["required"]] == ["Python", "PyTorch", "Spark"]  # bad items dropped
+    assert v["coverage"] == 0.5 and v["fit"] == 2  # Claude's own "fit" is ignored: (1 + 0.5 + 0) / 3
+    assert v["gaps"] == ["Spark", "partial: PyTorch"]
+
+
+@pytest.mark.parametrize("marks,fit", [
+    (["shown"] * 10, 5),
+    (["shown"] * 9 + ["missing"], 5),          # 0.90
+    (["shown"] * 8 + ["partial"] * 2, 5),      # 0.90
+    (["shown"] * 8 + ["missing"] * 2, 4),      # 0.80
+    (["shown"] * 3 + ["missing"], 4),          # 0.75
+    (["shown"] * 6 + ["missing"] * 4, 3),      # 0.60
+    (["shown", "missing"], 2),                 # 0.50
+    (["shown"] * 2 + ["missing"] * 4, 1),      # 0.33
+    (["missing"] * 3, 1),
+])
+def test_fit_bands(marks, fit):
+    v = screen.score({"verdict": "IN", "required": [item(f"r{i}", m) for i, m in enumerate(marks)]})
+    assert v["fit"] == fit
+
+
+def test_unmet_hard_bar_caps_fit_and_leads_gaps():
+    req = [item(f"r{i}") for i in range(9)]
+    v = screen.score({"verdict": "IN", "required": req + [item("PhD only", "missing", hard=True), item("Spark", "missing")]})
+    assert v["fit"] == 2 and v["gaps"] == ["Hard bar: PhD only", "Spark"]
+    v = screen.score({"verdict": "IN", "required": req + [item("3 yrs people management", "partial", hard=True)]})
+    assert v["fit"] == 3 and v["gaps"] == ["Hard bar: 3 yrs people management (partly shown)"]
+    v = screen.score({"verdict": "IN", "required": [item("Master's", "shown", hard=True)]})
+    assert v["fit"] == 5  # a hard bar that is met costs nothing
+
+
+def test_parse_reads_renamed_fields_and_notes_unreadable_items():
+    v = screen.parse('{"verdict": "IN", "required": [{"requirement": "Python", "status": "Met"},'
+                     '{"requirement": "SQL", "status": "partially shown"}, {"status": "shown"}]}')
+    assert [(x["req"], x["status"]) for x in v["required"]] == [("Python", "shown"), ("SQL", "partial")]
+    assert v["checklist_note"] == "1 of 3 required items unreadable"
+    v = screen.parse('{"verdict": "IN", "required": [{"what": "Python", "status": "shown"}]}')
+    assert v["fit"] is None and screen.fit_text(v) == "fit ?/5 (1 of 1 required items unreadable)"
+
+
+def test_only_years_and_degree_required_scores_preferred():
+    v = screen.score({"verdict": "STRETCH", "required": [], "preferred": [item("Python"), item("AML", "missing")]})
+    assert v["fit_basis"] == "preferred" and v["coverage"] == 0.5 and v["fit"] == 2 and v["gaps"] == ["AML"]
+    assert screen.fit_text(v) == "fit 2/5 (1 of 2 preferred)"
+
+
+def test_out_is_fit_1_and_no_requirements_is_unknown():
+    assert screen.score({"verdict": "OUT", "required": []})["fit"] == 1
+    v = screen.score({"verdict": "IN", "required": []})
+    assert v["fit"] is None and v["coverage"] is None
+    assert screen.fit_text(v) == "fit ?/5 (requirements unknown)"
+
+
+def test_fit_text_and_old_verdicts():
+    v = screen.score({"verdict": "IN", "required": [item("a"), item("b", "partial"), item("c", "missing")]})
+    assert screen.fit_text(v) == "fit 2/5 (1 of 3 required, 1 partial)"
+    assert screen.fit_text({"verdict": "IN", "fit": 4}) == "fit 4/5"  # cached before the checklist
+    assert screen.fit_text(None) == "not screened"
+
+
+def test_rank_fit_then_in_before_stretch_then_coverage():
+    a = {"verdict": "STRETCH", "fit": 4, "coverage": 0.85}
+    b = {"verdict": "IN", "fit": 4, "coverage": 0.76}
+    c = {"verdict": "IN", "fit": 3, "coverage": 0.7}
+    d = {"verdict": "IN", "fit": 4, "coverage": 0.8}
+    old = {"verdict": "IN", "fit": 4}
+    unknown = {"verdict": "IN", "fit": None}
+    order = sorted([c, a, b, d, old, unknown, None], key=screen.rank, reverse=True)
+    assert order == [d, b, old, a, c, unknown, None]
+
+
+def test_kit_has_checklist():
+    v = screen.score({"verdict": "IN", "location": "Pune", "experience_asked": "3+", "one_line": "x",
+                      "resume_tweak": "", "required": [item("Python", evidence="Python, 3 yrs"),
+                                                       item("PhD", "missing", hard=True)],
+                      "preferred": [item("Kafka", "missing")]})
+    text = screen.checklist(v)
+    assert "## Required" in text and "| ✓ | Python | Python, 3 yrs |" in text and "| ✗ | PhD (hard bar) |  |" in text
+    assert "## Preferred" in text and "Kafka" in text
 
 
 @pytest.mark.parametrize("reply", ["no json here", '{"verdict": "MAYBE"}', '{"verdict": "IN", "fit": '])

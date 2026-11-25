@@ -90,7 +90,8 @@ def _load_json(p: Path, default):
 
 def roles_section(led: dict, verdicts: dict, now: datetime) -> str:
     shown = [(k, e) for k, e in led["roles"].items() if e.get("status") == ledger.SHOWN]
-    shown.sort(key=lambda r: (r[1].get("fit") or 0, r[1].get("shown_at") or ""), reverse=True)
+    shown.sort(key=lambda r: (screen.rank(verdicts.get(r[0]) or (r[1] if r[1].get("verdict") else None)),
+                              r[1].get("shown_at") or ""), reverse=True)
     if not shown:
         return '<p class="muted">Nothing waiting on you.</p>'
     rows = []
@@ -106,8 +107,8 @@ def roles_section(led: dict, verdicts: dict, now: datetime) -> str:
         if e.get("closed_at"):
             close_txt, cls = f"closed early, seen {_ist(e['closed_at'])}", "urgent"
         verdict = e.get("verdict") or v.get("verdict")
-        fit = e.get("fit") or v.get("fit")
-        badge = (f'<span class="badge {escape(verdict.lower())}">{escape(verdict)}</span> {fit}/5'
+        fit = escape(screen.fit_text(v if v.get("verdict") else e).removeprefix("fit "))
+        badge = (f'<span class="badge {escape(verdict.lower())}">{escape(verdict)}</span> {fit}'
                  if verdict else '<span class="muted">not screened</span>')
         gaps = v.get("gaps") or []
         detail = escape(v.get("one_line", ""))

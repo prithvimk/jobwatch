@@ -230,9 +230,7 @@ def run(names: list[str], screen_roles: bool = False, screen_limit: int = SCREEN
 
 
 def _rank(cand: Candidate) -> tuple:
-    order = {"IN": 3, "STRETCH": 2, "OUT": 0}
-    v = cand.verdict or {}
-    return (order.get(v.get("verdict"), 1), v.get("fit", 0), cand.job.posted_at or "")
+    return (screen.rank(cand.verdict), cand.job.posted_at or "")
 
 
 def render(r: Report) -> str:
@@ -254,7 +252,7 @@ def render(r: Report) -> str:
         j, v = cand.job, cand.verdict
         posted = f"posted {notify.ist(j.posted_at)} (per ATS)" if j.posted_at else "posting date not stated"
         closes = f", closes {notify.ist(j.closes_at)}" if j.closes_at else ""
-        head = f"**{v['verdict']} fit {v['fit']}/5** " if v else ""
+        head = f"**{v['verdict']} {screen.fit_text(v)}** " if v else ""
         lines.append(f"- {head}{j.title} · {'; '.join(l for l in j.locations if l) or 'location not stated'}")
         lines.append(f"  - {posted}{closes} · {cand.history}")
         if v:
