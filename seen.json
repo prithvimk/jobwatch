@@ -43027,6 +43027,24 @@
      "jd_score": 0,
      "req": "JR2030549",
      "status": "filtered"
+    },
+    "JR2030663": {
+     "first_seen": "2026-11-25T19:27:36+00:00",
+     "jd_score": 0,
+     "req": "JR2030663",
+     "status": "filtered"
+    },
+    "JR2030702": {
+     "first_seen": "2026-11-25T19:27:36+00:00",
+     "jd_score": 1,
+     "req": "JR2030702",
+     "status": "filtered"
+    },
+    "JR2030728": {
+     "first_seen": "2026-11-25T19:27:36+00:00",
+     "jd_score": 0,
+     "req": "JR2030728",
+     "status": "filtered"
     }
    }
   },
