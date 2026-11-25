@@ -31,6 +31,10 @@
   "fails": 0,
   "ok": true
  },
+ "Cloudflare": {
+  "fails": 0,
+  "ok": true
+ },
  "Coinbase": {
   "fails": 0,
   "ok": true
@@ -47,11 +51,19 @@
   "fails": 0,
   "ok": true
  },
+ "FactSet": {
+  "fails": 0,
+  "ok": true
+ },
  "Goldman Sachs": {
   "fails": 0,
   "ok": true
  },
  "HERE": {
+  "fails": 0,
+  "ok": true
+ },
+ "HSBC": {
   "fails": 0,
   "ok": true
  },
@@ -72,6 +84,10 @@
   "ok": true
  },
  "MSCI": {
+  "fails": 0,
+  "ok": true
+ },
+ "Maersk": {
   "fails": 0,
   "ok": true
  },
