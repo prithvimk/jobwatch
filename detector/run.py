@@ -104,6 +104,58 @@ def format_alert(job: Job, first_seen: str, why: str, verdict: dict | None = Non
     return title, body
 
 
+def retry_why(pf: Prefilter, job: Job, entry: dict) -> str:
+    if entry.get("via") == "jd":
+        return f"title missed, JD keyword score {entry.get('jd_score', '?')}"
+    return pf.check(job)[1]
+
+
+def jd_pass(c: httpx.Client, pf: Prefilter, cfg: dict, seen: dict, queue: list[Job], ats_of: dict[str, str],
+            enriched: set[str]) -> list[tuple[Job, str, str]]:
+    """Read the JD of each title miss (status jdcheck) and send it on when its keyword score reaches the
+    threshold. At most jd_max_per_pass per pass; the rest stay jdcheck. A JD that cannot be read is retried
+    like liveness and then recorded as filtered with jd unknown (logged, never a guess)."""
+    out = []
+    for n, job in enumerate(queue):
+        entry = seen["boards"][job.board]["jobs"][job.id]
+        if n >= pf.jd_max_per_pass:
+            print(f"  jd-check deferred to the next pass: {len(queue) - n} posting(s)")
+            break
+        hooks = detail_hooks(ats_of.get(job.board, ""))
+        text, src = "", ""
+        try:
+            if hooks:
+                hooks[0](c, job)
+                enriched.add(f"{job.board}:{job.id}")
+                if job.req_id:
+                    entry["req"] = job.req_id
+                if not pf.jd_eligible(job):  # the detail filled in locations (Workday "N Locations" rows)
+                    entry["status"] = "filtered"
+                    continue
+            text, src = jd.get(c, job)
+        except Exception as e:
+            src = f"unknown ({type(e).__name__}: {str(e)[:80]})"
+        if not text:
+            entry["tries"] = entry.get("tries", 0) + 1
+            print(f"  jd-check: JD unreadable for {job.board} {job.id} {job.title!r}: {src} (try {entry['tries']})")
+            if entry["tries"] >= cfg["max_liveness_tries"]:
+                entry["status"], entry["jd_score"] = "filtered", "unknown"
+                entry.pop("tries", None)
+            continue
+        score, hits = pf.jd_score(text)
+        entry["jd_score"] = score
+        if score >= pf.jd_threshold:
+            entry.update(status="pending", via="jd")
+            entry.pop("tries", None)
+            why = f"title missed, JD names {', '.join(hits[:5])} (score {score})"
+            print(f"  jd-check passed: {job.board} {job.id} {job.title!r}: {why}")
+            out.append((job, why, entry["first_seen"]))
+        else:
+            entry["status"] = "filtered"
+            entry.pop("tries", None)
+    return out
+
+
 def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None) -> int:
     """screen_roles: judge each live hit with Claude before alerting (laptop; default from JOBWATCH_SCREEN)."""
     import os
@@ -114,6 +166,7 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
     seen, health = state.load_seen(), state.load_health()
     ts = state.now_iso()
     alerts: list[tuple[Job, str, str]] = []
+    jd_queue: list[Job] = []  # title misses whose JD gets a keyword read (status jdcheck)
     pass_no = int(time.time() // 300)  # a 5-min slot number: rotates Workday full sweeps across boards
     ats_of: dict[str, str] = {}
 
@@ -127,7 +180,7 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
             known = bs["jobs"]
             baseline = "baseline_at" not in bs
             full = baseline or (pass_no - i) % FULL_SWEEP_EVERY == 0
-            skip = {k for k, e in known.items() if e.get("status") != "pending"}
+            skip = {k for k, e in known.items() if e.get("status") not in ("pending", "jdcheck")}
             try:
                 jobs = FETCHERS[kind(b)](c, b, skip=skip, location_ok=pf.location_ok, full=full)
             except Exception as e:
@@ -141,39 +194,51 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
 
             new = [j for j in jobs if j.id not in known]
             retry = [j for j in jobs if known.get(j.id, {}).get("status") == "pending"]
-            passed = 0
+            passed = jd_wait = 0
             for j in new:
                 ok, why = pf.check(j)
-                known[j.id] = {"first_seen": ts, "status": "baseline" if baseline else ("pending" if ok else "filtered")}
+                status = "baseline" if baseline else "pending" if ok else "jdcheck" if pf.jd_eligible(j) else "filtered"
+                known[j.id] = {"first_seen": ts, "status": status}
                 if j.req_id:
                     known[j.id]["req"] = j.req_id
-                if ok and not baseline:
+                if status == "pending":
                     passed += 1
                     alerts.append((j, why, known[j.id]["first_seen"]))
+                elif status == "jdcheck":
+                    jd_wait += 1
+                    jd_queue.append(j)
             for j in retry:
-                alerts.append((j, pf.check(j)[1], known[j.id]["first_seen"]))
+                alerts.append((j, retry_why(pf, j, known[j.id]), known[j.id]["first_seen"]))
+            jd_queue += [j for j in jobs if known.get(j.id, {}).get("status") == "jdcheck" and j not in jd_queue]
             if baseline:
                 bs["baseline_at"] = ts
             if not h.get("ok", True) and h.get("fails", 0) >= cfg["board_fail_alert_after"]:
                 notify.push(f"jobwatch: {name} back", f"Reachable again after {h['fails']} failed runs.", dry_run=dry_run)
             health[name] = {"ok": True, "fails": 0}
             print(f"{name:<14} fetched={len(jobs):<4} new={len(new):<4} passed={passed:<3} "
+                  + (f"jd-check={jd_wait} " if jd_wait else "")
                   + ("(baseline: recorded, no alerts)" if baseline else ""))
+
+        enriched: set[str] = set()  # board:id already given its detail lookup this pass
+        alerts += jd_pass(c, pf, cfg, seen, jd_queue, ats_of, enriched)
 
         ready: list[tuple[Job, str, str, dict]] = []
         for job, why, first_seen in alerts:
             entry = seen["boards"][job.board]["jobs"][job.id]
+            via_jd = entry.get("via") == "jd"
             hooks = detail_hooks(ats_of.get(job.board, ""))
             if hooks:
                 enrich, check_live = hooks
                 try:  # stated dates and every location; the location check is redone with them
-                    enrich(c, job)
+                    if f"{job.board}:{job.id}" not in enriched:
+                        enrich(c, job)
                 except Exception as e:
                     ok, live_why = False, f"detail API {type(e).__name__}: {str(e)[:100]}"
                 else:
                     if job.req_id:  # some ATSs state the requisition only on the detail page (Radancy)
                         entry["req"] = job.req_id
-                    ok, why = pf.check(job)
+                    ok, w = pf.check(job, title_ok=via_jd)
+                    why = why if via_jd and ok else w
                     if not ok:
                         entry["status"] = "filtered"
                         print(f"  filtered after detail: {job.board} {job.id} {job.title!r}: {why}")

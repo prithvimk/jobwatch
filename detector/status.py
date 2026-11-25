@@ -232,7 +232,7 @@ def activity_section(seen: dict, now: datetime) -> str:
                 c[e.get("status")] += 1
     if not c:
         return '<p class="muted">No new postings in the last 7 days.</p>'
-    order = ("alerted", "screened", "filtered", "pending", "dead", "repost")
+    order = ("alerted", "screened", "filtered", "jdcheck", "pending", "dead", "repost")
     return "<p>" + " · ".join(f"<b>{c[s]}</b> {s}" for s in order if c[s]) + "</p>"
 
 

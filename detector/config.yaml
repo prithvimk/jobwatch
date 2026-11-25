@@ -11,7 +11,7 @@ title_include:
   - 'artificial intelligence|forward[- ]deploy|\bagents?\b'
   # Quant/modeling and analytics roles: the screener decides (fraud-risk quant and pure BI stay OUT there).
   - '\bquant\w*|\bmodell?ing\b|\banalytics\b|\bdata (analyst|product|management)\b|\bstatistic\w*'
-  - 'data scien|applied scien|research (engineer|scientist)|scientist'
+  - 'data scien|decision scien|applied scien|research (engineer|scientist)|scientist'
   - '\b(speech|asr|tts|vision|perception|recommend\w*|ranking|personali[sz]ation|inference)\b'
   # Kept for the spec's exception: a DE-titled role stays in if a required qualification is GenAI/ML.
   - 'data engineer'
@@ -29,6 +29,34 @@ title_exclude:
   - '\b(android|ios|mobile|front[- ]?end)\b'
   # Full-stack is dropped only when the title names no AI work ("Full Stack Developer (AI Agents)" goes to the screener).
   - '^(?!.*\b(ai|genai|gen ai|agents?|agentic|llms?|ml|machine learning|generative)\b).*?\bfull[- ]?stack\b'
+
+# JD keyword pass: a new posting whose title matches no include pattern and no exclude pattern (generic titles
+# like "Software Engineer II") has its JD read, and goes to the screener when the distinct signals it names add
+# up to the threshold. Each signal counts once, however often it appears. Plain code: no Claude call.
+jd_check:
+  threshold: 5
+  max_per_pass: 40  # the rest wait for the next pass (status jdcheck)
+  # Functions the spec never takes, whatever the JD says (Adobe architects and Salesforce consultants all name
+  # LLMs and agents). Only for the JD pass: a title the include list matches is not affected.
+  title_exclude: '\b(manager|architect|audit\w*|designer|\w*writer|copy\w*|renewals?|customer success|support|talent|courseware|tax|financial|finance|hr|recruit\w*|controllership|strategist|gtm)\b'
+  # Scoring starts at the first match: Amazon's team blurbs mention GenAI and agents on unrelated roles.
+  quals_heading: '(basic|minimum|required|preferred|key)?\s*(qualifications|requirements)|what you(''ll)? (bring|need)|skills and experience|you (have|bring|should have)|must[- ]have|about you|who you are|what we(''re| are) looking for'
+  signals:
+    - {name: LLM, weight: 3, pattern: '\b(llms?|large language models?)\b'}
+    - {name: GenAI, weight: 3, pattern: '\b(genai|gen ai|generative ai|generative models?)\b'}
+    - {name: RAG, weight: 3, pattern: '\b(rag|retrieval[- ]augmented)\b'}
+    - {name: agents, weight: 2, pattern: '\b(agentic|ai agents?|multi[- ]agent|llm agents?|autonomous agents?)\b'}
+    - {name: fine-tuning, weight: 3, pattern: '\bfine[- ]?tun(e|ed|ing)\b'}
+    - {name: prompt engineering, weight: 3, pattern: '\bprompt (engineering|design|tuning)\b'}
+    - {name: LLM frameworks, weight: 3, pattern: '\b(langchain|langgraph|llama ?index|crewai|autogen|semantic kernel|hugging ?face|vllm|openai api)\b'}
+    - {name: ML frameworks, weight: 3, pattern: '\b(pytorch|tensorflow|keras|jax|scikit[- ]learn|sklearn|xgboost|lightgbm)\b'}
+    - {name: embeddings/vector search, weight: 2, pattern: '\b(embeddings?|vector (databases?|search|stores?|db))\b'}
+    - {name: machine learning, weight: 2, pattern: '\b(machine learning|deep learning|ml models?|ml pipelines?|ml engineering|neural networks?)\b'}
+    - {name: NLP/CV, weight: 2, pattern: '\b(nlp|natural language processing|computer vision|transformers?)\b'}
+    - {name: model training/eval, weight: 2, pattern: '\b(model (training|evaluation|development|deployment|serving)|train(ing)? (ml |deep learning )?models)\b'}
+    - {name: MLOps, weight: 2, pattern: '\b(mlops|mlflow|sagemaker|vertex ai|bedrock|azure (openai|ml))\b'}
+    - {name: data science, weight: 2, pattern: '\b(data scien\w+|statistical model\w*|predictive model\w*)\b'}
+    - {name: statistics, weight: 1, pattern: '\b(statistics|statistical|regression|hypothesis test\w*|a/b test\w*|experimentation)\b'}
 
 # Location: anywhere in India except North India. A posting passes if ANY of its locations passes.
 india: '\bIND-|\bindia\b|\bindian\b|bengaluru|bangalore|mumbai|navi mumbai|thane|pune|hyderabad|secunderabad|chennai|kolkata|ahmedabad|gandhinagar|gift city|kochi|cochin|thiruvananthapuram|trivandrum|coimbatore|mysuru|mysore|mangaluru|mangalore|indore|bhopal|nagpur|vadodara|surat|bhubaneswar|visakhapatnam|vizag|vijayawada|\bgoa\b|\bdelhi\b|new delhi|gurugram|gurgaon|noida|faridabad|ghaziabad|chandigarh|mohali|panchkula|jaipur|lucknow|dehradun|ludhiana|amritsar|kanpur'

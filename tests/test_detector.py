@@ -266,3 +266,92 @@ def test_atlassian_keeps_india_only():
     [j] = sources.atlassian(c, "Atlassian")
     assert j.id == "1" and j.locations == ["Bengaluru - India - Bengaluru, 560071 India"] and j.posted_at is None
     assert j.apply_url.endswith("?mode=apply") and PF.check(j)[0]
+
+
+# ---------------------------------------------------------------- JD keyword pass (title misses)
+
+QUALS_JD = ("About the team: we are building the future of GenAI and AI agents across Amazon.\n"
+            "Basic Qualifications\n- 3+ years of Python\n- Experience building LLM applications with RAG\n")
+
+
+def test_jd_score_counts_distinct_signals_from_the_qualifications_on():
+    s, hits = PF.jd_score(QUALS_JD)
+    assert "LLM" in hits and "RAG" in hits and "GenAI" not in hits and "agents" not in hits  # blurb not scored
+    assert s >= PF.jd_threshold
+    assert PF.jd_score(QUALS_JD + "\nLLM LLM LLM")[0] == s  # repeats count once
+    blurb_only = "We are a GenAI company building AI agents.\nRequirements\n- 3 years of Java and Spring Boot\n"
+    assert PF.jd_score(blurb_only)[0] < PF.jd_threshold
+
+
+def test_jd_score_without_a_heading_scores_the_whole_text():
+    assert PF.jd_score("Build LLM agents with LangChain and RAG.")[0] >= PF.jd_threshold
+
+
+@pytest.mark.parametrize("title,locs,ok", [
+    ("Software Engineer II", ("Bengaluru, India",), True),
+    ("Lead Software Engineer", ("Mumbai, India",), True),
+    ("Research Analyst", (), True),                      # location unknown: kept
+    ("ML Engineer", ("Bengaluru, India",), False),       # the title already passes: no JD read needed
+    ("Software Engineer II", ("Noida, India",), False),  # North India
+    ("Software Engineering Intern", ("Pune, India",), False),
+    ("Director, Software Engineering", ("Pune, India",), False),
+    ("Enterprise Architect (Martech)", ("Pune, India",), False),  # a function the spec never takes
+    ("Senior Engineering Manager", ("Pune, India",), False),
+])
+def test_jd_eligible(title, locs, ok):
+    assert PF.jd_eligible(job(title, locs)) is ok
+
+
+def _jd_job(i, title, text):
+    j = Job("Acme", i, title, ["Pune, India"], "u", "a", None)
+    j.jd = text
+    return j
+
+
+def test_title_miss_with_genai_jd_is_alerted(env):
+    tmp, postings, pushed, _ = env
+    runmod.run(None, dry_run=False)  # baseline
+    postings += [_jd_job("1", "Software Engineer II", QUALS_JD),
+                 _jd_job("2", "Software Engineer III", "Requirements\n- Java, Spring Boot, Kafka\n")]
+    runmod.run(None, dry_run=False)
+    s = seen(tmp)
+    assert pushed == ["Acme: Software Engineer II"]
+    assert s["1"]["status"] == "alerted" and s["1"]["via"] == "jd" and s["1"]["jd_score"] >= PF.jd_threshold
+    assert s["2"]["status"] == "filtered" and s["2"]["jd_score"] < PF.jd_threshold
+
+
+def test_jd_pass_unreadable_jd_retries_then_records_unknown(env, monkeypatch):
+    tmp, postings, pushed, _ = env
+    monkeypatch.setattr(runmod.jd, "get", lambda c, j: ("", "unknown (JD fetch failed: ConnectError)"))
+    runmod.run(None, dry_run=False)
+    postings.append(Job("Acme", "4", "Software Engineer II", ["Pune, India"], "u", "a", None))
+    runmod.run(None, dry_run=False)
+    assert seen(tmp)["4"]["status"] == "jdcheck" and seen(tmp)["4"]["tries"] == 1
+    runmod.run(None, dry_run=False); runmod.run(None, dry_run=False)
+    assert seen(tmp)["4"]["status"] == "filtered" and seen(tmp)["4"]["jd_score"] == "unknown" and pushed == []
+
+
+def test_jd_pass_cap_defers_the_rest(env, monkeypatch):
+    tmp, postings, pushed, _ = env
+    from dataclasses import replace
+    capped = replace(Prefilter.load(), jd_max_per_pass=1)
+    monkeypatch.setattr(Prefilter, "load", classmethod(lambda cls, *a: capped))
+    runmod.run(None, dry_run=False)
+    postings += [_jd_job(str(i), "Software Engineer II", QUALS_JD) for i in (1, 2)]
+    runmod.run(None, dry_run=False)
+    assert sorted(e["status"] for e in seen(tmp).values()) == ["alerted", "jdcheck"]
+    runmod.run(None, dry_run=False)  # the deferred one is read on the next pass
+    assert [e["status"] for e in seen(tmp).values()] == ["alerted", "alerted"]
+
+
+def test_applied_roles_pass_the_title_filter():
+    """Regression: every role marked APPLIED in the private ledger must reach the screener by its title
+    (or at least get its JD read). Skipped where there is no private/ (Actions, a fresh clone)."""
+    from pathlib import Path
+    led = Path(__file__).parents[1] / "private" / "ledger.json"
+    if not led.exists():
+        pytest.skip("no private ledger")
+    roles = [e for e in json.loads(led.read_text(encoding="utf-8"))["roles"].values() if e.get("status") == "APPLIED"]
+    dropped = [e["title"] for e in roles
+               if not PF.check(job(e["title"]))[0] and not PF.jd_eligible(job(e["title"]))]
+    assert dropped == []

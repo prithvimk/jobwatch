@@ -2,8 +2,9 @@
 
 state/seen.json  = union of every job ID ever seen, per board, with first_seen and a status:
     baseline  present when the board was first tracked (never alerted)
-    filtered  failed the prefilter
-    pending   passed the prefilter but liveness failed; retried up to max_liveness_tries
+    filtered  failed the prefilter (or the JD keyword pass; jd_score says which)
+    jdcheck   title matched no include pattern and nothing excludes it: JD keyword read still to do
+    pending   passed the prefilter (via=jd: by JD keywords) but liveness failed; retried up to max_liveness_tries
     alerted   pushed to the phone
     screened  judged OUT by the screener: not pushed, listed in the daily digest
     dead      never became live
