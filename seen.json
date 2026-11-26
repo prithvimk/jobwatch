@@ -11740,6 +11740,18 @@
      "req": "10615391",
      "status": "filtered"
     },
+    "10615426": {
+     "first_seen": "2026-11-26T17:22:36+00:00",
+     "jd_score": 0,
+     "req": "10615426",
+     "status": "filtered"
+    },
+    "10615427": {
+     "first_seen": "2026-11-26T17:22:36+00:00",
+     "jd_score": 0,
+     "req": "10615427",
+     "status": "filtered"
+    },
     "3104755": {
      "first_seen": "2026-11-21T17:06:02+00:00",
      "req": "3104755",
@@ -22700,6 +22712,12 @@
      "first_seen": "2026-11-21T16:10:33+00:00",
      "req": "26995938",
      "status": "baseline"
+    },
+    "26995945-1": {
+     "first_seen": "2026-11-26T17:22:36+00:00",
+     "jd_score": 0,
+     "req": "26995945",
+     "status": "filtered"
     },
     "26995972": {
      "first_seen": "2026-11-21T16:10:33+00:00",
@@ -67861,6 +67879,11 @@
      "first_seen": "2026-11-26T12:27:36+00:00",
      "req": "See Opening ID",
      "status": "baseline"
+    },
+    "8419418": {
+     "first_seen": "2026-11-26T17:22:36+00:00",
+     "req": "See Opening ID",
+     "status": "filtered"
     }
    }
   },
