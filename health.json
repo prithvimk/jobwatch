@@ -84,8 +84,10 @@
   "ok": true
  },
  "Eightfold AI": {
-  "fails": 0,
-  "ok": true
+  "error": "EightfoldError: search HTTP 503",
+  "failing_since": "2026-11-26T16:27:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Eli Lilly": {
   "fails": 0,
@@ -192,8 +194,10 @@
   "ok": true
  },
  "Millennium": {
-  "fails": 0,
-  "ok": true
+  "error": "ReadTimeout: The read operation timed out",
+  "failing_since": "2026-11-26T16:27:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Mindtickle": {
   "fails": 0,
