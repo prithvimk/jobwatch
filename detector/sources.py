@@ -256,6 +256,11 @@ def _phenom(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     return phenom.fetch(c, b, **ctx)
 
 
+def _deshaw(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import deshaw
+    return deshaw.fetch(c, b, **ctx)
+
+
 def _sfcsb(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     from detector import sfcsb
     return sfcsb.fetch(c, b, **ctx)
@@ -280,6 +285,7 @@ FETCHERS = {
     "brassring": _brassring,
     "sfcsb": _sfcsb,
     "phenom": _phenom,
+    "deshaw": _deshaw,
 }
 
 
@@ -311,6 +317,9 @@ def detail_hooks(ats: str):
     if ats == "phenom":
         from detector import phenom
         return phenom.enrich, phenom.live
+    if ats == "deshaw":
+        from detector import deshaw
+        return deshaw.enrich, deshaw.live
     if ats == "sfcsb":
         from detector import sfcsb
         return sfcsb.enrich, sfcsb.live

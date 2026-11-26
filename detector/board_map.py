@@ -293,10 +293,17 @@ def probe_phenom(c: httpx.Client, root: str) -> dict:
             "india": len(phenom.fetch(c, {"name": "probe", "endpoint": root}))}
 
 
+def probe_deshaw(c: httpx.Client, url: str) -> dict:
+    """D. E. Shaw India's own Next.js careers site (see detector/deshaw.py)."""
+    from detector import deshaw
+    url = url.rstrip("/")
+    return {"endpoint": url, "total": "unknown", "india": len(deshaw.fetch(c, {"name": "probe", "endpoint": url}))}
+
+
 CUSTOM_PROBES = {"jibe": probe_jibe, "eightfold": probe_eightfold, "amazon": probe_amazon,
                  "atlassian": probe_atlassian, "beesite": probe_beesite, "boa": probe_boa,
                  "gr8people": probe_gr8people, "radancy": probe_radancy, "rippling": probe_rippling,
-                 "brassring": probe_brassring, "sfcsb": probe_sfcsb, "phenom": probe_phenom}
+                 "brassring": probe_brassring, "sfcsb": probe_sfcsb, "phenom": probe_phenom, "deshaw": probe_deshaw}
 
 
 class RateLimited(Exception):

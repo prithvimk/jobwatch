@@ -84,6 +84,7 @@ summary:
   - Millennium
   - Charles Schwab
   - Franklin Templeton
+  - D. E. Shaw India
   custom-scrape:
   - Google
   - Sony Research India
@@ -1374,3 +1375,15 @@ boards:
   evidence:
   - GET https://careers.franklintempleton.com/us/en -> 200 https://careers.franklintempleton.com/us/en
   - confirmed phenom JSON
+- name: D. E. Shaw India
+  careers_url: https://www.deshawindia.com/careers
+  note: Added 2026-11-26. Own Next.js site; postings embedded in the careers page; apply is one general form. Hyderabad, Bengaluru, Gurugram
+  ats: custom
+  platform: deshaw
+  effort: custom-json
+  endpoint: https://www.deshawindia.com/careers
+  total: unknown
+  india: 73
+  evidence:
+  - GET https://www.deshawindia.com/careers -> 200 https://www.deshawindia.com/careers
+  - confirmed deshaw JSON

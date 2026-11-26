@@ -337,4 +337,8 @@ boards:
     hints: {phenom: "https://careers.franklintempleton.com/us/en"}
     backend: workday
     note: "Added 2026-11-26. Phenom front end; apply goes to Workday franklintempleton.wd5 Primary-External-1, whose list is empty, so the list comes from Phenom and liveness from the Workday detail API. Hyderabad"
+  - name: D. E. Shaw India
+    careers_url: https://www.deshawindia.com/careers
+    hints: {deshaw: "https://www.deshawindia.com/careers"}
+    note: "Added 2026-11-26. Own Next.js site; postings embedded in the careers page; apply is one general form. Hyderabad, Bengaluru, Gurugram"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.
