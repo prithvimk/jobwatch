@@ -182,7 +182,10 @@ def probe_jibe(c: httpx.Client, base: str) -> dict:
     """Jibe (iCIMS front end) career sites: <base>/api/jobs."""
     url = f"{base.rstrip('/')}/api/jobs"
     total = c.get(url, params={"limit": 1}).raise_for_status().json()["totalCount"]
-    india = c.get(url, params={"limit": 1, "location": "India"}).raise_for_status().json()["totalCount"]
+    # The location search is fuzzy (Principal: 56 hits, 28 in the US), so count rows whose country is India,
+    # as sources.jibe keeps them.
+    from detector import sources
+    india = len(sources.jibe(c, "probe", url))
     return {"endpoint": url, "total": total, "india": india}
 
 

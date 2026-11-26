@@ -282,4 +282,45 @@ boards:
     hints: {sfcsb: "https://careers.nomura.com/Nomura"}
     backend: successfactors
     note: "Added 2026-11-26. SuccessFactors Career Site Builder; Mumbai (Powai)"
+  # Added 2026-11-26 from the wealth and asset management sheet (private/reports/Wealth and asset management boards.md)
+  - name: Northern Trust
+    careers_url: https://careers.northerntrust.com/
+    hints: {workday: "https://ntrs.wd1.myworkdayjobs.com/northerntrust"}
+    note: "Added 2026-11-26. Pune and Bengaluru"
+  - name: Invesco
+    careers_url: https://careers.invesco.com/
+    hints: {workday: "https://invesco.wd1.myworkdayjobs.com/IVZ"}
+    note: "Added 2026-11-26. City-level (no country facet); Hyderabad"
+  - name: Morningstar
+    careers_url: https://www.morningstar.com/company/careers
+    hints: {workday: "https://morningstar.wd5.myworkdayjobs.com/morningstar"}
+    note: "Added 2026-11-26. Mumbai and Navi Mumbai"
+  - name: Blackstone
+    careers_url: https://www.blackstone.com/careers/
+    hints: {workday: "https://blackstone.wd1.myworkdayjobs.com/Blackstone_Careers"}
+    note: "Added 2026-11-26. City-level (no country facet); Bangalore"
+  - name: Apollo
+    careers_url: https://www.apollo.com/careers
+    hints: {workday: "https://athene.wd5.myworkdayjobs.com/Apollo_Careers"}
+    note: "Added 2026-11-26. Workday tenant is athene (Apollo's insurer); Mumbai"
+  - name: Fidelity International
+    careers_url: https://careers.fidelityinternational.com/
+    hints: {workday: "https://fil.wd3.myworkdayjobs.com/001"}
+    note: "Added 2026-11-26. Bengaluru (Gurgaon postings are filtered)"
+  - name: Point72
+    careers_url: https://careers.point72.com/
+    hints: {greenhouse: point72}
+    note: "Added 2026-11-26. Bengaluru"
+  - name: AQR
+    careers_url: https://careers.aqr.com/
+    hints: {greenhouse: aqr}
+    note: "Added 2026-11-26. Bengaluru"
+  - name: Groww
+    careers_url: https://groww.in/careers
+    hints: {greenhouse: groww}
+    note: "Added 2026-11-26. Bengaluru"
+  - name: Principal
+    careers_url: https://careers.principal.com/in
+    hints: {jibe: "https://careers.principal.com"}
+    note: "Added 2026-11-26. Jibe; Principal Global Services, Hyderabad and Pune"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

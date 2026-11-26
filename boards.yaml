@@ -23,6 +23,9 @@ summary:
   - Mindtickle
   - Squarepoint
   - AlphaGrep
+  - Point72
+  - AQR
+  - Groww
   adapter:
   - JPMC
   - Goldman Sachs
@@ -55,6 +58,12 @@ summary:
   - Lowe's
   - Eli Lilly
   - BNY
+  - Northern Trust
+  - Invesco
+  - Morningstar
+  - Blackstone
+  - Apollo
+  - Fidelity International
   custom-json:
   - Amazon
   - Eightfold AI
@@ -71,6 +80,7 @@ summary:
   - Rippling
   - UBS
   - Nomura
+  - Principal
   custom-scrape:
   - Google
   - Sony Research India
@@ -1160,3 +1170,165 @@ boards:
   - GET https://careers.nomura.com/Nomura/ -> 200 https://careers.nomura.com/Nomura/
   - confirmed sfcsb JSON
   - probed 2026-11-26
+- name: Northern Trust
+  careers_url: https://careers.northerntrust.com/
+  note: Added 2026-11-26. Pune and Bengaluru
+  ats: workday
+  effort: adapter
+  locator:
+  - ntrs
+  - wd1
+  - northerntrust
+  endpoint: https://ntrs.wd1.myworkdayjobs.com/wday/cxs/ntrs/northerntrust/jobs
+  total: 668
+  india: 115
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://careers.northerntrust.com/ -> 429 https://ntrs.wd1.myworkdayjobs.com/northerntrust
+  - confirmed workday ('ntrs', 'wd1', 'northerntrust')
+- name: Invesco
+  careers_url: https://careers.invesco.com/
+  note: Added 2026-11-26. City-level (no country facet); Hyderabad
+  ats: workday
+  effort: adapter
+  locator:
+  - invesco
+  - wd1
+  - IVZ
+  endpoint: https://invesco.wd1.myworkdayjobs.com/wday/cxs/invesco/IVZ/jobs
+  total: 211
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.invesco.com/ -> 200 https://careers.invesco.com/
+  - confirmed workday ('invesco', 'wd1', 'IVZ')
+- name: Morningstar
+  careers_url: https://www.morningstar.com/company/careers
+  note: Added 2026-11-26. Mumbai and Navi Mumbai
+  ats: workday
+  effort: adapter
+  locator:
+  - morningstar
+  - wd5
+  - morningstar
+  endpoint: https://morningstar.wd5.myworkdayjobs.com/wday/cxs/morningstar/morningstar/jobs
+  total: 184
+  india: 33
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://www.morningstar.com/company/careers -> 202 https://www.morningstar.com/company/careers
+  - confirmed workday ('morningstar', 'wd5', 'morningstar')
+- name: Blackstone
+  careers_url: https://www.blackstone.com/careers/
+  note: Added 2026-11-26. City-level (no country facet); Bangalore
+  ats: workday
+  effort: adapter
+  locator:
+  - blackstone
+  - wd1
+  - Blackstone_Careers
+  endpoint: https://blackstone.wd1.myworkdayjobs.com/wday/cxs/blackstone/Blackstone_Careers/jobs
+  total: 138
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://www.blackstone.com/careers/ -> 403 https://www.blackstone.com/careers/
+  - confirmed workday ('blackstone', 'wd1', 'Blackstone_Careers')
+- name: Apollo
+  careers_url: https://www.apollo.com/careers
+  note: Added 2026-11-26. Workday tenant is athene (Apollo's insurer); Mumbai
+  ats: workday
+  effort: adapter
+  locator:
+  - athene
+  - wd5
+  - Apollo_Careers
+  endpoint: https://athene.wd5.myworkdayjobs.com/wday/cxs/athene/Apollo_Careers/jobs
+  total: 53
+  india: 12
+  india_facet:
+    param: Location_Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://www.apollo.com/careers -> 200 https://www.apollo.com/careers
+  - confirmed workday ('athene', 'wd5', 'Apollo_Careers')
+- name: Fidelity International
+  careers_url: https://careers.fidelityinternational.com/
+  note: Added 2026-11-26. Bengaluru (Gurgaon postings are filtered)
+  ats: workday
+  effort: adapter
+  locator:
+  - fil
+  - wd3
+  - '001'
+  endpoint: https://fil.wd3.myworkdayjobs.com/wday/cxs/fil/001/jobs
+  total: 81
+  india: 8
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://careers.fidelityinternational.com/ -> 200 https://careers.fidelityinternational.com/
+  - confirmed workday ('fil', 'wd3', '001')
+- name: Point72
+  careers_url: https://careers.point72.com/
+  note: Added 2026-11-26. Bengaluru
+  ats: greenhouse
+  effort: easy
+  locator:
+  - point72
+  endpoint: https://boards-api.greenhouse.io/v1/boards/point72/jobs
+  total: 200
+  india: 39
+  evidence:
+  - from seed hints
+  - 'GET https://careers.point72.com/ failed: ConnectError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1028)'
+  - confirmed greenhouse ('point72',)
+- name: AQR
+  careers_url: https://careers.aqr.com/
+  note: Added 2026-11-26. Bengaluru
+  ats: greenhouse
+  effort: easy
+  locator:
+  - aqr
+  endpoint: https://boards-api.greenhouse.io/v1/boards/aqr/jobs
+  total: 44
+  india: 9
+  evidence:
+  - from seed hints
+  - GET https://careers.aqr.com/ -> 200 https://careers.aqr.com/
+  - confirmed greenhouse ('aqr',)
+- name: Groww
+  careers_url: https://groww.in/careers
+  note: Added 2026-11-26. Bengaluru
+  ats: greenhouse
+  effort: easy
+  locator:
+  - groww
+  endpoint: https://boards-api.greenhouse.io/v1/boards/groww/jobs
+  total: 8
+  india: 8
+  evidence:
+  - from seed hints
+  - GET https://groww.in/careers -> 200 https://groww.in/careers
+  - confirmed greenhouse ('groww',)
+- name: Principal
+  careers_url: https://careers.principal.com/in
+  note: Added 2026-11-26. Jibe; Principal Global Services, Hyderabad and Pune
+  ats: custom
+  platform: jibe
+  effort: custom-json
+  endpoint: https://careers.principal.com/api/jobs
+  total: 155
+  india: 28
+  evidence:
+  - GET https://careers.principal.com/in -> 200 https://careers.principal.com/in
+  - confirmed jibe JSON
