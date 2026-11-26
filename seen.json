@@ -24877,6 +24877,11 @@
      "req": "Anand (Named ENT)- GTM_AMER CANADA East#24309",
      "status": "baseline"
     },
+    "8336447": {
+     "first_seen": "2026-11-26T14:52:36+00:00",
+     "req": "24975",
+     "status": "filtered"
+    },
     "8336559": {
      "first_seen": "2026-11-25T05:52:36+00:00",
      "status": "baseline"
@@ -25341,6 +25346,11 @@
      "first_seen": "2026-11-25T05:52:36+00:00",
      "req": "24832",
      "status": "baseline"
+    },
+    "8405433": {
+     "first_seen": "2026-11-26T14:52:36+00:00",
+     "req": "TBH#24270",
+     "status": "filtered"
     },
     "8406109": {
      "first_seen": "2026-11-25T13:42:37+00:00",
@@ -56465,6 +56475,12 @@
      "first_seen": "2026-11-26T07:47:37+00:00",
      "req": "54095",
      "status": "baseline"
+    },
+    "54128": {
+     "first_seen": "2026-11-26T14:52:36+00:00",
+     "jd_score": 0,
+     "req": "54128",
+     "status": "filtered"
     },
     "54415": {
      "first_seen": "2026-11-26T12:22:36+00:00",
