@@ -24,6 +24,8 @@ def job(title="ML Engineer", locs=("Bengaluru, India",), board="Databricks"):
     ("IND-BLR-Divyasree Technopolis", True), ("IND-DEL-Okhla", False), ("IND-GGN-DLF", False), ("Indianapolis, IN-US", False),
     ("Tokyo, Japan", False), ("San Francisco, CA", False),
     ("ITGOA01 - Genoa - Magazzini del Cotone", False), ("Panaji, Goa, India", True),  # Maersk, 2026-11-25
+    ("Indian Land, SC (N Lancaster) 3040", False), ("Indian Trail, NC 2907", False),  # Lowe's stores, 2026-11-26
+    ("Indian Harbour Beach, FL 2351", False),
 ])
 def test_location(loc, ok):
     assert PF.location_ok(loc) is ok

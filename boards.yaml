@@ -13,6 +13,16 @@ summary:
   - Netomi
   - ServiceNow
   - Cloudflare
+  - WorldQuant
+  - Glance
+  - InMobi
+  - Glean
+  - Composio
+  - IMC
+  - Sigmoid
+  - Mindtickle
+  - Squarepoint
+  - AlphaGrep
   adapter:
   - JPMC
   - Goldman Sachs
@@ -33,6 +43,17 @@ summary:
   - Intel
   - Maersk
   - FactSet
+  - Expedia
+  - Capital One
+  - Walmart Global Tech
+  - Target
+  - Vanguard
+  - Shell
+  - P&G
+  - GE HealthCare
+  - Nike
+  - Lowe's
+  - Eli Lilly
   custom-json:
   - Amazon
   - Eightfold AI
@@ -46,6 +67,7 @@ summary:
   - Teradata
   - Moody's
   - HSBC
+  - Rippling
   custom-scrape:
   - Google
   - Sony Research India
@@ -429,9 +451,8 @@ boards:
   - confirmed eightfold JSON (2026-11-22)
 - name: Goldman Sachs
   careers_url: https://higher.gs.com/results?LOCATION=India
-  note: Added 2026-11-22. higher.gs.com is a front end (GraphQL at api-higher.gs.com) whose apply links go to
-    this Oracle site. It also lists roles Oracle has closed (15 of 132 India roles on 2026-11-22), so Oracle is
-    the source.
+  note: Added 2026-11-22. higher.gs.com is a front end (GraphQL at api-higher.gs.com) whose apply links go to this Oracle site. It also lists roles Oracle has closed (15 of 132 India roles on 2026-11-22),
+    so Oracle is the source.
   ats: oracle
   effort: adapter
   locator:
@@ -727,3 +748,366 @@ boards:
   - GET https://portal.careers.hsbc.com/careers -> 200 https://portal.careers.hsbc.com/careers
   - confirmed eightfold JSON
   - probed 2026-11-25
+- name: WorldQuant
+  careers_url: https://www.worldquant.com/career-listing/
+  note: Added 2026-11-26. Mumbai quant research; New Delhi roles are dropped by the prefilter
+  ats: greenhouse
+  effort: easy
+  locator:
+  - worldquant
+  endpoint: https://boards-api.greenhouse.io/v1/boards/worldquant/jobs
+  total: 79
+  india: 8
+  evidence:
+  - from seed hints
+  - GET https://www.worldquant.com/career-listing/ -> 403 https://www.worldquant.com/career-listing/
+  - confirmed greenhouse ('worldquant',)
+  - probed 2026-11-26
+- name: Glance
+  careers_url: https://glance.com/careers
+  note: Added 2026-11-26
+  ats: greenhouse
+  effort: easy
+  locator:
+  - glance
+  endpoint: https://boards-api.greenhouse.io/v1/boards/glance/jobs
+  total: 21
+  india: 11
+  evidence:
+  - from seed hints
+  - GET https://glance.com/careers -> 200 https://glance.com/careers
+  - confirmed greenhouse ('glance',)
+  - probed 2026-11-26
+- name: InMobi
+  careers_url: https://www.inmobi.com/company/careers
+  note: Added 2026-11-26
+  ats: greenhouse
+  effort: easy
+  locator:
+  - inmobi
+  endpoint: https://boards-api.greenhouse.io/v1/boards/inmobi/jobs
+  total: 63
+  india: 33
+  evidence:
+  - from seed hints
+  - GET https://www.inmobi.com/company/careers -> 200 https://www.inmobi.com/company/careers
+  - confirmed greenhouse ('inmobi',)
+  - probed 2026-11-26
+- name: Glean
+  careers_url: https://www.glean.com/careers
+  note: Added 2026-11-26
+  ats: greenhouse
+  effort: easy
+  locator:
+  - gleanwork
+  endpoint: https://boards-api.greenhouse.io/v1/boards/gleanwork/jobs
+  total: 122
+  india: 18
+  evidence:
+  - from seed hints
+  - GET https://www.glean.com/careers -> 200 https://www.glean.com/careers
+  - confirmed greenhouse ('gleanwork',)
+  - probed 2026-11-26
+- name: Expedia
+  careers_url: https://careers.expediagroup.com/jobs/
+  note: Added 2026-11-26
+  ats: workday
+  effort: adapter
+  locator:
+  - expedia
+  - wd108
+  - search
+  endpoint: https://expedia.wd108.myworkdayjobs.com/wday/cxs/expedia/search/jobs
+  total: 138
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.expediagroup.com/jobs/ -> 403 https://careers.expediagroup.com/jobs/
+  - confirmed workday ('expedia', 'wd108', 'search')
+  - probed 2026-11-26
+- name: Capital One
+  careers_url: https://www.capitalonecareers.com/
+  note: Added 2026-11-26. India centre in Bengaluru
+  ats: workday
+  effort: adapter
+  locator:
+  - capitalone
+  - wd12
+  - Capital_One
+  endpoint: https://capitalone.wd12.myworkdayjobs.com/wday/cxs/capitalone/Capital_One/jobs
+  total: 2052
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://www.capitalonecareers.com/ -> 200 https://www.capitalonecareers.com/
+  - confirmed workday ('capitalone', 'wd12', 'Capital_One')
+  - probed 2026-11-26
+- name: Composio
+  careers_url: https://composio.dev/careers
+  note: Added 2026-11-26. Bangalore roles run on US hours
+  ats: ashby
+  effort: easy
+  locator:
+  - composio
+  endpoint: https://api.ashbyhq.com/posting-api/job-board/composio
+  total: 30
+  india: 4
+  evidence:
+  - from seed hints
+  - GET https://composio.dev/careers -> 200 https://jobs.ashbyhq.com/composio
+  - confirmed ashby ('composio',)
+  - probed 2026-11-26
+- name: Walmart Global Tech
+  careers_url: https://careers.walmart.com/
+  note: Added 2026-11-26
+  ats: workday
+  effort: adapter
+  locator:
+  - walmart
+  - wd5
+  - WalmartExternal
+  endpoint: https://walmart.wd5.myworkdayjobs.com/wday/cxs/walmart/WalmartExternal/jobs
+  status: unconfirmed (careers.walmart.com and this Workday site showed a maintenance page, CXS HTTP 422, 2026-11-25 and 2026-11-26)
+  total: unknown
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.walmart.com/ -> 200 https://careers.walmart.com/us/en/home
+  - 'workday (''walmart'', ''wd5'', ''WalmartExternal''): HTTP 429'
+  - probed 2026-11-26
+- name: Target
+  careers_url: https://india.target.com/
+  note: Added 2026-11-26. Target in India (Bengaluru)
+  ats: workday
+  effort: adapter
+  locator:
+  - target
+  - wd5
+  - targetcareers
+  endpoint: https://target.wd5.myworkdayjobs.com/wday/cxs/target/targetcareers/jobs
+  total: 2000
+  india: 74
+  india_facet:
+    param: Location_Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://india.target.com/ -> 200 https://india.target.com/
+  - confirmed workday ('target', 'wd5', 'targetcareers')
+  - probed 2026-11-26
+- name: IMC
+  careers_url: https://www.imc.com/ap/careers/jobs
+  note: Added 2026-11-26. Mumbai
+  ats: greenhouse
+  effort: easy
+  locator:
+  - imc
+  endpoint: https://boards-api.greenhouse.io/v1/boards/imc/jobs
+  total: 151
+  india: 15
+  evidence:
+  - from seed hints
+  - GET https://www.imc.com/ap/careers/jobs -> 404 https://www.imc.com/ap/careers/jobs
+  - confirmed greenhouse ('imc',)
+  - probed 2026-11-26
+- name: Vanguard
+  careers_url: https://www.vanguardjobs.com/
+  note: Added 2026-11-26. Hyderabad centre
+  ats: workday
+  effort: adapter
+  locator:
+  - vanguard
+  - wd5
+  - vanguard_external
+  endpoint: https://vanguard.wd5.myworkdayjobs.com/wday/cxs/vanguard/vanguard_external/jobs
+  total: 330
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://www.vanguardjobs.com/ -> 200 https://www.vanguardjobs.com/
+  - confirmed workday ('vanguard', 'wd5', 'vanguard_external')
+  - probed 2026-11-26
+- name: Shell
+  careers_url: https://www.shell.com/careers.html
+  note: Added 2026-11-26. Chennai and Bengaluru
+  ats: workday
+  effort: adapter
+  locator:
+  - shell
+  - wd3
+  - ShellCareers
+  endpoint: https://shell.wd3.myworkdayjobs.com/wday/cxs/shell/ShellCareers/jobs
+  total: 143
+  india: 15
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://www.shell.com/careers.html -> 200 https://www.shell.com/careers.html
+  - confirmed workday ('shell', 'wd3', 'ShellCareers')
+  - probed 2026-11-26
+- name: P&G
+  careers_url: https://www.pgcareers.com/
+  note: Added 2026-11-26. Hyderabad
+  ats: workday
+  effort: adapter
+  locator:
+  - pg
+  - wd5
+  - '1000'
+  endpoint: https://pg.wd5.myworkdayjobs.com/wday/cxs/pg/1000/jobs
+  total: 873
+  india: 36
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://www.pgcareers.com/ -> 200 https://www.pgcareers.com/in/en
+  - confirmed workday ('pg', 'wd5', '1000')
+  - probed 2026-11-26
+- name: GE HealthCare
+  careers_url: https://careers.gehealthcare.com/
+  note: Added 2026-11-26. Bengaluru
+  ats: workday
+  effort: adapter
+  locator:
+  - gehc
+  - wd5
+  - GEHC_ExternalSite
+  endpoint: https://gehc.wd5.myworkdayjobs.com/wday/cxs/gehc/GEHC_ExternalSite/jobs
+  total: 1101
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.gehealthcare.com/ -> 200 https://careers.gehealthcare.com/global/en
+  - confirmed workday ('gehc', 'wd5', 'GEHC_ExternalSite')
+  - probed 2026-11-26
+- name: Nike
+  careers_url: https://careers.nike.com/
+  note: Added 2026-11-26. Nike India Technology Center, Bengaluru
+  ats: workday
+  effort: adapter
+  locator:
+  - nike
+  - wd1
+  - nke
+  endpoint: https://nike.wd1.myworkdayjobs.com/wday/cxs/nike/nke/jobs
+  total: 637
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.nike.com/ -> 200 https://careers.nike.com/
+  - confirmed workday ('nike', 'wd1', 'nke')
+  - probed 2026-11-26
+- name: Sigmoid
+  careers_url: https://www.sigmoid.com/careers/
+  note: Added 2026-11-26. Analytics services firm (lower pay tier)
+  ats: greenhouse
+  effort: easy
+  locator:
+  - sigmoid
+  endpoint: https://boards-api.greenhouse.io/v1/boards/sigmoid/jobs
+  total: 43
+  india: 38
+  evidence:
+  - from seed hints
+  - GET https://www.sigmoid.com/careers/ -> 200 https://www.sigmoid.com/careers/
+  - confirmed greenhouse ('sigmoid',)
+  - probed 2026-11-26
+- name: Rippling
+  careers_url: https://www.rippling.com/careers/open-roles
+  note: Added 2026-11-26. Rippling's own ATS (ats.rippling.com)
+  ats: custom
+  platform: rippling
+  effort: custom-json
+  endpoint: https://ats.rippling.com/api/v2/board/rippling/jobs
+  total: 739
+  india: 94
+  evidence:
+  - GET https://www.rippling.com/careers/open-roles -> 200 https://www.rippling.com/en-IN/careers/open-roles
+  - confirmed rippling JSON
+  - probed 2026-11-26
+- name: Mindtickle
+  careers_url: https://www.mindtickle.com/careers/
+  note: Added 2026-11-26. Pune
+  ats: lever
+  effort: easy
+  locator:
+  - mindtickle
+  endpoint: https://api.lever.co/v0/postings/mindtickle?mode=json
+  total: 20
+  india: 17
+  evidence:
+  - from seed hints
+  - GET https://www.mindtickle.com/careers/ -> 200 https://jobs.lever.co/mindtickle
+  - confirmed lever ('mindtickle',)
+  - probed 2026-11-26
+- name: Lowe's
+  careers_url: https://talent.lowes.com/in/en
+  note: Added 2026-11-26. Phenom front end; apply goes to this Workday site
+  ats: workday
+  effort: adapter
+  locator:
+  - lowes
+  - wd5
+  - LWS_External_CS
+  endpoint: https://lowes.wd5.myworkdayjobs.com/wday/cxs/lowes/LWS_External_CS/jobs
+  total: 12835
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://talent.lowes.com/in/en -> 200 https://talent.lowes.com/in/en
+  - confirmed workday ('lowes', 'wd5', 'LWS_External_CS')
+  - probed 2026-11-26
+- name: Eli Lilly
+  careers_url: https://careers.lilly.com/
+  note: Added 2026-11-26. Hyderabad and Bengaluru
+  ats: workday
+  effort: adapter
+  locator:
+  - lilly
+  - wd115
+  - LLY
+  endpoint: https://lilly.wd115.myworkdayjobs.com/wday/cxs/lilly/LLY/jobs
+  total: 692
+  india: 43
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://careers.lilly.com/ -> 403 https://careers.lilly.com/
+  - confirmed workday ('lilly', 'wd115', 'LLY')
+  - probed 2026-11-26
+- name: Squarepoint
+  careers_url: https://www.squarepoint-capital.com/careers
+  note: Added 2026-11-26. Bangalore; the careers site links Greenhouse jobs by gh_jid
+  ats: greenhouse
+  effort: easy
+  locator:
+  - squarepointcapital
+  endpoint: https://boards-api.greenhouse.io/v1/boards/squarepointcapital/jobs
+  total: 87
+  india: 22
+  evidence:
+  - from seed hints
+  - GET https://www.squarepoint-capital.com/careers -> 404 https://www.squarepoint-capital.com/careers
+  - confirmed greenhouse ('squarepointcapital',)
+  - probed 2026-11-26
+- name: AlphaGrep
+  careers_url: https://www.alphagrep.com/careers
+  note: Added 2026-11-26. Mumbai
+  ats: greenhouse
+  effort: easy
+  locator:
+  - alphagrepsecurities
+  endpoint: https://boards-api.greenhouse.io/v1/boards/alphagrepsecurities/jobs
+  total: 12
+  india: 4
+  evidence:
+  - from seed hints
+  - GET https://www.alphagrep.com/careers -> 404 https://www.alphagrep.com/careers
+  - confirmed greenhouse ('alphagrepsecurities',)
+  - probed 2026-11-26

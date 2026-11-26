@@ -180,4 +180,93 @@ boards:
     hints: {eightfold: "portal.careers.hsbc.com|hsbc.com"}
     backend: successfactors
     note: "Added 2026-11-25. Eightfold site on the older v2 API (no PCSX); apply goes to SuccessFactors (hsbcholdin)"
+  # Added 2026-11-26 from the lesser-known employers research (private/reports/).
+  - name: WorldQuant
+    careers_url: https://www.worldquant.com/career-listing/
+    hints: {greenhouse: worldquant}
+    note: "Added 2026-11-26. Mumbai quant research; New Delhi roles are dropped by the prefilter"
+  - name: Glance
+    careers_url: https://glance.com/careers
+    hints: {greenhouse: glance}
+    note: "Added 2026-11-26"
+  - name: InMobi
+    careers_url: https://www.inmobi.com/company/careers
+    hints: {greenhouse: inmobi}
+    note: "Added 2026-11-26"
+  - name: Glean
+    careers_url: https://www.glean.com/careers
+    hints: {greenhouse: gleanwork}
+    note: "Added 2026-11-26"
+  - name: Expedia
+    careers_url: https://careers.expediagroup.com/jobs/
+    hints: {workday: "https://expedia.wd108.myworkdayjobs.com/search"}
+    note: "Added 2026-11-26"
+  - name: Capital One
+    careers_url: https://www.capitalonecareers.com/
+    hints: {workday: "https://capitalone.wd12.myworkdayjobs.com/Capital_One"}
+    note: "Added 2026-11-26. India centre in Bengaluru"
+  - name: Composio
+    careers_url: https://composio.dev/careers
+    hints: {ashby: composio}
+    note: "Added 2026-11-26. Bangalore roles run on US hours"
+  - name: Walmart Global Tech
+    careers_url: https://careers.walmart.com/
+    hints: {workday: "https://walmart.wd5.myworkdayjobs.com/WalmartExternal"}
+    note: "Added 2026-11-26"
+  - name: Target
+    careers_url: https://india.target.com/
+    hints: {workday: "https://target.wd5.myworkdayjobs.com/targetcareers"}
+    note: "Added 2026-11-26. Target in India (Bengaluru)"
+  - name: IMC
+    careers_url: https://www.imc.com/ap/careers/jobs
+    hints: {greenhouse: imc}
+    note: "Added 2026-11-26. Mumbai"
+  - name: Vanguard
+    careers_url: https://www.vanguardjobs.com/
+    hints: {workday: "https://vanguard.wd5.myworkdayjobs.com/vanguard_external"}
+    note: "Added 2026-11-26. Hyderabad centre"
+  - name: Shell
+    careers_url: https://www.shell.com/careers.html
+    hints: {workday: "https://shell.wd3.myworkdayjobs.com/ShellCareers"}
+    note: "Added 2026-11-26. Chennai and Bengaluru"
+  - name: P&G
+    careers_url: https://www.pgcareers.com/
+    hints: {workday: "https://pg.wd5.myworkdayjobs.com/1000"}
+    note: "Added 2026-11-26. Hyderabad"
+  - name: GE HealthCare
+    careers_url: https://careers.gehealthcare.com/
+    hints: {workday: "https://gehc.wd5.myworkdayjobs.com/GEHC_ExternalSite"}
+    note: "Added 2026-11-26. Bengaluru"
+  - name: Nike
+    careers_url: https://careers.nike.com/
+    hints: {workday: "https://nike.wd1.myworkdayjobs.com/nke"}
+    note: "Added 2026-11-26. Nike India Technology Center, Bengaluru"
+  - name: Sigmoid
+    careers_url: https://www.sigmoid.com/careers/
+    hints: {greenhouse: sigmoid}
+    note: "Added 2026-11-26. Analytics services firm (lower pay tier)"
+  - name: Rippling
+    careers_url: https://www.rippling.com/careers/open-roles
+    hints: {rippling: rippling}
+    note: "Added 2026-11-26. Rippling's own ATS (ats.rippling.com)"
+  - name: Mindtickle
+    careers_url: https://www.mindtickle.com/careers/
+    hints: {lever: mindtickle}
+    note: "Added 2026-11-26. Pune"
+  - name: Lowe's
+    careers_url: https://talent.lowes.com/in/en
+    hints: {workday: "https://lowes.wd5.myworkdayjobs.com/LWS_External_CS"}
+    note: "Added 2026-11-26. Phenom front end; apply goes to this Workday site"
+  - name: Eli Lilly
+    careers_url: https://careers.lilly.com/
+    hints: {workday: "https://lilly.wd115.myworkdayjobs.com/LLY"}
+    note: "Added 2026-11-26. Hyderabad and Bengaluru"
+  - name: Squarepoint
+    careers_url: https://www.squarepoint-capital.com/careers
+    hints: {greenhouse: squarepointcapital}
+    note: "Added 2026-11-26. Bangalore; the careers site links Greenhouse jobs by gh_jid"
+  - name: AlphaGrep
+    careers_url: https://www.alphagrep.com/careers
+    hints: {greenhouse: alphagrepsecurities}
+    note: "Added 2026-11-26. Mumbai"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

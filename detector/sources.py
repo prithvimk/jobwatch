@@ -241,6 +241,11 @@ def _radancy(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     return radancy.fetch(c, b, **ctx)
 
 
+def _rippling(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import rippling
+    return rippling.fetch(c, b, **ctx)
+
+
 # fetcher(client, board entry from boards.yaml, skip=set of settled IDs, location_ok=fn, full=bool).
 # Incremental fetchers (Workday) use the context to stop paging early; the JSON boards return everything.
 FETCHERS = {
@@ -256,6 +261,7 @@ FETCHERS = {
     "atlassian": lambda c, b, **_: atlassian(c, b["name"]),
     "gr8people": _gr8people,
     "radancy": _radancy,
+    "rippling": _rippling,
 }
 
 
@@ -278,6 +284,9 @@ def detail_hooks(ats: str):
     if ats == "radancy":
         from detector import radancy
         return radancy.enrich, radancy.live
+    if ats == "rippling":
+        from detector import rippling
+        return rippling.enrich, rippling.live
     return None
 
 

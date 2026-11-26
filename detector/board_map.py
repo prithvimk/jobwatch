@@ -252,9 +252,17 @@ def probe_radancy(c: httpx.Client, base: str) -> dict:
     return {"endpoint": url, "total": "unknown", "india": int(india.group(1)) if india else "unknown"}
 
 
+def probe_rippling(c: httpx.Client, slug: str) -> dict:
+    """Rippling's own ATS: one call lists every posting worldwide (see detector/rippling.py)."""
+    from detector import rippling
+    url = f"https://ats.rippling.com/api/v2/board/{slug}/jobs"
+    total = c.get(url, params={"page": 0, "pageSize": 1}).raise_for_status().json()["totalItems"]
+    return {"endpoint": url, "total": total, "india": len(rippling.fetch(c, {"name": "probe", "endpoint": url}))}
+
+
 CUSTOM_PROBES = {"jibe": probe_jibe, "eightfold": probe_eightfold, "amazon": probe_amazon,
                  "atlassian": probe_atlassian, "beesite": probe_beesite, "boa": probe_boa,
-                 "gr8people": probe_gr8people, "radancy": probe_radancy}
+                 "gr8people": probe_gr8people, "radancy": probe_radancy, "rippling": probe_rippling}
 
 
 class RateLimited(Exception):
