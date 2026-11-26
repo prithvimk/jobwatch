@@ -3,6 +3,10 @@
   "fails": 0,
   "ok": true
  },
+ "AlphaGrep": {
+  "fails": 0,
+  "ok": true
+ },
  "Amazon": {
   "fails": 0,
   "ok": true
@@ -23,6 +27,10 @@
   "fails": 0,
   "ok": true
  },
+ "Capital One": {
+  "fails": 0,
+  "ok": true
+ },
  "Cisco": {
   "fails": 0,
   "ok": true
@@ -39,6 +47,10 @@
   "fails": 0,
   "ok": true
  },
+ "Composio": {
+  "fails": 0,
+  "ok": true
+ },
  "Databricks": {
   "fails": 0,
   "ok": true
@@ -51,7 +63,27 @@
   "fails": 0,
   "ok": true
  },
+ "Eli Lilly": {
+  "fails": 0,
+  "ok": true
+ },
+ "Expedia": {
+  "fails": 0,
+  "ok": true
+ },
  "FactSet": {
+  "fails": 0,
+  "ok": true
+ },
+ "GE HealthCare": {
+  "fails": 0,
+  "ok": true
+ },
+ "Glance": {
+  "fails": 0,
+  "ok": true
+ },
+ "Glean": {
   "fails": 0,
   "ok": true
  },
@@ -71,6 +103,14 @@
   "fails": 0,
   "ok": true
  },
+ "IMC": {
+  "fails": 0,
+  "ok": true
+ },
+ "InMobi": {
+  "fails": 0,
+  "ok": true
+ },
  "Intel": {
   "fails": 0,
   "ok": true
@@ -80,6 +120,10 @@
   "ok": true
  },
  "LSEG": {
+  "fails": 0,
+  "ok": true
+ },
+ "Lowe's": {
   "fails": 0,
   "ok": true
  },
@@ -103,6 +147,10 @@
   "fails": 0,
   "ok": true
  },
+ "Mindtickle": {
+  "fails": 0,
+  "ok": true
+ },
  "Moody's": {
   "fails": 0,
   "ok": true
@@ -119,7 +167,19 @@
   "fails": 0,
   "ok": true
  },
+ "Nike": {
+  "fails": 0,
+  "ok": true
+ },
+ "P&G": {
+  "fails": 0,
+  "ok": true
+ },
  "PayPal": {
+  "fails": 0,
+  "ok": true
+ },
+ "Rippling": {
   "fails": 0,
   "ok": true
  },
@@ -143,11 +203,27 @@
   "fails": 0,
   "ok": true
  },
+ "Shell": {
+  "fails": 0,
+  "ok": true
+ },
+ "Sigmoid": {
+  "fails": 0,
+  "ok": true
+ },
+ "Squarepoint": {
+  "fails": 0,
+  "ok": true
+ },
  "State Street": {
   "fails": 0,
   "ok": true
  },
  "Swiggy": {
+  "fails": 0,
+  "ok": true
+ },
+ "Target": {
   "fails": 0,
   "ok": true
  },
@@ -159,11 +235,25 @@
   "fails": 0,
   "ok": true
  },
+ "Vanguard": {
+  "fails": 0,
+  "ok": true
+ },
  "Visa": {
   "fails": 0,
   "ok": true
  },
+ "Walmart Global Tech": {
+  "error": "WorkdayError: HTTP 422 from https://walmart.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-26T05:02:36+00:00",
+  "fails": 1,
+  "ok": false
+ },
  "Wells Fargo": {
+  "fails": 0,
+  "ok": true
+ },
+ "WorldQuant": {
   "fails": 0,
   "ok": true
  },
