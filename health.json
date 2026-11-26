@@ -196,10 +196,8 @@
   "ok": true
  },
  "Mindtickle": {
-  "error": "ReadTimeout: The read operation timed out",
-  "failing_since": "2026-11-26T15:27:36+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Moody's": {
   "fails": 0,
