@@ -33517,6 +33517,12 @@
      "jd_score": 0,
      "req": "R33952",
      "status": "filtered"
+    },
+    "R34018": {
+     "first_seen": "2026-11-26T08:52:37+00:00",
+     "jd_score": 0,
+     "req": "R34018",
+     "status": "filtered"
     }
    }
   },
@@ -52897,6 +52903,10 @@
      "first_seen": "2026-11-26T05:02:36+00:00",
      "status": "baseline"
     },
+    "235895a2-ad1b-4eb2-8edb-8301d7f3b6d5": {
+     "first_seen": "2026-11-26T08:52:37+00:00",
+     "status": "filtered"
+    },
     "23b76264-41d7-48c2-97b0-eab190a65067": {
      "first_seen": "2026-11-26T05:02:36+00:00",
      "status": "baseline"
@@ -54467,6 +54477,11 @@
     "8412766": {
      "first_seen": "2026-11-24T19:22:36+00:00",
      "req": "11895",
+     "status": "filtered"
+    },
+    "8413157": {
+     "first_seen": "2026-11-26T08:52:37+00:00",
+     "req": "Pooling Req - UI",
      "status": "filtered"
     }
    }
