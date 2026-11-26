@@ -43,7 +43,10 @@ def test_multi_location_any_allowed():
     ("Applied AIML Associate Senior, AWM Predictive Science", True), ("Applied AI/ML Associate", True),
     ("Predictive Modeling Analyst", True), ("Associate, Predictive Science", True),
     ("Artificial Intelligence Engineer (III)", True), ("Agent Engineer", True), ("Forward Deployed Engineer", True),
-    ("Forward Deploy Engineer, Aladdin Data, Associate", True), ("Member of Technical Staff, Inference", True),
+    ("Forward Deploy Engineer, Aladdin Data, Associate", True),
+    ("FDE, Bangalore", True), ("Senior FDE - GenAI Platform", True), ("FDEs (Applied AI)", True),
+    ("Fidelity Operations Analyst", False), ("Sr FDE Lead, Staff", False),  # "staff" still drops it
+    ("Member of Technical Staff, Inference", True),
     ("Quant Developer - Front Office", True), ("Analyst /Sr Analytics & Modeling Analyst", True),
     ("Associate - Strategic Data Analytics", True), ("Sr Full Stack Developer (AI Agents)", True),
     ("Sr. SW Engineer (3-5 yrs, GenAI, Java/Python full stack)", True), ("Senior Full Stack Engineer", False),

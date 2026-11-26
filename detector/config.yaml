@@ -8,7 +8,7 @@ title_include:
   - '\b(aiml|genaiml|aiops|predictive)\b'
   - 'machine learning|deep learning|generative|agentic|computer vision|foundation model|transformer'
   # From the applications tracker (2026-11-23): spelled-out AI, agent roles and forward-deployed engineers.
-  - 'artificial intelligence|forward[- ]deploy|\bagents?\b'
+  - 'artificial intelligence|forward[- ]deploy|\bfdes?\b|\bagents?\b'
   # Quant/modeling and analytics roles: the screener decides (fraud-risk quant and pure BI stay OUT there).
   - '\bquant\w*|\bmodell?ing\b|\banalytics\b|\bdata (analyst|product|management)\b|\bstatistic\w*'
   - 'data scien|decision scien|applied scien|research (engineer|scientist)|scientist'
