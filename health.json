@@ -15,6 +15,10 @@
   "fails": 0,
   "ok": true
  },
+ "BNY": {
+  "fails": 0,
+  "ok": true
+ },
  "Bank of America": {
   "fails": 0,
   "ok": true
@@ -171,6 +175,10 @@
   "fails": 0,
   "ok": true
  },
+ "Nomura": {
+  "fails": 0,
+  "ok": true
+ },
  "P&G": {
   "fails": 0,
   "ok": true
@@ -232,6 +240,10 @@
   "ok": true
  },
  "Twilio": {
+  "fails": 0,
+  "ok": true
+ },
+ "UBS": {
   "fails": 0,
   "ok": true
  },
