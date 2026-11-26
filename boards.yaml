@@ -864,17 +864,19 @@ boards:
   effort: adapter
   locator:
   - walmart
-  - wd5
+  - wd504
   - WalmartExternal
-  endpoint: https://walmart.wd5.myworkdayjobs.com/wday/cxs/walmart/WalmartExternal/jobs
-  status: unconfirmed (careers.walmart.com and this Workday site showed a maintenance page, CXS HTTP 422, 2026-11-25 and 2026-11-26)
-  total: unknown
-  india: unknown
+  endpoint: https://walmart.wd504.myworkdayjobs.com/wday/cxs/walmart/WalmartExternal/jobs
+  total: 2000
+  india: 208
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
   evidence:
   - from seed hints
   - GET https://careers.walmart.com/ -> 200 https://careers.walmart.com/us/en/home
-  - 'workday (''walmart'', ''wd5'', ''WalmartExternal''): HTTP 429'
-  - probed 2026-11-26
+  - confirmed workday ('walmart', 'wd504', 'WalmartExternal')
+  - probed 2026-11-26 (wd504; wd5 was a stale host)
 - name: Target
   careers_url: https://india.target.com/
   note: Added 2026-11-26. Target in India (Bengaluru)

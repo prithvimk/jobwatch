@@ -211,7 +211,7 @@ boards:
     note: "Added 2026-11-26. Bangalore roles run on US hours"
   - name: Walmart Global Tech
     careers_url: https://careers.walmart.com/
-    hints: {workday: "https://walmart.wd5.myworkdayjobs.com/WalmartExternal"}
+    hints: {workday: "https://walmart.wd504.myworkdayjobs.com/WalmartExternal"}
     note: "Added 2026-11-26"
   - name: Target
     careers_url: https://india.target.com/
