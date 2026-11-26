@@ -48594,6 +48594,24 @@
      "first_seen": "2026-11-26T08:02:37+00:00",
      "req": "REQ-32072",
      "status": "baseline"
+    },
+    "755959996092": {
+     "first_seen": "2026-11-26T15:37:36+00:00",
+     "jd_score": 0,
+     "req": "REQ-32104",
+     "status": "filtered"
+    },
+    "755959996156": {
+     "first_seen": "2026-11-26T15:37:36+00:00",
+     "jd_score": 0,
+     "req": "REQ-32106",
+     "status": "filtered"
+    },
+    "755959996243": {
+     "first_seen": "2026-11-26T15:37:36+00:00",
+     "jd_score": 0,
+     "req": "REQ-32108",
+     "status": "filtered"
     }
    }
   },
