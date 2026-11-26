@@ -60,14 +60,14 @@ def seed(env):
 def test_roles_best_fit_first_escaped_with_verdict_kit_and_closing(env):
     seed(env)
     html = status.build(NOW)
-    todo = html.split("<h2>To act on (2)</h2>")[1].split("<h2>")[0]
+    todo = html.split("<h2>To act on <span class='count'>(2)</span></h2>")[1].split("<h2>")[0]
     assert todo.index("Applied Scientist") < todo.index("ML &lt;Engineer&gt;")  # fit 5 before fit 3
     assert "<Engineer>" not in html
     assert "Strong RAG match" in todo and "Spark" in todo and "Mumbai" in todo
     assert "2026-11-22-JPMC-2.md" in todo  # kit link
     row1 = todo.split('data-key="JPMC:1"')[1].split("</tr>")[0]
     assert 'class="nowrap urgent"' in row1 and "REQ1" in row1  # closes within 2 days
-    resolved = html.split("<h2>Resolved, last 30 days</h2>")[1].split("<h2>")[0]
+    resolved = html.split("<h2>Resolved, last 30 days <span class='count'>(1: 1 applied)</span></h2>")[1].split("<h2>")[0]
     assert "Data Scientist" in resolved and "Old Role" not in resolved
 
 
@@ -80,13 +80,14 @@ def test_buttons_use_reply_topic(env, monkeypatch):
 
 def test_boards_failing_first_unknown_visible_and_counts(env):
     seed(env)
-    boards = status.build(NOW).split("<h2>Boards</h2>")[1]
+    boards = status.build(NOW).split("<h2>Boards <span class='count'>(")[1]
+    assert boards.startswith("2 watched · 1 failing · 1 not watched)")
     assert boards.index("Sarvam") < boards.index("Google") < boards.index("JPMC")
     assert "ConnectTimeout: boom" in boards and "not watched" in boards
     jpmc = boards.split("<td>JPMC</td>")[1].split("</tr>")[0]
     cells = [c.split(">", 1)[1] for c in jpmc.split("</td>")[:-1]]
     assert cells[3:6] == ["4", "2", "1"]  # IDs, new in 7 days (alerted + pending), pending
-    activity = status.build(NOW).split("<h2>Last 7 days</h2>")[1].split("<h2>")[0]
+    activity = status.build(NOW).split("<h2>Last 7 days <span class='count'>(2 new)</span></h2>")[1].split("<h2>")[0]
     assert "<b>1</b> alerted" in activity and "<b>1</b> pending" in activity and "filtered" not in activity
 
 
@@ -100,6 +101,8 @@ def test_problems_only_from_the_last_pass_and_digest(env):
     html = status.build(NOW)
     assert "Sarvam UNKNOWN" in html and "fetch failed: old" not in html and "ok line" not in html
     assert "Risk Lead" in html and "7+ years" in html
+    assert "Runner <span class='count'>(1 problem this pass)</span>" in html
+    assert "Screened out, queued for tonight's digest <span class='count'>(1)</span>" in html
 
 
 def test_write_with_no_private_data(env):

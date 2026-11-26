@@ -140,8 +140,10 @@ def resolved_section(led: dict, now: datetime) -> str:
     rows = [(k, e) for k, e in led["roles"].items()
             if e.get("status") in ledger.RESOLVED and (t := _t(e.get("marked_at"))) and now - t <= RESOLVED_WINDOW]
     if not rows:
-        return '<p class="muted">None in the last 30 days.</p>'
+        return '<p class="muted">None in the last 30 days.</p>', "0"
     rows.sort(key=lambda r: r[1].get("marked_at", ""), reverse=True)
+    by = Counter(e["status"] for _, e in rows)
+    count = f"{len(rows)}: " + ", ".join(f"{by[s]} {s.lower()}" for s in sorted(by))
     out = []
     for k, e in rows:
         follow = f"follow-up sent {_ist(e['followed_up_at'])}" if e.get("followed_up_at") else ""
@@ -149,7 +151,7 @@ def resolved_section(led: dict, now: datetime) -> str:
 <td><span class="badge {e['status'].lower()}">{e['status']}</span></td><td class="nowrap">{_ist(e.get('marked_at'))}</td>
 <td class="muted">{follow}</td><td class="nowrap">{_link(e.get('url'), 'JD')}</td>
 <td class="act"><button data-s="shown">Undo</button> <span class="pending muted"></span></td></tr>""")
-    return "<table><tr><th>Role</th><th>Mark</th><th>When</th><th></th><th></th><th></th></tr>" + "".join(out) + "</table>"
+    return "<table><tr><th>Role</th><th>Mark</th><th>When</th><th></th><th></th><th></th></tr>" + "".join(out) + "</table>", count
 
 
 def _last_state_commit() -> tuple[datetime | None, str]:
@@ -188,7 +190,7 @@ def runner_section(now: datetime) -> str:
     ]
     log = ("<details open><summary>Problems logged this pass</summary><pre>" + escape("\n".join(probs)) + "</pre></details>"
            if probs else '<p class="muted">No problems logged this pass.</p>')
-    return "<ul>" + "".join(items) + "</ul>" + log
+    return "<ul>" + "".join(items) + "</ul>" + log, f"{len(probs)} problem{'' if len(probs) == 1 else 's'} this pass"
 
 
 def boards_section(seen: dict, health: dict, now: datetime) -> str:
@@ -221,8 +223,11 @@ def boards_section(seen: dict, health: dict, now: datetime) -> str:
                                  f"<td class='num'>{len(recent) or ''}</td><td class='num'>{c['pending'] or ''}</td>"
                                  f"<td class='num'>{c['alerted'] or ''}</td><td class='nowrap'>{_ist(last_new) or '—'}</td></tr>"))
     rows.sort(key=lambda r: (r[0], r[1].lower()))
+    n = Counter(r[0] for r in rows)
+    count = " · ".join(x for x in (f"{len(rows) - n[2]} watched", f"{n[0]} failing" if n[0] else "",
+                                   f"{n[2]} not watched" if n[2] else "") if x)
     return ("<table><tr><th>Board</th><th>Source</th><th>Health</th><th>Tracked since</th><th>IDs</th>"
-            "<th>New 7d</th><th>Pending</th><th>Alerted</th><th>Last new</th></tr>" + "".join(r[2] for r in rows) + "</table>")
+            "<th>New 7d</th><th>Pending</th><th>Alerted</th><th>Last new</th></tr>" + "".join(r[2] for r in rows) + "</table>"), count
 
 
 def activity_section(seen: dict, now: datetime) -> str:
@@ -232,18 +237,19 @@ def activity_section(seen: dict, now: datetime) -> str:
             if e.get("status") != "baseline" and (t := _t(e.get("first_seen"))) and now - t <= RECENT:
                 c[e.get("status")] += 1
     if not c:
-        return '<p class="muted">No new postings in the last 7 days.</p>'
+        return '<p class="muted">No new postings in the last 7 days.</p>', "0 new"
     order = ("alerted", "screened", "filtered", "jdcheck", "pending", "dead", "repost")
-    return "<p>" + " · ".join(f"<b>{c[s]}</b> {s}" for s in order if c[s]) + "</p>"
+    return "<p>" + " · ".join(f"<b>{c[s]}</b> {s}" for s in order if c[s]) + "</p>", f"{sum(c.values())} new"
 
 
 def digest_section() -> str:
     d = _load_json(screen.DIGEST, {"pending": [], "last_sent": ""})
     if not d.get("pending"):
-        return f'<p class="muted">Nothing queued. Last digest sent: {escape(d.get("last_sent") or "never")}.</p>'
+        return f'<p class="muted">Nothing queued. Last digest sent: {escape(d.get("last_sent") or "never")}.</p>', "0"
     rows = "".join(f"<tr><td><b>{escape(x['board'])}</b> {_link(x.get('url'), x['title'])}</td>"
                    f"<td>{escape(x['reason'])}</td></tr>" for x in d["pending"])
-    return f"<p class='muted'>Sent as one push after 20:00 IST.</p><table><tr><th>Role</th><th>Why OUT</th></tr>{rows}</table>"
+    return (f"<p class='muted'>Sent as one push after 20:00 IST.</p><table><tr><th>Role</th><th>Why OUT</th></tr>{rows}</table>",
+            str(len(d["pending"])))
 
 
 # ---------------------------------------------------------------- page
@@ -261,6 +267,7 @@ th{background:var(--head);font-weight:600;font-size:13px} .num{text-align:right}
 button{font:inherit;font-size:12px;padding:2px 8px;cursor:pointer} tr.marked{opacity:.55}
 #stale{display:none;background:#f8d7d3;color:#9b2c1f;padding:8px 12px;border-radius:6px;margin:8px 0}
 @media (max-width:900px){table{display:block;overflow-x:auto} td{min-width:90px}}
+h2 .count{color:var(--muted);font-weight:400}
 pre{white-space:pre-wrap;font-size:12px;background:var(--head);padding:8px;border-radius:6px}
 """
 
@@ -299,6 +306,12 @@ setTimeout(() => location.reload(), 120000);
 """
 
 
+def _h2(title: str, section: tuple[str, str]) -> str:
+    """Heading with the section's count, then the section."""
+    html, count = section
+    return f"<h2>{escape(title, quote=False)} <span class='count'>({escape(count, quote=False)})</span></h2>{html}"
+
+
 def build(now: datetime | None = None) -> str:
     now = now or datetime.now(timezone.utc)
     led = ledger.load()
@@ -315,12 +328,12 @@ def build(now: datetime | None = None) -> str:
 <title>jobwatch ({n_shown} to act on)</title><style>{CSS}</style></head><body>
 <h1>jobwatch</h1>
 <div id="stale"></div>
-<h2>To act on ({n_shown})</h2>{roles_section(led, verdicts, now)}
-<h2>Runner</h2>{runner_section(now)}
-<h2>Last 7 days</h2>{activity_section(seen, now)}
-<h2>Screened out, queued for tonight's digest</h2>{digest_section()}
-<h2>Resolved, last 30 days</h2>{resolved_section(led, now)}
-<h2>Boards</h2>{boards_section(seen, health, now)}
+<h2>To act on <span class='count'>({n_shown})</span></h2>{roles_section(led, verdicts, now)}
+{_h2("Runner", runner_section(now))}
+{_h2("Last 7 days", activity_section(seen, now))}
+{_h2("Screened out, queued for tonight's digest", digest_section())}
+{_h2("Resolved, last 30 days", resolved_section(led, now))}
+{_h2("Boards", boards_section(seen, health, now))}
 <script>{consts}{JS}</script>
 </body></html>
 """
