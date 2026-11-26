@@ -11712,6 +11712,12 @@
      "req": "10615347",
      "status": "filtered"
     },
+    "10615371": {
+     "first_seen": "2026-11-26T15:22:36+00:00",
+     "jd_score": 0,
+     "req": "10615371",
+     "status": "filtered"
+    },
     "3104755": {
      "first_seen": "2026-11-21T17:06:02+00:00",
      "req": "3104755",
@@ -46742,6 +46748,10 @@
      "first_seen": "2026-11-21T20:12:36+00:00",
      "status": "baseline"
     },
+    "15cbdb02-e678-462b-b3ac-d70f48144eb8": {
+     "first_seen": "2026-11-26T15:22:36+00:00",
+     "status": "filtered"
+    },
     "1690adaa-ec47-4246-a40e-995b859545f2": {
      "first_seen": "2026-11-21T20:12:36+00:00",
      "status": "baseline"
@@ -46858,6 +46868,10 @@
      "first_seen": "2026-11-21T20:12:36+00:00",
      "status": "baseline"
     },
+    "97213f20-6160-4145-abef-281399ed4885": {
+     "first_seen": "2026-11-26T15:22:36+00:00",
+     "status": "filtered"
+    },
     "97ce9e5a-a8bb-446d-a8db-9078603b106f": {
      "first_seen": "2026-11-21T20:12:36+00:00",
      "status": "baseline"
@@ -46888,6 +46902,10 @@
     },
     "bae9f9ed-0f2f-4f7d-87d6-2d4e63092a6e": {
      "first_seen": "2026-11-23T08:47:37+00:00",
+     "status": "filtered"
+    },
+    "bb950ba6-dd50-4caf-9c52-00d5168a59a5": {
+     "first_seen": "2026-11-26T15:22:36+00:00",
      "status": "filtered"
     },
     "c428c9f1-d06c-47a3-aa61-7bd445401816": {
