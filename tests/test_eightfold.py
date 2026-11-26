@@ -149,3 +149,44 @@ def test_v2_closed_detail_404_raises():
     [j] = eightfold.fetch(c, V2)
     with pytest.raises(eightfold.EightfoldError):
         eightfold.enrich(c, j)
+
+
+# --- v2 API applying on Eightfold itself (Millennium, recorded 2026-11-26) ---
+MLP = {"name": "Millennium", "endpoint": "https://mlp.eightfold.ai/api/apply/v2/jobs?domain=mlp.com"}
+
+
+def mlp_client(job_page=200):
+    def handler(req: httpx.Request):
+        if req.url.path == "/api/apply/v2/jobs":
+            return httpx.Response(200, json={"count": 1, "positions": [{
+                "id": 755959842482, "name": "Applied AI Engineer - Operations & Middle Office",
+                "location": "Bangalore, Karnataka, India", "locations": ["Bangalore, Karnataka, India"],
+                "t_create": 1794960000, "ats_job_id": "REQ-32011", "display_job_id": "REQ-32011",
+                "canonicalPositionUrl": "https://mlp.eightfold.ai/careers/job/755959842482", "custom_data": None}]})
+        if req.url.path == "/api/apply/v2/jobs/755959842482":
+            return httpx.Response(200, json={"locations": ["Bangalore, Karnataka, India"],
+                                             "job_description": "<p>LLM agents in Python</p>", "apply_redirect_url": None})
+        if req.url.path == "/careers/job/755959842482":
+            return httpx.Response(job_page, text="<html></html>")
+        if req.url.path == "/careers/apply":  # a JS shell: 200 for any pid
+            return httpx.Response(200, text="<html></html>")
+        return httpx.Response(404)
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def test_v2_eightfold_apply_uses_detail_api_and_job_page():
+    c = mlp_client()
+    [j] = eightfold.fetch(c, MLP)
+    assert j.req_id == "REQ-32011" and j.posted_at is None  # custom_data is null
+    eightfold.enrich(c, j)
+    assert "LLM agents" in j.jd
+    assert j.apply_url == "https://mlp.eightfold.ai/careers/apply?pid=755959842482&domain=mlp.com"  # no hand-off
+    assert eightfold.live(c, j)[0]
+
+
+def test_v2_eightfold_apply_closed_job_page_is_not_live():
+    c = mlp_client(job_page=404)
+    [j] = eightfold.fetch(c, MLP)
+    eightfold.enrich(c, j)
+    ok, why = eightfold.live(c, j)
+    assert not ok and "JD HTTP 404" in why

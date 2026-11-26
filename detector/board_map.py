@@ -249,10 +249,14 @@ def probe_gr8people(c: httpx.Client, base: str) -> dict:
 def probe_radancy(c: httpx.Client, base: str) -> dict:
     """Radancy (TalentBrew) sites: <base>/search-jobs/results with the India country facet (see detector/radancy.py)."""
     from detector import radancy
+    base, _, module = base.partition("|")  # hint "<base>|<results module name>" when not Moody's
     url = f"{base.rstrip('/')}/search-jobs/results"
-    r = c.get(url, params=radancy.params(1), headers={"X-Requested-With": "XMLHttpRequest"}).raise_for_status()
+    r = c.get(url, params=radancy.params(1, module or radancy.MODULE), headers={"X-Requested-With": "XMLHttpRequest"}).raise_for_status()
     india = radancy.TOTAL.search(r.json()["results"])
-    return {"endpoint": url, "total": "unknown", "india": int(india.group(1)) if india else "unknown"}
+    out = {"endpoint": url, "total": "unknown", "india": int(india.group(1)) if india else "unknown"}
+    if module:
+        out["results_module"] = module
+    return out
 
 
 def probe_rippling(c: httpx.Client, slug: str) -> dict:

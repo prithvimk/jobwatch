@@ -323,4 +323,13 @@ boards:
     careers_url: https://careers.principal.com/in
     hints: {jibe: "https://careers.principal.com"}
     note: "Added 2026-11-26. Jibe; Principal Global Services, Hyderabad and Pune"
+  - name: Millennium
+    careers_url: https://www.mlp.com/careers/
+    hints: {eightfold: "mlp.eightfold.ai|mlp.com"}
+    note: "Added 2026-11-26. Eightfold v2 API (no PCSX); applies on Eightfold itself; Bengaluru and Mumbai"
+  - name: Charles Schwab
+    careers_url: https://www.schwabjobs.com/
+    hints: {radancy: "https://www.schwabjobs.com|Search Results"}
+    backend: icims
+    note: "Added 2026-11-26. Radancy front end, results module 'Search Results'; apply goes to iCIMS (career-ind-schwab); Hyderabad"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

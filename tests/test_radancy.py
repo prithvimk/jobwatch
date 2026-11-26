@@ -110,3 +110,76 @@ def test_closed_successfactors_requisition_is_not_live():
     radancy.enrich(c, j)
     ok, why = radancy.live(c, j)
     assert not ok and "closed" in why
+
+
+# --- Charles Schwab (recorded 2026-11-26): title in <h2>, location and requisition inside the link, iCIMS apply ---
+SCHWAB = {"name": "Charles Schwab", "endpoint": "https://www.schwabjobs.com/search-jobs/results",
+          "results_module": "Search Results"}
+ICIMS = "https://career-ind-schwab.icims.com/jobs/124308/manager%2c-business-systems-analysis/login"
+
+
+def schwab_item(i):
+    jid = 98379876016 + i
+    return f"""
+                        <li>
+                            <a href="/job/hyderabad/manager-business-systems-analysis/33995/{jid}" data-job-id="{jid}">
+                                <h2>Manager, Business Systems Analysis</h2>
+                                    <span class="job-location">Hyderabad, Telangana</span>
+                                    <div><span class="job-req-id"><b>Requisition ID: </b> 2026-{124308 + i}</span></div>
+                                <button type="button" class="js-save-job-btn" data-job-id="{jid}" data-org-id="33995">Save for Later</button>
+                            </a>
+                        </li>"""
+
+
+SCHWAB_LD = {"@type": "JobPosting", "datePosted": "2026-11-25",
+             "description": "<h2>Your opportunity</h2><p>Build ML models</p>",
+             "qualifications": "<ul><li>3+ years of Python and statistics</li></ul>",
+             "identifier": {"@type": "PropertyValue", "name": "Job ID", "value": "2026-124308"},
+             "jobLocation": [{"@type": "Place", "address": {"addressLocality": "Hyderabad", "addressRegion": "Telangana",
+                                                            "addressCountry": "India"}}]}
+
+
+def schwab_client(n, icims_status=200):
+    def handler(req: httpx.Request):
+        if req.url.path == "/search-jobs/results":
+            assert req.url.params["SearchResultsModuleName"] == "Search Results"
+            assert req.url.params["FacetFilters[0].ID"] == "1269750"
+            return httpx.Response(200, json={"results": results([schwab_item(i) for i in range(n)], n)})
+        if req.url.path.startswith("/job/"):
+            return httpx.Response(200, html=f'<html><script type="application/ld+json">{json.dumps(SCHWAB_LD)}</script>'
+                                            f'<a class="button job-apply top" data-apply-url="{ICIMS}" href="{ICIMS}">Apply</a></html>')
+        if req.url.host == "career-ind-schwab.icims.com":
+            return httpx.Response(icims_status, html="<html><body>iCIMS</body></html>")
+        return httpx.Response(404)
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def test_schwab_rows_with_h2_title_and_requisition():
+    jobs = radancy.fetch(schwab_client(3), SCHWAB)
+    assert len(jobs) == 3
+    j = jobs[0]
+    assert j.id == "98379876016" and j.title == "Manager, Business Systems Analysis"
+    assert j.locations == ["Hyderabad, Telangana"] and j.req_id == "2026-124308"
+    assert j.url == "https://www.schwabjobs.com/job/hyderabad/manager-business-systems-analysis/33995/98379876016"
+
+
+def test_moodys_default_module_name():
+    assert radancy.params(1)["SearchResultsModuleName"] == "Section 6 - Search Results List"
+
+
+def test_schwab_jd_includes_qualifications_and_icims_live():
+    c = schwab_client(1)
+    [j] = radancy.fetch(c, SCHWAB)
+    radancy.enrich(c, j)
+    assert j.posted_at == "2026-11-25" and j.req_id == "2026-124308"
+    assert "Build ML models" in j.jd and "3+ years of Python" in j.jd
+    assert j.apply_url == ICIMS
+    assert radancy.live(c, j)[0]
+
+
+def test_schwab_closed_icims_410_is_not_live():
+    c = schwab_client(1, icims_status=410)
+    [j] = radancy.fetch(c, SCHWAB)
+    radancy.enrich(c, j)
+    ok, why = radancy.live(c, j)
+    assert not ok and "410" in why

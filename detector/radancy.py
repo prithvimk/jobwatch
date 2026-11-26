@@ -1,4 +1,6 @@
-"""Radancy (TalentBrew) career sites (Moody's). Config: boards.yaml `endpoint` = https://<host>/<lang>/search-jobs/results.
+"""Radancy (TalentBrew) career sites (Moody's, Charles Schwab). Config: boards.yaml `endpoint` =
+https://<host>[/<lang>]/search-jobs/results, and `results_module` when the site's results module is not
+named like Moody's (Schwab: "Search Results"; the wrong name returns the list without rows).
 
 Facts this relies on (checked live on Moody's, 2026-11-22):
 - `search-jobs/results` (the site's own AJAX call) returns JSON whose `results` is an HTML list. With the
@@ -12,6 +14,11 @@ Facts this relies on (checked live on Moody's, 2026-11-22):
   (`career8.successfactors.com/sfcareer/jobreqcareer?jobId=<Job ID>`), which answers 200 for closed
   requisitions too, with a "no longer available" page whose title lacks the job id; an open one is titled
   "Career Opportunities: <title> (<Job ID>)". So the apply check looks for the id in the title.
+
+Charles Schwab (checked 2026-11-26): rows put the title in an <h2> and the location and "Requisition ID"
+inside the job link. JSON-LD keeps the required skills in a separate `qualifications` field, added to the
+JD. Apply goes to iCIMS (`career-ind-schwab.icims.com/jobs/<n>/.../login`), which answers 410 for a
+closed or unknown job, so the generic apply-page check decides.
 """
 
 from __future__ import annotations
@@ -26,8 +33,12 @@ from detector.sources import Job
 
 INDIA_FACET = "1269750"
 PER_PAGE = 100
-ITEM = re.compile(r'<a[^>]*href="(?P<href>/[^"]+)"[^>]*data-job-id="(?P<id>\d+)"[^>]*>(?P<title>[^<]+)</a>(?P<rest>.*?)(?=<a[^>]*data-job-id="\d+"[^>]*>[^<]|\Z)', re.S)
+ITEM = re.compile(r'<a[^>]*href="(?P<href>/[^"]+)"[^>]*data-job-id="(?P<id>\d+)"[^>]*>(?P<inner>.*?)</a>(?P<rest>.*?)(?=<a[^>]*data-job-id="\d+"|\Z)', re.S)
+H2 = re.compile(r"<h2[^>]*>(.*?)</h2>", re.S)
+TAG = re.compile(r"<[^>]+>")
 LOCATION = re.compile(r'job-location[^"]*">([^<]*)<')
+REQ = re.compile(r'job-req-id[^"]*">(?:\s*<b>[^<]*</b>)?\s*([^<\s][^<]*?)\s*<')
+MODULE = "Section 6 - Search Results List"
 TOTAL = re.compile(r'data-total-results="(\d+)"')
 LD = re.compile(r'<script type="application/ld\+json">(.*?)</script>', re.S)
 APPLY = re.compile(r'data-apply-url="([^"]+)"')
@@ -38,13 +49,13 @@ class RadancyError(RuntimeError):
     pass
 
 
-def params(page: int) -> dict:
+def params(page: int, module: str = MODULE) -> dict:
     return {
         "ActiveFacetID": INDIA_FACET, "CurrentPage": page, "RecordsPerPage": PER_PAGE, "Distance": 50,
         "RadiusUnitType": 0, "Keywords": "", "Location": "", "ShowRadius": "False", "IsPagination": "False",
         "FacetTerm": "", "FacetType": 0, "FacetFilters[0].ID": INDIA_FACET, "FacetFilters[0].FacetType": 2,
         "FacetFilters[0].Count": 0, "FacetFilters[0].Display": "India", "FacetFilters[0].IsApplied": "true",
-        "FacetFilters[0].FieldName": "", "SearchResultsModuleName": "Section 6 - Search Results List",
+        "FacetFilters[0].FieldName": "", "SearchResultsModuleName": module,
         "SearchFiltersModuleName": "Search Filters", "SortCriteria": 0, "SortDirection": 0, "SearchType": 5,
         "ResultsType": 0,
     }
@@ -53,12 +64,18 @@ def params(page: int) -> dict:
 def parse_results(fragment: str, base: str, board: str) -> list[Job]:
     out = []
     for m in ITEM.finditer(fragment):
-        loc = LOCATION.search(m.group("rest"))
+        row = m.group("inner") + m.group("rest")
+        h2 = H2.search(m.group("inner"))
+        title = html.unescape(TAG.sub("", h2.group(1) if h2 else m.group("inner"))).strip()
+        if not title:
+            continue
+        loc = LOCATION.search(row)
         locs = [l.strip() for l in html.unescape(loc.group(1)).split(";")] if loc else []
+        req = REQ.search(row)
         url = base + html.unescape(m.group("href"))
         out.append(Job(
-            board=board, id=m.group("id"), title=html.unescape(m.group("title")).strip(),
-            locations=[l for l in locs if l], url=url, apply_url=url, posted_at=None,
+            board=board, id=m.group("id"), title=title, locations=[l for l in locs if l],
+            url=url, apply_url=url, posted_at=None, req_id=html.unescape(req.group(1)) if req else None,
         ))
     return out
 
@@ -68,7 +85,7 @@ def fetch(c: httpx.Client, board: dict, **_) -> list[Job]:
     base = f"{u.scheme}://{u.host}"
     out, seen, page = [], set(), 1
     while True:
-        r = c.get(board["endpoint"], params=params(page), headers={"X-Requested-With": "XMLHttpRequest"})
+        r = c.get(board["endpoint"], params=params(page, board.get("results_module") or MODULE), headers={"X-Requested-With": "XMLHttpRequest"})
         r.raise_for_status()
         if "json" not in r.headers.get("content-type", ""):
             raise RadancyError(f"results not JSON ({r.headers.get('content-type', '')})")
@@ -118,7 +135,8 @@ def enrich(c: httpx.Client, job: Job) -> None:
     locs = [place(x) for x in (places if isinstance(places, list) else [places])]
     job.locations = [l for l in locs if l] or job.locations
     from detector.jd import html_to_text
-    job.jd = html_to_text(html.unescape(p.get("description") or "")) or job.jd
+    parts = [html_to_text(html.unescape(p.get(k) or "")) for k in ("description", "responsibilities", "qualifications")]
+    job.jd = "\n\n".join(x for x in parts if x) or job.jd
     a = APPLY.search(r.text)
     if a:
         job.apply_url = html.unescape(a.group(1))

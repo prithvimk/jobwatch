@@ -81,6 +81,8 @@ summary:
   - UBS
   - Nomura
   - Principal
+  - Millennium
+  - Charles Schwab
   custom-scrape:
   - Google
   - Sony Research India
@@ -1332,3 +1334,29 @@ boards:
   evidence:
   - GET https://careers.principal.com/in -> 200 https://careers.principal.com/in
   - confirmed jibe JSON
+- name: Millennium
+  careers_url: https://www.mlp.com/careers/
+  note: Added 2026-11-26. Eightfold v2 API (no PCSX); applies on Eightfold itself; Bengaluru and Mumbai
+  ats: custom
+  platform: eightfold
+  effort: custom-json
+  endpoint: https://mlp.eightfold.ai/api/apply/v2/jobs?domain=mlp.com
+  total: unknown
+  india: 37
+  evidence:
+  - GET https://www.mlp.com/careers/ -> 403 https://www.mlp.com/careers/
+  - confirmed eightfold JSON
+- name: Charles Schwab
+  careers_url: https://www.schwabjobs.com/
+  note: Added 2026-11-26. Radancy front end, results module 'Search Results'; apply goes to iCIMS (career-ind-schwab); Hyderabad
+  ats: custom
+  platform: radancy
+  effort: custom-json
+  endpoint: https://www.schwabjobs.com/search-jobs/results
+  total: unknown
+  india: 22
+  results_module: Search Results
+  backend: icims
+  evidence:
+  - GET https://www.schwabjobs.com/ -> 200 https://www.schwabjobs.com/
+  - confirmed radancy JSON
