@@ -269,6 +269,15 @@ button{font:inherit;font-size:12px;padding:2px 8px;cursor:pointer} tr.marked{opa
 @media (max-width:900px){table{display:block;overflow-x:auto} td{min-width:90px}}
 h2 .count{color:var(--muted);font-weight:400}
 pre{white-space:pre-wrap;font-size:12px;background:var(--head);padding:8px;border-radius:6px}
+body{max-width:none;margin:0;padding:0} main{max-width:1300px;margin:24px auto;padding:0 16px 0 196px}
+section{scroll-margin-top:12px}
+#side{position:fixed;top:0;left:0;bottom:0;width:172px;padding:20px 8px;background:var(--head);border-right:1px solid var(--line);overflow-y:auto;box-sizing:border-box}
+#side a{display:flex;justify-content:space-between;gap:6px;padding:6px 10px;border-radius:6px;color:var(--fg);text-decoration:none;font-size:13px}
+#side a:hover{background:#e7eaef} #side a.on{background:var(--accent);color:#fff} #side a.on .count{color:#dfe6ef}
+#side a.top{font-weight:700;color:var(--accent);font-size:15px;margin-bottom:8px} #side .count{color:var(--muted);font-variant-numeric:tabular-nums}
+@media (max-width:900px){main{padding:0 12px;margin-top:12px} section{scroll-margin-top:52px}
+ #side{position:sticky;bottom:auto;width:auto;display:flex;overflow-x:auto;padding:6px;border-right:0;border-bottom:1px solid var(--line);z-index:1}
+ #side a{white-space:nowrap;flex:none} #side a.top{margin:0}}
 """
 
 JS = """
@@ -302,14 +311,30 @@ function age() {
   st.textContent = `No laptop pass for ${m} min. Check the Task Scheduler job and private/logs/sync.log.`;
 }
 age(); setInterval(age, 30000);
+const navLinks = [...document.querySelectorAll('#side a[href^="#"]:not(.top)')];
+function onSection() {
+  let cur = navLinks[0];
+  for (const a of navLinks) if (document.querySelector(a.getAttribute('href')).getBoundingClientRect().top < 80) cur = a;
+  if (innerHeight + scrollY >= document.body.scrollHeight - 2) cur = navLinks[navLinks.length - 1];
+  navLinks.forEach(a => a.classList.toggle('on', a === cur));
+}
+addEventListener('scroll', onSection, {passive: true}); onSection();
 setTimeout(() => location.reload(), 120000);
 """
 
 
-def _h2(title: str, section: tuple[str, str]) -> str:
-    """Heading with the section's count, then the section."""
+def _h2(title: str, section: tuple[str, str], sid: str) -> str:
+    """Heading with the section's count, then the section, wrapped so the sidebar can link to it."""
     html, count = section
-    return f"<h2>{escape(title, quote=False)} <span class='count'>({escape(count, quote=False)})</span></h2>{html}"
+    return (f"<section id='{sid}'><h2>{escape(title, quote=False)} "
+            f"<span class='count'>({escape(count, quote=False)})</span></h2>{html}</section>")
+
+
+def _sidebar(items: list[tuple[str, str, str]]) -> str:
+    """Section links (id, label, count), fixed at the left; a bar across the top on narrow screens."""
+    links = "".join(f"<a href='#{sid}'>{escape(label, quote=False)}"
+                    f"<span class='count'>{escape(count, quote=False)}</span></a>" for sid, label, count in items)
+    return f"<nav id='side'><a class='top' href='#'>jobwatch</a>{links}</nav>"
 
 
 def build(now: datetime | None = None) -> str:
@@ -323,17 +348,26 @@ def build(now: datetime | None = None) -> str:
     n_shown = sum(e.get("status") == ledger.SHOWN for e in led["roles"].values())
     consts = (f"const GENERATED={int(now.timestamp() * 1000)}, STALE={STALE_MIN}, "
               f"REPLY={json.dumps(reply)}, AUTH={json.dumps(auth)};")
+    sections = [
+        ("act", "To act on", "To act on", (roles_section(led, verdicts, now), str(n_shown))),
+        ("runner", "Runner", "Runner", runner_section(now)),
+        ("recent", "Last 7 days", "Last 7 days", activity_section(seen, now)),
+        ("digest", "Screened out, queued for tonight's digest", "Tonight's digest", digest_section()),
+        ("resolved", "Resolved, last 30 days", "Resolved", resolved_section(led, now)),
+        ("boards", "Boards", "Boards", boards_section(seen, health, now)),
+    ]
+    nav = _sidebar([(sid, short, (re.match(r"\d*", sec[1]).group() or ""))
+                    for sid, _, short, sec in sections])
+    body = "\n".join(_h2(title, sec, sid) for sid, title, _, sec in sections)
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>jobwatch ({n_shown} to act on)</title><style>{CSS}</style></head><body>
+{nav}
+<main>
 <h1>jobwatch</h1>
 <div id="stale"></div>
-<h2>To act on <span class='count'>({n_shown})</span></h2>{roles_section(led, verdicts, now)}
-{_h2("Runner", runner_section(now))}
-{_h2("Last 7 days", activity_section(seen, now))}
-{_h2("Screened out, queued for tonight's digest", digest_section())}
-{_h2("Resolved, last 30 days", resolved_section(led, now))}
-{_h2("Boards", boards_section(seen, health, now))}
+{body}
+</main>
 <script>{consts}{JS}</script>
 </body></html>
 """
