@@ -25422,6 +25422,11 @@
      "req": "CF1_AMER_TBH#23940",
      "status": "filtered"
     },
+    "8416739": {
+     "first_seen": "2026-11-26T15:52:36+00:00",
+     "jd_score": 0,
+     "status": "filtered"
+    },
     "8417964": {
      "first_seen": "2026-11-25T20:02:38+00:00",
      "req": "24125",
