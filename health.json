@@ -47,6 +47,10 @@
   "fails": 0,
   "ok": true
  },
+ "Charles Schwab": {
+  "fails": 0,
+  "ok": true
+ },
  "Cisco": {
   "fails": 0,
   "ok": true
@@ -172,6 +176,10 @@
   "ok": true
  },
  "Microsoft": {
+  "fails": 0,
+  "ok": true
+ },
+ "Millennium": {
   "fails": 0,
   "ok": true
  },
