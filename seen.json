@@ -45537,6 +45537,17 @@
      "req": "PT-JR046981",
      "status": "baseline"
     },
+    "PT-JR046989": {
+     "first_seen": "2026-11-26T06:12:37+00:00",
+     "req": "PT-JR046989",
+     "status": "filtered"
+    },
+    "PT-JR046990": {
+     "first_seen": "2026-11-26T06:12:37+00:00",
+     "jd_score": 0,
+     "req": "PT-JR046990",
+     "status": "filtered"
+    },
     "PT-JR046991": {
      "first_seen": "2026-11-23T09:07:37+00:00",
      "req": "PT-JR046991",
@@ -58343,6 +58354,11 @@
      "first_seen": "2026-11-24T06:42:37+00:00",
      "req": "R-588471",
      "status": "screened"
+    },
+    "R-588764-1": {
+     "first_seen": "2026-11-26T06:12:37+00:00",
+     "req": "R-588764",
+     "status": "filtered"
     },
     "R-589032": {
      "first_seen": "2026-11-23T10:32:37+00:00",
