@@ -54,6 +54,7 @@ summary:
   - Nike
   - Lowe's
   - Eli Lilly
+  - BNY
   custom-json:
   - Amazon
   - Eightfold AI
@@ -68,6 +69,8 @@ summary:
   - Moody's
   - HSBC
   - Rippling
+  - UBS
+  - Nomura
   custom-scrape:
   - Google
   - Sony Research India
@@ -1112,4 +1115,48 @@ boards:
   - from seed hints
   - GET https://www.alphagrep.com/careers -> 404 https://www.alphagrep.com/careers
   - confirmed greenhouse ('alphagrepsecurities',)
+  - probed 2026-11-26
+- name: UBS
+  careers_url: https://www.ubs.com/global/en/careers/search-jobs.html
+  note: Added 2026-11-26. IBM Kenexa BrassRing, site 5012 (experienced professionals); Pune, Mumbai, Hyderabad
+  ats: custom
+  platform: brassring
+  effort: custom-json
+  endpoint: https://jobs.ubs.com/TgNewUI/Search/Ajax/MatchedJobs?partnerid=25008&siteid=5012
+  total: unknown
+  india: 36
+  evidence:
+  - GET https://www.ubs.com/global/en/careers/search-jobs.html -> 403 https://www.ubs.com/global/en/careers/search-jobs.html
+  - confirmed brassring JSON
+  - probed 2026-11-26
+- name: BNY
+  careers_url: https://www.bny.com/corporate/global/en/about-us/careers/experienced-professionals.html
+  note: Added 2026-11-26. Oracle Recruiting Cloud; Pune and Chennai
+  ats: oracle
+  effort: adapter
+  locator:
+  - eofe.fa.us2.oraclecloud.com
+  - BNY-Careers
+  endpoint: https://eofe.fa.us2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?finder=findReqs;siteNumber=BNY-Careers
+  total: 1233
+  india: 130
+  india_method: LOCATIONS facet, country=India
+  evidence:
+  - from seed hints
+  - GET https://www.bny.com/corporate/global/en/about-us/careers/experienced-professionals.html -> 200 https://www.bny.com/corporate/global/en/about-us/careers/experienced-professionals.html
+  - confirmed oracle ('eofe.fa.us2.oraclecloud.com', 'BNY-Careers')
+  - probed 2026-11-26
+- name: Nomura
+  careers_url: https://careers.nomura.com/Nomura/
+  note: Added 2026-11-26. SuccessFactors Career Site Builder; Mumbai (Powai)
+  ats: custom
+  platform: sfcsb
+  effort: custom-json
+  endpoint: https://careers.nomura.com/Nomura/search/
+  total: unknown
+  india: 300
+  backend: successfactors
+  evidence:
+  - GET https://careers.nomura.com/Nomura/ -> 200 https://careers.nomura.com/Nomura/
+  - confirmed sfcsb JSON
   - probed 2026-11-26

@@ -35,7 +35,7 @@ ADAPTER = {"workday", "oracle"}
 LOCATORS: list[tuple[str, re.Pattern]] = [
     ("workday", re.compile(r"https?://([a-z0-9-]+)\.(wd\d+)\.myworkdayjobs\.com/(?:[a-z]{2}-[A-Z]{2}/)?([A-Za-z0-9_-]+)")),
     ("workday", re.compile(r"https?://(wd\d+)\.myworkdaysite\.com/(?:[a-z]{2}-[A-Z]{2}/)?recruiting/([a-z0-9-]+)/([A-Za-z0-9_-]+)")),
-    ("oracle", re.compile(r"https?://([a-z0-9.-]+\.oraclecloud\.com)/hcmUI/CandidateExperience/[a-z]{2}(?:-[A-Z]{2})?/sites/([A-Za-z0-9_]+)")),
+    ("oracle", re.compile(r"https?://([a-z0-9.-]+\.oraclecloud\.com)/hcmUI/CandidateExperience/[a-z]{2}(?:-[A-Z]{2})?/sites/([A-Za-z0-9_-]+)")),
     ("greenhouse", re.compile(r"(?:boards|job-boards)(?:\.eu)?\.greenhouse\.io/(?:embed/job_board(?:/js)?\?for=)?([A-Za-z0-9_-]+)")),
     ("greenhouse", re.compile(r"boards-api\.greenhouse\.io/v1/boards/([A-Za-z0-9_-]+)")),
     ("lever", re.compile(r"jobs\.(?:eu\.)?lever\.co/([A-Za-z0-9_-]+)")),
@@ -260,9 +260,26 @@ def probe_rippling(c: httpx.Client, slug: str) -> dict:
     return {"endpoint": url, "total": total, "india": len(rippling.fetch(c, {"name": "probe", "endpoint": url}))}
 
 
+def probe_brassring(c: httpx.Client, spec: str) -> dict:
+    """IBM Kenexa BrassRing. spec = '<base>|<partnerid>|<siteid>' (see detector/brassring.py)."""
+    from detector import brassring
+    base, partner, site = spec.split("|")
+    url = f"{base.rstrip('/')}/TgNewUI/Search/Ajax/MatchedJobs?partnerid={partner}&siteid={site}"
+    jobs = brassring.fetch(c, {"name": "probe", "endpoint": url}, location_ok=lambda l: bool(INDIA.search(l)))
+    return {"endpoint": url, "total": "unknown", "india": len(jobs)}
+
+
+def probe_sfcsb(c: httpx.Client, base: str) -> dict:
+    """SuccessFactors Career Site Builder. Hint value: https://<host>/<site> (see detector/sfcsb.py)."""
+    from detector import sfcsb
+    url = f"{base.rstrip('/')}/search/"
+    return {"endpoint": url, "total": "unknown", "india": len(sfcsb.fetch(c, {"name": "probe", "endpoint": url}))}
+
+
 CUSTOM_PROBES = {"jibe": probe_jibe, "eightfold": probe_eightfold, "amazon": probe_amazon,
                  "atlassian": probe_atlassian, "beesite": probe_beesite, "boa": probe_boa,
-                 "gr8people": probe_gr8people, "radancy": probe_radancy, "rippling": probe_rippling}
+                 "gr8people": probe_gr8people, "radancy": probe_radancy, "rippling": probe_rippling,
+                 "brassring": probe_brassring, "sfcsb": probe_sfcsb}
 
 
 class RateLimited(Exception):

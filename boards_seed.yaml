@@ -269,4 +269,17 @@ boards:
     careers_url: https://www.alphagrep.com/careers
     hints: {greenhouse: alphagrepsecurities}
     note: "Added 2026-11-26. Mumbai"
+  - name: UBS
+    careers_url: https://www.ubs.com/global/en/careers/search-jobs.html
+    hints: {brassring: "https://jobs.ubs.com|25008|5012"}
+    note: "Added 2026-11-26. IBM Kenexa BrassRing, site 5012 (experienced professionals); Pune, Mumbai, Hyderabad"
+  - name: BNY
+    careers_url: https://www.bny.com/corporate/global/en/about-us/careers/experienced-professionals.html
+    hints: {oracle: "https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/BNY-Careers"}
+    note: "Added 2026-11-26. Oracle Recruiting Cloud; Pune and Chennai"
+  - name: Nomura
+    careers_url: https://careers.nomura.com/Nomura/
+    hints: {sfcsb: "https://careers.nomura.com/Nomura"}
+    backend: successfactors
+    note: "Added 2026-11-26. SuccessFactors Career Site Builder; Mumbai (Powai)"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

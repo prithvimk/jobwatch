@@ -246,6 +246,16 @@ def _rippling(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     return rippling.fetch(c, b, **ctx)
 
 
+def _brassring(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import brassring
+    return brassring.fetch(c, b, **ctx)
+
+
+def _sfcsb(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import sfcsb
+    return sfcsb.fetch(c, b, **ctx)
+
+
 # fetcher(client, board entry from boards.yaml, skip=set of settled IDs, location_ok=fn, full=bool).
 # Incremental fetchers (Workday) use the context to stop paging early; the JSON boards return everything.
 FETCHERS = {
@@ -262,6 +272,8 @@ FETCHERS = {
     "gr8people": _gr8people,
     "radancy": _radancy,
     "rippling": _rippling,
+    "brassring": _brassring,
+    "sfcsb": _sfcsb,
 }
 
 
@@ -287,6 +299,12 @@ def detail_hooks(ats: str):
     if ats == "rippling":
         from detector import rippling
         return rippling.enrich, rippling.live
+    if ats == "brassring":
+        from detector import brassring
+        return brassring.enrich, brassring.live
+    if ats == "sfcsb":
+        from detector import sfcsb
+        return sfcsb.enrich, sfcsb.live
     return None
 
 
