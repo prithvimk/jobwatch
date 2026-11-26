@@ -151,6 +151,10 @@
   "fails": 0,
   "ok": true
  },
+ "Intuit": {
+  "fails": 0,
+  "ok": true
+ },
  "Invesco": {
   "fails": 0,
   "ok": true
@@ -192,10 +196,8 @@
   "ok": true
  },
  "Mindtickle": {
-  "error": "ReadTimeout: The read operation timed out",
-  "failing_since": "2026-11-26T12:22:36+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Moody's": {
   "fails": 0,
@@ -229,6 +231,10 @@
   "fails": 0,
   "ok": true
  },
+ "Okta": {
+  "fails": 0,
+  "ok": true
+ },
  "P&G": {
   "fails": 0,
   "ok": true
@@ -242,6 +248,10 @@
   "ok": true
  },
  "Principal": {
+  "fails": 0,
+  "ok": true
+ },
+ "Razorpay": {
   "fails": 0,
   "ok": true
  },
@@ -277,11 +287,19 @@
   "fails": 0,
   "ok": true
  },
+ "Snowflake": {
+  "fails": 0,
+  "ok": true
+ },
  "Squarepoint": {
   "fails": 0,
   "ok": true
  },
  "State Street": {
+  "fails": 0,
+  "ok": true
+ },
+ "Stripe": {
   "fails": 0,
   "ok": true
  },
