@@ -83,6 +83,7 @@ summary:
   - Principal
   - Millennium
   - Charles Schwab
+  - Franklin Templeton
   custom-scrape:
   - Google
   - Sony Research India
@@ -1360,3 +1361,16 @@ boards:
   evidence:
   - GET https://www.schwabjobs.com/ -> 200 https://www.schwabjobs.com/
   - confirmed radancy JSON
+- name: Franklin Templeton
+  careers_url: https://careers.franklintempleton.com/us/en
+  note: Added 2026-11-26. Phenom front end; apply goes to Workday franklintempleton.wd5 Primary-External-1, whose list is empty, so the list comes from Phenom and liveness from the Workday detail API. Hyderabad
+  ats: custom
+  platform: phenom
+  effort: custom-json
+  endpoint: https://careers.franklintempleton.com/us/en
+  total: 273
+  india: 113
+  backend: workday
+  evidence:
+  - GET https://careers.franklintempleton.com/us/en -> 200 https://careers.franklintempleton.com/us/en
+  - confirmed phenom JSON

@@ -283,10 +283,20 @@ def probe_sfcsb(c: httpx.Client, base: str) -> dict:
     return {"endpoint": url, "total": "unknown", "india": len(sfcsb.fetch(c, {"name": "probe", "endpoint": url}))}
 
 
+def probe_phenom(c: httpx.Client, root: str) -> dict:
+    """Phenom sites. Hint value: the locale root https://<host>/<country>/<lang> (see detector/phenom.py)."""
+    from detector import phenom
+    root = root.rstrip("/")
+    u = httpx.URL(root)
+    total = c.post(f"{u.scheme}://{u.host}/widgets", json={**phenom.body(0, 1), "selected_fields": {}}).raise_for_status()
+    return {"endpoint": root, "total": total.json()["refineSearch"]["totalHits"],
+            "india": len(phenom.fetch(c, {"name": "probe", "endpoint": root}))}
+
+
 CUSTOM_PROBES = {"jibe": probe_jibe, "eightfold": probe_eightfold, "amazon": probe_amazon,
                  "atlassian": probe_atlassian, "beesite": probe_beesite, "boa": probe_boa,
                  "gr8people": probe_gr8people, "radancy": probe_radancy, "rippling": probe_rippling,
-                 "brassring": probe_brassring, "sfcsb": probe_sfcsb}
+                 "brassring": probe_brassring, "sfcsb": probe_sfcsb, "phenom": probe_phenom}
 
 
 class RateLimited(Exception):

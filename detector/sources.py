@@ -251,6 +251,11 @@ def _brassring(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     return brassring.fetch(c, b, **ctx)
 
 
+def _phenom(c: httpx.Client, b: dict, **ctx) -> list[Job]:
+    from detector import phenom
+    return phenom.fetch(c, b, **ctx)
+
+
 def _sfcsb(c: httpx.Client, b: dict, **ctx) -> list[Job]:
     from detector import sfcsb
     return sfcsb.fetch(c, b, **ctx)
@@ -274,6 +279,7 @@ FETCHERS = {
     "rippling": _rippling,
     "brassring": _brassring,
     "sfcsb": _sfcsb,
+    "phenom": _phenom,
 }
 
 
@@ -302,6 +308,9 @@ def detail_hooks(ats: str):
     if ats == "brassring":
         from detector import brassring
         return brassring.enrich, brassring.live
+    if ats == "phenom":
+        from detector import phenom
+        return phenom.enrich, phenom.live
     if ats == "sfcsb":
         from detector import sfcsb
         return sfcsb.enrich, sfcsb.live

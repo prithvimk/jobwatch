@@ -332,4 +332,9 @@ boards:
     hints: {radancy: "https://www.schwabjobs.com|Search Results"}
     backend: icims
     note: "Added 2026-11-26. Radancy front end, results module 'Search Results'; apply goes to iCIMS (career-ind-schwab); Hyderabad"
+  - name: Franklin Templeton
+    careers_url: https://careers.franklintempleton.com/us/en
+    hints: {phenom: "https://careers.franklintempleton.com/us/en"}
+    backend: workday
+    note: "Added 2026-11-26. Phenom front end; apply goes to Workday franklintempleton.wd5 Primary-External-1, whose list is empty, so the list comes from Phenom and liveness from the Workday detail API. Hyderabad"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.
