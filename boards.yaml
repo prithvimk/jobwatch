@@ -26,6 +26,10 @@ summary:
   - Point72
   - AQR
   - Groww
+  - Snowflake
+  - Razorpay
+  - Okta
+  - Stripe
   adapter:
   - JPMC
   - Goldman Sachs
@@ -85,6 +89,7 @@ summary:
   - Charles Schwab
   - Franklin Templeton
   - D. E. Shaw India
+  - Intuit
   custom-scrape:
   - Google
   - Sony Research India
@@ -1387,3 +1392,73 @@ boards:
   evidence:
   - GET https://www.deshawindia.com/careers -> 200 https://www.deshawindia.com/careers
   - confirmed deshaw JSON
+- name: Intuit
+  careers_url: https://jobs.intuit.com/
+  note: Added 2026-11-26. Radancy front end, results module 'Search Results'; row ids are Intuit's requisition numbers; apply goes to Avature (intuit.avature.net), 403 for an unknown id; Bengaluru
+  ats: custom
+  platform: radancy
+  effort: custom-json
+  endpoint: https://jobs.intuit.com/search-jobs/results
+  total: unknown
+  india: 28
+  results_module: Search Results
+  backend: avature
+  evidence:
+  - GET https://jobs.intuit.com/ -> 200 https://jobs.intuit.com/
+  - confirmed radancy JSON
+- name: Snowflake
+  careers_url: https://careers.snowflake.com/
+  note: Added 2026-11-26. Pune and Bengaluru
+  ats: ashby
+  effort: easy
+  locator:
+  - snowflake
+  endpoint: https://api.ashbyhq.com/posting-api/job-board/snowflake
+  total: 373
+  india: 11
+  evidence:
+  - from seed hints
+  - GET https://careers.snowflake.com/ -> 200 https://careers.snowflake.com/us/en
+  - confirmed ashby ('snowflake',)
+- name: Razorpay
+  careers_url: https://razorpay.com/jobs/
+  note: Added 2026-11-26. Bengaluru
+  ats: greenhouse
+  effort: easy
+  locator:
+  - razorpaysoftwareprivatelimited
+  endpoint: https://boards-api.greenhouse.io/v1/boards/razorpaysoftwareprivatelimited/jobs
+  total: 26
+  india: 22
+  evidence:
+  - from seed hints
+  - GET https://razorpay.com/jobs/ -> 200 https://razorpay.com/careers/
+  - confirmed greenhouse ('razorpaysoftwareprivatelimited',)
+- name: Okta
+  careers_url: https://www.okta.com/company/careers/
+  note: Added 2026-11-26. Bengaluru
+  ats: greenhouse
+  effort: easy
+  locator:
+  - okta
+  endpoint: https://boards-api.greenhouse.io/v1/boards/okta/jobs
+  total: 361
+  india: 103
+  evidence:
+  - from seed hints
+  - GET https://www.okta.com/company/careers/ -> 200 https://www.okta.com/company/careers/
+  - confirmed greenhouse ('okta',)
+- name: Stripe
+  careers_url: https://stripe.com/jobs
+  note: Added 2026-11-26. Bengaluru
+  ats: greenhouse
+  effort: easy
+  locator:
+  - stripe
+  endpoint: https://boards-api.greenhouse.io/v1/boards/stripe/jobs
+  total: 771
+  india: 43
+  evidence:
+  - from seed hints
+  - GET https://stripe.com/jobs -> 200 https://stripe.com/in/careers
+  - confirmed greenhouse ('stripe',)

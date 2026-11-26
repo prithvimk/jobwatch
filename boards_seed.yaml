@@ -341,4 +341,25 @@ boards:
     careers_url: https://www.deshawindia.com/careers
     hints: {deshaw: "https://www.deshawindia.com/careers"}
     note: "Added 2026-11-26. Own Next.js site; postings embedded in the careers page; apply is one general form. Hyderabad, Bengaluru, Gurugram"
+  - name: Intuit
+    careers_url: https://jobs.intuit.com/
+    hints: {radancy: "https://jobs.intuit.com|Search Results"}
+    backend: avature
+    note: "Added 2026-11-26. Radancy front end, results module 'Search Results'; row ids are Intuit's requisition numbers; apply goes to Avature (intuit.avature.net), 403 for an unknown id; Bengaluru"
+  - name: Snowflake
+    careers_url: https://careers.snowflake.com/
+    hints: {ashby: snowflake}
+    note: "Added 2026-11-26. Pune and Bengaluru"
+  - name: Razorpay
+    careers_url: https://razorpay.com/jobs/
+    hints: {greenhouse: razorpaysoftwareprivatelimited}
+    note: "Added 2026-11-26. Bengaluru"
+  - name: Okta
+    careers_url: https://www.okta.com/company/careers/
+    hints: {greenhouse: okta}
+    note: "Added 2026-11-26. Bengaluru"
+  - name: Stripe
+    careers_url: https://stripe.com/jobs
+    hints: {greenhouse: stripe}
+    note: "Added 2026-11-26. Bengaluru"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.
