@@ -19,7 +19,7 @@ from pathlib import Path
 import httpx
 import yaml
 
-from detector import jd, ledger, notify, screen, state
+from detector import jd, ledger, notify, outcomes, screen, state
 from detector.prefilter import Prefilter
 from detector.sources import FETCHERS, Job, client, detail_hooks, enrich_smartrecruiters_urls
 
@@ -278,10 +278,12 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
         verdicts = screen.load_verdicts() if screen_roles else {}
         # JDs are fetched in order (shared HTTP client, paced sites); the Claude calls run in parallel.
         todo = []
+        jd_texts: dict[str, tuple[str, str]] = {}  # kept for the JD copy saved at alert time
         if screen_roles:
             for job, *_ in ready:
                 if f"{job.board}:{job.id}" not in verdicts:
                     todo.append((job, *jd.get(c, job)))
+                    jd_texts[f"{job.board}:{job.id}"] = todo[-1][1:]
         notes: dict[str, str] = {}
 
         def _screen(item):
@@ -330,8 +332,14 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
                 entry["alerted_at"] = state.now_iso()
                 entry.pop("tries", None)
                 if led is not None:
-                    ledger.record_shown(led, job, v, entry["alerted_at"])
+                    e = ledger.record_shown(led, job, v, entry["alerted_at"])
                     led_changed = True
+                    if not dry_run and not e.get("jd_file"):
+                        try:  # a JD copy that outlives the posting (outcomes); caught up later if this fails
+                            text, src = jd_texts.get(f"{job.board}:{job.id}") or jd.get(c, job)
+                            outcomes.save_alert_jd(e, f"{job.board}:{job.id}", text, src)
+                        except Exception as err:
+                            print(f"  JD copy failed: {job.board} {job.id}: {type(err).__name__}: {err}")
         if screen_roles and not dry_run:
             screen.save_verdicts(verdicts)
         if led_changed and not dry_run:

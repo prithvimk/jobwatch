@@ -1,4 +1,4 @@
-"""Laptop runner: pull state -> read phone ledger taps -> detector pass -> digest and reminders -> status page
+"""Laptop runner: pull state -> read phone ledger taps -> detector pass -> digest and reminders -> outcomes (JD copies, closures) -> status page
 -> commit state -> push state -> heartbeat.
 
 Run every 5 min by Windows Task Scheduler (scripts/install_task.ps1) through the venv's pythonw.exe,
@@ -25,7 +25,7 @@ from datetime import datetime
 from pathlib import Path
 
 from detector import run as detector
-from detector import ledger, notify, remind, screen, status
+from detector import ledger, notify, outcomes, remind, screen, status
 
 ROOT = Path(__file__).resolve().parent.parent
 LOG = ROOT / "private" / "logs" / "sync.log"
@@ -148,6 +148,10 @@ def sync() -> int:
         remind.run()  # closing-date reminders, 5-day follow-ups, Sunday lists
     except Exception as e:  # a reminder bug must not stop state from being committed
         print(f"reminders failed: {type(e).__name__}: {e}")
+    try:
+        outcomes.run()  # JD copies still missing, daily closure checks on APPLIED roles
+    except Exception as e:
+        print(f"outcomes failed: {type(e).__name__}: {e}")
     try:
         status.write()  # private/status.html: ledger, board health, this pass's problems
     except Exception as e:
