@@ -1,4 +1,8 @@
 {
+ "AQR": {
+  "fails": 0,
+  "ok": true
+ },
  "Adobe": {
   "fails": 0,
   "ok": true
@@ -8,6 +12,10 @@
   "ok": true
  },
  "Amazon": {
+  "fails": 0,
+  "ok": true
+ },
+ "Apollo": {
   "fails": 0,
   "ok": true
  },
@@ -28,6 +36,10 @@
   "ok": true
  },
  "BlackRock": {
+  "fails": 0,
+  "ok": true
+ },
+ "Blackstone": {
   "fails": 0,
   "ok": true
  },
@@ -79,6 +91,10 @@
   "fails": 0,
   "ok": true
  },
+ "Fidelity International": {
+  "fails": 0,
+  "ok": true
+ },
  "GE HealthCare": {
   "fails": 0,
   "ok": true
@@ -92,6 +108,10 @@
   "ok": true
  },
  "Goldman Sachs": {
+  "fails": 0,
+  "ok": true
+ },
+ "Groww": {
   "fails": 0,
   "ok": true
  },
@@ -116,6 +136,10 @@
   "ok": true
  },
  "Intel": {
+  "fails": 0,
+  "ok": true
+ },
+ "Invesco": {
   "fails": 0,
   "ok": true
  },
@@ -163,6 +187,10 @@
   "fails": 0,
   "ok": true
  },
+ "Morningstar": {
+  "fails": 0,
+  "ok": true
+ },
  "NVIDIA": {
   "fails": 0,
   "ok": true
@@ -179,11 +207,23 @@
   "fails": 0,
   "ok": true
  },
+ "Northern Trust": {
+  "fails": 0,
+  "ok": true
+ },
  "P&G": {
   "fails": 0,
   "ok": true
  },
  "PayPal": {
+  "fails": 0,
+  "ok": true
+ },
+ "Point72": {
+  "fails": 0,
+  "ok": true
+ },
+ "Principal": {
   "fails": 0,
   "ok": true
  },
