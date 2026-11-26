@@ -246,7 +246,7 @@
  "Walmart Global Tech": {
   "error": "WorkdayError: HTTP 422 from https://walmart.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-26T05:02:36+00:00",
-  "fails": 5,
+  "fails": 6,
   "ok": false
  },
  "Wells Fargo": {
