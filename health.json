@@ -244,8 +244,10 @@
   "ok": true
  },
  "Netomi": {
-  "fails": 0,
-  "ok": true
+  "error": "ReadTimeout: The read operation timed out",
+  "failing_since": "2026-11-27T13:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Nike": {
   "fails": 0,
