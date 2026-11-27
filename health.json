@@ -192,8 +192,10 @@
   "ok": true
  },
  "Lowe's": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 0 from https://lowes.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-27T19:02:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "MSCI": {
   "fails": 0,
@@ -224,8 +226,10 @@
   "ok": true
  },
  "Mindtickle": {
-  "fails": 0,
-  "ok": true
+  "error": "ConnectError: [Errno 11001] getaddrinfo failed",
+  "failing_since": "2026-11-27T19:02:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Moody's": {
   "fails": 0,
@@ -248,8 +252,10 @@
   "ok": true
  },
  "Nike": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 0 from https://nike.wd1.myworkdayjobs.com",
+  "failing_since": "2026-11-27T19:02:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Nomura": {
   "fails": 0,
@@ -296,8 +302,10 @@
   "ok": true
  },
  "Rippling": {
-  "fails": 0,
-  "ok": true
+  "error": "ConnectError: [Errno 11001] getaddrinfo failed",
+  "failing_since": "2026-11-27T19:02:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Roche": {
   "fails": 0,
@@ -332,8 +340,10 @@
   "ok": true
  },
  "Sigmoid": {
-  "fails": 0,
-  "ok": true
+  "error": "ConnectError: [Errno 11001] getaddrinfo failed",
+  "failing_since": "2026-11-27T19:02:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Snowflake": {
   "fails": 0,
