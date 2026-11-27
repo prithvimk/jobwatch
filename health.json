@@ -15,7 +15,15 @@
   "fails": 0,
   "ok": true
  },
+ "Amgen": {
+  "fails": 0,
+  "ok": true
+ },
  "Apollo": {
+  "fails": 0,
+  "ok": true
+ },
+ "AstraZeneca": {
   "fails": 0,
   "ok": true
  },
@@ -40,6 +48,10 @@
   "ok": true
  },
  "Blackstone": {
+  "fails": 0,
+  "ok": true
+ },
+ "Bristol Myers Squibb": {
   "fails": 0,
   "ok": true
  },
@@ -115,6 +127,10 @@
   "fails": 0,
   "ok": true
  },
+ "GSK": {
+  "fails": 0,
+  "ok": true
+ },
  "Glance": {
   "fails": 0,
   "ok": true
@@ -167,6 +183,10 @@
   "fails": 0,
   "ok": true
  },
+ "Johnson & Johnson": {
+  "fails": 0,
+  "ok": true
+ },
  "LSEG": {
   "fails": 0,
   "ok": true
@@ -176,6 +196,10 @@
   "ok": true
  },
  "MSCI": {
+  "fails": 0,
+  "ok": true
+ },
+ "MSD": {
   "fails": 0,
   "ok": true
  },
@@ -235,6 +259,10 @@
   "fails": 0,
   "ok": true
  },
+ "Novartis": {
+  "fails": 0,
+  "ok": true
+ },
  "Okta": {
   "fails": 0,
   "ok": true
@@ -244,6 +272,10 @@
   "ok": true
  },
  "PayPal": {
+  "fails": 0,
+  "ok": true
+ },
+ "Pfizer": {
   "fails": 0,
   "ok": true
  },
@@ -267,6 +299,10 @@
   "fails": 0,
   "ok": true
  },
+ "Roche": {
+  "fails": 0,
+  "ok": true
+ },
  "Rubrik": {
   "fails": 0,
   "ok": true
@@ -276,6 +312,10 @@
   "ok": true
  },
  "Salesforce": {
+  "fails": 0,
+  "ok": true
+ },
+ "Sanofi": {
   "fails": 0,
   "ok": true
  },
@@ -312,6 +352,10 @@
   "ok": true
  },
  "Swiggy": {
+  "fails": 0,
+  "ok": true
+ },
+ "Takeda": {
   "fails": 0,
   "ok": true
  },
