@@ -224,8 +224,10 @@
   "ok": true
  },
  "Mindtickle": {
-  "fails": 0,
-  "ok": true
+  "error": "HTTPStatusError: Server error '502 Bad Gateway' for url 'https://api.lever.co/v0/postings/mindtickle?mode=json'\nFor more information check: https://developer.mozilla.o",
+  "failing_since": "2026-11-27T14:32:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Moody's": {
   "fails": 0,
