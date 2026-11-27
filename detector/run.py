@@ -28,7 +28,7 @@ CLOSED_URL = ("error=true", "/404", "job-not-found", "jobnotfound")  # closed jo
 APPLY_ENTRY = ("/oneclick-ui/",)  # ATS application entry paths that refuse non-browser clients
 SIGNIN_APPLY_HOSTS = ("account.amazon.jobs",)  # apply links that always go to a sign-in (see live())
 SCREEN_WORKERS = 4     # parallel Claude calls per pass
-FULL_SWEEP_EVERY = 12  # passes; incremental fetchers (Workday) fully re-enumerate one board per pass
+FULL_SWEEP_EVERY = 12  # 5-min slots; each incremental board (Workday, Amazon, Eightfold) is read in full once per 12, staggered so ~1/12 of boards per pass
 CLOSED_TEXT = ("this job is no longer", "position has been filled", "no longer accepting applications",
                "job you are looking for is no longer")
 
