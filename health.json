@@ -160,10 +160,8 @@
   "ok": true
  },
  "IMC": {
-  "error": "ConnectError: [WinError 10054] An existing connection was forcibly closed by the remote host",
-  "failing_since": "2026-11-27T20:52:36+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "InMobi": {
   "fails": 0,
