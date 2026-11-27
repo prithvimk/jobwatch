@@ -40,5 +40,16 @@ def test_workday_india_nested_facet():
     assert workday_india(facets) == (211, {"param": "locationCountry", "id": "c4f78be1a8f14da0ab49ce1162348a5e"})
 
 
+def test_workday_india_ignores_a_city_level_india_location():
+    # Roche (2026-11-27): no country facet; "India" is one value of the city list, beside Hyderabad.
+    facets = [{"facetParameter": "locationMainGroup", "values": [
+        {"facetParameter": "locations", "descriptor": "Locations", "values": [
+            {"descriptor": "Hyderabad", "id": "h", "count": 46},
+            {"descriptor": "India", "id": "54c59631019f01c479dfb787a377c235", "count": 5},
+        ]},
+    ]}]
+    assert workday_india(facets) == ("unknown", None)
+
+
 def test_workday_india_missing_is_unknown():
     assert workday_india([{"facetParameter": "x", "values": [{"descriptor": "Mumbai", "id": "m", "count": 3}]}]) == ("unknown", None)

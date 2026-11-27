@@ -362,4 +362,57 @@ boards:
     careers_url: https://stripe.com/jobs
     hints: {greenhouse: stripe}
     note: "Added 2026-11-26. Bengaluru"
+  - name: GE Vernova
+    careers_url: https://careers.gevernova.com/
+    hints: {workday: "https://gevernova.wd5.myworkdayjobs.com/Vernova_ExternalSite"}
+    note: "Added 2026-11-27. Careers site is a front end; apply goes to Workday. Bengaluru, Hyderabad, Vadodara, Chennai"
+  - name: Qualcomm
+    careers_url: https://careers.qualcomm.com/careers
+    hints: {eightfold: "careers.qualcomm.com|qualcomm.com"}
+    note: "Added 2026-11-27. Eightfold PCSX, applies on Eightfold itself (no handoff). Bengaluru, Hyderabad, Chennai, Noida"
+  # Pharma, added 2026-11-27. Tenants confirmed live (postings dated today) with India postings.
+  - name: Novartis
+    careers_url: https://www.novartis.com/careers/career-search
+    hints: {workday: "https://novartis.wd3.myworkdayjobs.com/Novartis_Careers"}
+    note: "Added 2026-11-27. Hyderabad, Mumbai"
+  - name: AstraZeneca
+    careers_url: https://careers.astrazeneca.com/search-jobs
+    hints: {eightfold: "astrazeneca.eightfold.ai|astrazeneca.com"}
+    note: "Added 2026-11-27. Radancy front end whose apply button goes to Eightfold (applies there, no handoff); also has a Workday tenant (astrazeneca.wd3 Careers), not used. Chennai, Bengaluru, Mumbai"
+  - name: Sanofi
+    careers_url: https://jobs.sanofi.com/en/search-jobs
+    hints: {workday: "https://sanofi.wd3.myworkdayjobs.com/SanofiCareers"}
+    note: "Added 2026-11-27. Radancy front end (China roles apply on Ajinga). Hyderabad"
+  - name: Amgen
+    careers_url: https://careers.amgen.com/en/search-jobs
+    hints: {workday: "https://amgen.wd1.myworkdayjobs.com/Careers"}
+    note: "Added 2026-11-27. Amgen India, Hyderabad (~735 postings)"
+  - name: Bristol Myers Squibb
+    careers_url: https://careers.bms.com/jobs
+    hints: {workday: "https://bristolmyerssquibb.wd5.myworkdayjobs.com/BMS"}
+    note: "Added 2026-11-27. Hyderabad"
+  - name: Pfizer
+    careers_url: https://www.pfizer.com/about/careers/search-results
+    hints: {workday: "https://pfizer.wd1.myworkdayjobs.com/PfizerCareers"}
+    note: "Added 2026-11-27. Chennai, Mumbai"
+  - name: MSD
+    careers_url: https://jobs.msd.com/gb/en/search-results
+    hints: {workday: "https://msd.wd5.myworkdayjobs.com/SearchJobs"}
+    note: "Added 2026-11-27. Merck & Co. Phenom front end; apply goes to Workday SearchJobs. Hyderabad, Pune, Mumbai"
+  - name: GSK
+    careers_url: https://jobs.gsk.com/en-gb/jobs
+    hints: {workday: "https://gsk.wd5.myworkdayjobs.com/GSKCareers"}
+    note: "Added 2026-11-27. Bengaluru, Hyderabad, Mumbai"
+  - name: Takeda
+    careers_url: https://jobs.takeda.com/search-jobs
+    hints: {workday: "https://takeda.wd502.myworkdayjobs.com/External"}
+    note: "Added 2026-11-27. Radancy front end; apply goes to Workday on wd502. Bengaluru, Mumbai"
+  - name: Johnson & Johnson
+    careers_url: https://www.careers.jnj.com/en/jobs/
+    hints: {workday: "https://jj.wd5.myworkdayjobs.com/JJ"}
+    note: "Added 2026-11-27. Bengaluru, Hyderabad, Mumbai, Pune"
+  - name: Roche
+    careers_url: https://careers.roche.com/global/en/search-results
+    hints: {workday: "https://roche.wd3.myworkdayjobs.com/roche-ext"}
+    note: "Added 2026-11-27. Phenom front end; apply goes to Workday. Hyderabad, Pune, Chennai"
 # Removed 2026-11-21 at user request: Prodigal (replaced by Bank of America), Zwayam.

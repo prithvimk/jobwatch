@@ -68,6 +68,17 @@ summary:
   - Blackstone
   - Apollo
   - Fidelity International
+  - GE Vernova
+  - Novartis
+  - Sanofi
+  - Amgen
+  - Bristol Myers Squibb
+  - Pfizer
+  - MSD
+  - GSK
+  - Takeda
+  - Johnson & Johnson
+  - Roche
   custom-json:
   - Amazon
   - Eightfold AI
@@ -90,6 +101,8 @@ summary:
   - Franklin Templeton
   - D. E. Shaw India
   - Intuit
+  - Qualcomm
+  - AstraZeneca
   custom-scrape:
   - Google
   - Sony Research India
@@ -1462,3 +1475,244 @@ boards:
   - from seed hints
   - GET https://stripe.com/jobs -> 200 https://stripe.com/in/careers
   - confirmed greenhouse ('stripe',)
+- name: GE Vernova
+  careers_url: https://careers.gevernova.com/
+  note: Added 2026-11-27. Careers site is a front end; apply goes to Workday. Bengaluru,
+    Hyderabad, Vadodara, Chennai
+  ats: workday
+  effort: adapter
+  locator:
+  - gevernova
+  - wd5
+  - Vernova_ExternalSite
+  endpoint: https://gevernova.wd5.myworkdayjobs.com/wday/cxs/gevernova/Vernova_ExternalSite/jobs
+  total: 2208
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.gevernova.com/ -> 200 https://careers.gevernova.com/
+  - confirmed workday ('gevernova', 'wd5', 'Vernova_ExternalSite')
+  - probed 2026-11-27
+- name: Qualcomm
+  careers_url: https://careers.qualcomm.com/careers
+  note: Added 2026-11-27. Eightfold PCSX, applies on Eightfold itself (no handoff).
+    Bengaluru, Hyderabad, Chennai, Noida
+  ats: custom
+  platform: eightfold
+  effort: custom-json
+  endpoint: https://careers.qualcomm.com/api/pcsx/search?domain=qualcomm.com
+  total: unknown
+  india: 559
+  evidence:
+  - GET https://careers.qualcomm.com/careers -> 200 https://careers.qualcomm.com/careers
+  - confirmed eightfold JSON
+  - probed 2026-11-27
+- name: Novartis
+  careers_url: https://www.novartis.com/careers/career-search
+  note: Added 2026-11-27. Hyderabad, Mumbai
+  ats: workday
+  effort: adapter
+  locator:
+  - novartis
+  - wd3
+  - Novartis_Careers
+  endpoint: https://novartis.wd3.myworkdayjobs.com/wday/cxs/novartis/Novartis_Careers/jobs
+  total: 884
+  india: 107
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://www.novartis.com/careers/career-search -> 200 https://www.novartis.com/careers/career-search
+  - confirmed workday ('novartis', 'wd3', 'Novartis_Careers')
+  - probed 2026-11-27
+- name: AstraZeneca
+  careers_url: https://careers.astrazeneca.com/search-jobs
+  note: Added 2026-11-27. Radancy front end whose apply button goes to Eightfold (applies
+    there, no handoff); also has a Workday tenant (astrazeneca.wd3 Careers), not used.
+    Chennai, Bengaluru, Mumbai
+  ats: custom
+  platform: eightfold
+  effort: custom-json
+  endpoint: https://astrazeneca.eightfold.ai/api/pcsx/search?domain=astrazeneca.com
+  total: unknown
+  india: 39
+  evidence:
+  - GET https://careers.astrazeneca.com/search-jobs -> 200 https://careers.astrazeneca.com/search-jobs
+  - confirmed eightfold JSON
+  - probed 2026-11-27
+- name: Sanofi
+  careers_url: https://jobs.sanofi.com/en/search-jobs
+  note: Added 2026-11-27. Radancy front end (China roles apply on Ajinga). Hyderabad
+  ats: workday
+  effort: adapter
+  locator:
+  - sanofi
+  - wd3
+  - SanofiCareers
+  endpoint: https://sanofi.wd3.myworkdayjobs.com/wday/cxs/sanofi/SanofiCareers/jobs
+  total: 1438
+  india: 76
+  india_facet:
+    param: locationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://jobs.sanofi.com/en/search-jobs -> 200 https://jobs.sanofi.com/en/search-jobs
+  - confirmed workday ('sanofi', 'wd3', 'SanofiCareers')
+  - probed 2026-11-27
+- name: Amgen
+  careers_url: https://careers.amgen.com/en/search-jobs
+  note: Added 2026-11-27. Amgen India, Hyderabad (~735 postings)
+  ats: workday
+  effort: adapter
+  locator:
+  - amgen
+  - wd1
+  - Careers
+  endpoint: https://amgen.wd1.myworkdayjobs.com/wday/cxs/amgen/Careers/jobs
+  total: 1852
+  india: 735
+  india_facet:
+    param: LocationCountry
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://careers.amgen.com/en/search-jobs -> 200 https://careers.amgen.com/en/search-jobs
+  - confirmed workday ('amgen', 'wd1', 'Careers')
+  - probed 2026-11-27
+- name: Bristol Myers Squibb
+  careers_url: https://careers.bms.com/jobs
+  note: Added 2026-11-27. Hyderabad
+  ats: workday
+  effort: adapter
+  locator:
+  - bristolmyerssquibb
+  - wd5
+  - BMS
+  endpoint: https://bristolmyerssquibb.wd5.myworkdayjobs.com/wday/cxs/bristolmyerssquibb/BMS/jobs
+  total: 688
+  india: 65
+  india_facet:
+    param: locationHierarchy2
+    id: 7b0045a3289810548a41236822339065
+  evidence:
+  - from seed hints
+  - GET https://careers.bms.com/jobs -> 200 https://jobs.bms.com/careers
+  - confirmed workday ('bristolmyerssquibb', 'wd5', 'BMS')
+  - probed 2026-11-27
+- name: Pfizer
+  careers_url: https://www.pfizer.com/about/careers/search-results
+  note: Added 2026-11-27. Chennai, Mumbai
+  ats: workday
+  effort: adapter
+  locator:
+  - pfizer
+  - wd1
+  - PfizerCareers
+  endpoint: https://pfizer.wd1.myworkdayjobs.com/wday/cxs/pfizer/PfizerCareers/jobs
+  total: 720
+  india: 29
+  india_facet:
+    param: Location_Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://www.pfizer.com/about/careers/search-results -> 200 https://www.pfizer.com/about/careers/search-results
+  - confirmed workday ('pfizer', 'wd1', 'PfizerCareers')
+  - probed 2026-11-27
+- name: MSD
+  careers_url: https://jobs.msd.com/gb/en/search-results
+  note: Added 2026-11-27. Merck & Co. Phenom front end; apply goes to Workday SearchJobs.
+    Hyderabad, Pune, Mumbai
+  ats: workday
+  effort: adapter
+  locator:
+  - msd
+  - wd5
+  - SearchJobs
+  endpoint: https://msd.wd5.myworkdayjobs.com/wday/cxs/msd/SearchJobs/jobs
+  total: 787
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://jobs.msd.com/gb/en/search-results -> 200 https://jobs.msd.com/gb/en/search-results
+  - confirmed workday ('msd', 'wd5', 'SearchJobs')
+  - probed 2026-11-27
+- name: GSK
+  careers_url: https://jobs.gsk.com/en-gb/jobs
+  note: Added 2026-11-27. Bengaluru, Hyderabad, Mumbai
+  ats: workday
+  effort: adapter
+  locator:
+  - gsk
+  - wd5
+  - GSKCareers
+  endpoint: https://gsk.wd5.myworkdayjobs.com/wday/cxs/gsk/GSKCareers/jobs
+  total: 897
+  india: 175
+  india_facet:
+    param: Location_Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://jobs.gsk.com/en-gb/jobs -> 200 https://jobs.gsk.com/gb/en
+  - confirmed workday ('gsk', 'wd5', 'GSKCareers')
+  - probed 2026-11-27
+- name: Takeda
+  careers_url: https://jobs.takeda.com/search-jobs
+  note: Added 2026-11-27. Radancy front end; apply goes to Workday on wd502. Bengaluru,
+    Mumbai
+  ats: workday
+  effort: adapter
+  locator:
+  - takeda
+  - wd502
+  - External
+  endpoint: https://takeda.wd502.myworkdayjobs.com/wday/cxs/takeda/External/jobs
+  total: 1835
+  india: 123
+  india_facet:
+    param: Location_Country
+    id: c4f78be1a8f14da0ab49ce1162348a5e
+  evidence:
+  - from seed hints
+  - GET https://jobs.takeda.com/search-jobs -> 200 https://jobs.takeda.com/search-jobs
+  - confirmed workday ('takeda', 'wd502', 'External')
+  - probed 2026-11-27
+- name: Johnson & Johnson
+  careers_url: https://www.careers.jnj.com/en/jobs/
+  note: Added 2026-11-27. Bengaluru, Hyderabad, Mumbai, Pune
+  ats: workday
+  effort: adapter
+  locator:
+  - jj
+  - wd5
+  - JJ
+  endpoint: https://jj.wd5.myworkdayjobs.com/wday/cxs/jj/JJ/jobs
+  total: 1732
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://www.careers.jnj.com/en/jobs/ -> 403 https://www.careers.jnj.com/en/jobs/
+  - confirmed workday ('jj', 'wd5', 'JJ')
+  - probed 2026-11-27
+- name: Roche
+  careers_url: https://careers.roche.com/global/en/search-results
+  note: Added 2026-11-27. Phenom front end; apply goes to Workday. Hyderabad, Pune,
+    Chennai
+  ats: workday
+  effort: adapter
+  locator:
+  - roche
+  - wd3
+  - roche-ext
+  endpoint: https://roche.wd3.myworkdayjobs.com/wday/cxs/roche/roche-ext/jobs
+  total: 1201
+  india: unknown
+  evidence:
+  - from seed hints
+  - GET https://careers.roche.com/global/en/search-results -> 200 https://careers.roche.com/global/en/search-results
+  - confirmed workday ('roche', 'wd3', 'roche-ext')
+  - probed 2026-11-27

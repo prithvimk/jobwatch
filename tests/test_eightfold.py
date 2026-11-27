@@ -49,6 +49,13 @@ def test_fetch_retries_cookie_challenge_and_pages():
     assert Prefilter.load().location_ok(j.locations[0])
 
 
+def test_midnight_utc_posted_ts_is_a_date():
+    # Qualcomm (careers.qualcomm.com, 2026-11-27): every postedTs is 00:00 UTC, i.e. a date only.
+    assert eightfold.posted(1795737600) == "2026-11-27"
+    assert eightfold.posted(1795274517) == "2026-11-21T15:21:57+00:00"
+    assert eightfold.posted(None) is None
+
+
 def test_incremental_stops_on_page_with_nothing_new():
     c, calls = client(230, first_429=False)
     eightfold.fetch(c, BOARD, skip={str(1970393557000000 + i) for i in range(3, 230)}, full=False)

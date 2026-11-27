@@ -152,11 +152,13 @@ def curl_json(url: str, body: dict) -> dict | None:
 
 
 def workday_india(facets: list, parent: str = "") -> tuple[int | str, dict | None]:
-    """Find the country-level 'India' value in a Workday facet tree (facet names differ per tenant)."""
+    """Find the country-level 'India' value in a Workday facet tree (facet names differ per tenant).
+    The plain `locations` facet is skipped: an 'India' value there is one location among the cities
+    (Roche, 2026-11-27: 'India' 5 postings, Hyderabad 46), so filtering on it would drop the rest."""
     for f in facets:
         param = f.get("facetParameter") or parent
         for v in f.get("values") or []:
-            if (v.get("descriptor") or "").strip().lower() == "india" and "id" in v:
+            if (v.get("descriptor") or "").strip().lower() == "india" and "id" in v and param.lower() != "locations":
                 return v.get("count", "unknown"), {"param": param, "id": v["id"]}
             if v.get("values"):
                 found = workday_india([v], param)

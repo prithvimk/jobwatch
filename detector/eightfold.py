@@ -5,7 +5,8 @@ Facts this relies on (checked live on Microsoft, 2026-11-21):
   the same client then gets 200. Bursts also get 429. So: one client per pass (cookies kept), 3 s
   between calls, and one retry on 429.
 - `/api/pcsx/search?location=India&sort_by=timestamp` is newest first, 10 per page (`num` is ignored),
-  with `postedTs` (epoch seconds, the stated posting time). A normal pass stops at the first page
+  with `postedTs` (epoch seconds, the stated posting time; Qualcomm states only a date, sent as
+  midnight UTC, kept as a date). A normal pass stops at the first page
   with nothing unseen or pending, like Workday.
 - `/api/pcsx/position_details` returns 404 for a closed or unknown position, while the job page is a
   JS shell that loads for any id, so the details API decides liveness. Microsoft applies on Eightfold
@@ -59,6 +60,15 @@ def config(board: dict) -> tuple[str, str]:
     return u.netloc, parse_qs(u.query)["domain"][0]
 
 
+def posted(ts: int | None) -> str | None:
+    """`postedTs` as stated. Some tenants (Qualcomm, 2026-11-27) state only a date, sent as midnight UTC;
+    that becomes a plain date so alerts never show an invented 05:30 IST time."""
+    if not ts:
+        return None
+    dt = datetime.fromtimestamp(ts, timezone.utc)
+    return dt.date().isoformat() if ts % 86400 == 0 else dt.isoformat()
+
+
 def is_v2(board: dict) -> bool:
     return "/api/apply/v2/jobs" in board["endpoint"]
 
@@ -82,7 +92,7 @@ def fetch(c: httpx.Client, board: dict, skip: set[str] = frozenset(), full: bool
                 board=board["name"], id=pid, title=p["name"].strip(), locations=list(p.get("locations") or []),
                 url=f"https://{host}/careers/job/{pid}",
                 apply_url=f"https://{host}/careers/apply?pid={pid}&domain={domain}",
-                posted_at=datetime.fromtimestamp(ts, timezone.utc).isoformat() if ts else None,
+                posted_at=posted(ts),
                 req_id=p.get("displayJobId") or p.get("atsJobId"),
                 check_urls=[f"https://{host}/api/pcsx/position_details?position_id={pid}&domain={domain}&hl=en"],
             ))
