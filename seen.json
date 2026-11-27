@@ -35915,6 +35915,12 @@
      "jd_score": 0,
      "req": "R4050146",
      "status": "filtered"
+    },
+    "R4050175-1": {
+     "first_seen": "2026-11-27T05:52:37+00:00",
+     "jd_score": 0,
+     "req": "R4050175",
+     "status": "filtered"
     }
    }
   },
@@ -40742,6 +40748,12 @@
     "JR0289543": {
      "first_seen": "2026-11-24T07:02:37+00:00",
      "req": "JR0289543",
+     "status": "filtered"
+    },
+    "JR0289547": {
+     "first_seen": "2026-11-27T05:52:37+00:00",
+     "jd_score": 0,
+     "req": "JR0289547",
      "status": "filtered"
     },
     "JR0289555": {
@@ -57151,6 +57163,12 @@
      "first_seen": "2026-11-26T12:27:36+00:00",
      "req": "15003",
      "status": "baseline"
+    },
+    "4758549005": {
+     "first_seen": "2026-11-27T05:52:37+00:00",
+     "jd_score": 0,
+     "req": "15006",
+     "status": "filtered"
     }
    }
   },
