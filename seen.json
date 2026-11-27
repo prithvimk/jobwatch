@@ -38859,6 +38859,11 @@
      "req": "Gurgaon Office",
      "status": "baseline"
     },
+    "J72790-1": {
+     "first_seen": "2026-11-27T07:22:37+00:00",
+     "req": "Gurgaon Office",
+     "status": "filtered"
+    },
     "J73315": {
      "first_seen": "2026-11-26T07:47:37+00:00",
      "req": "FIL Bengaluru Office",
@@ -49789,6 +49794,12 @@
      "first_seen": "2026-11-26T15:47:36+00:00",
      "req": "210812489",
      "status": "filtered"
+    },
+    "210812490": {
+     "first_seen": "2026-11-27T07:22:37+00:00",
+     "jd_score": 0,
+     "req": "210812490",
+     "status": "filtered"
     }
    }
   },
@@ -54091,6 +54102,12 @@
      "first_seen": "2026-11-21T16:10:33+00:00",
      "req": "R-292849",
      "status": "baseline"
+    },
+    "R-292939-1": {
+     "first_seen": "2026-11-27T07:22:37+00:00",
+     "jd_score": 0,
+     "req": "R-292939",
+     "status": "filtered"
     },
     "R-292945": {
      "first_seen": "2026-11-21T16:10:33+00:00",
@@ -71199,6 +71216,11 @@
      "first_seen": "2026-11-27T06:42:37+00:00",
      "req": "R2875457",
      "status": "baseline"
+    },
+    "R2875879": {
+     "first_seen": "2026-11-27T07:22:37+00:00",
+     "req": "R2875879",
+     "status": "filtered"
     },
     "R2875940": {
      "first_seen": "2026-11-27T06:42:37+00:00",
