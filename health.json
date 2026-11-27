@@ -216,10 +216,8 @@
   "ok": true
  },
  "Microsoft": {
-  "error": "ReadTimeout: The read operation timed out",
-  "failing_since": "2026-11-27T08:12:37+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Millennium": {
   "fails": 0,
@@ -282,8 +280,10 @@
   "ok": true
  },
  "Point72": {
-  "fails": 0,
-  "ok": true
+  "error": "ConnectError: [WinError 10054] An existing connection was forcibly closed by the remote host",
+  "failing_since": "2026-11-27T08:22:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Principal": {
   "fails": 0,
