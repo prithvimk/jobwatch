@@ -212,10 +212,8 @@
   "ok": true
  },
  "Meesho": {
-  "error": "ReadTimeout: The read operation timed out",
-  "failing_since": "2026-11-27T17:02:37+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Microsoft": {
   "fails": 0,
