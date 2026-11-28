@@ -56,10 +56,8 @@
   "ok": true
  },
  "Capital One": {
-  "error": "WorkdayError: HTTP 500 from https://capitalone.wd12.myworkdayjobs.com",
-  "failing_since": "2026-11-28T06:07:36+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Charles Schwab": {
   "fails": 0,
@@ -314,10 +312,8 @@
   "ok": true
  },
  "Salesforce": {
-  "error": "WorkdayError: HTTP 500 from https://salesforce.wd12.myworkdayjobs.com",
-  "failing_since": "2026-11-28T06:07:36+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Sanofi": {
   "fails": 0,
