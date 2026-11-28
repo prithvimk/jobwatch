@@ -100,8 +100,10 @@
   "ok": true
  },
  "Eli Lilly": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://lilly.wd115.myworkdayjobs.com",
+  "failing_since": "2026-11-28T06:02:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Expedia": {
   "fails": 0,
