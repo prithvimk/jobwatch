@@ -6,7 +6,7 @@
  "Adobe": {
   "error": "WorkdayError: HTTP 403 from https://adobe.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "AlphaGrep": {
@@ -18,15 +18,13 @@
   "ok": true
  },
  "Amgen": {
-  "error": "WorkdayError: HTTP 403 from https://amgen.wd1.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Apollo": {
   "error": "WorkdayError: HTTP 403 from https://athene.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "AstraZeneca": {
@@ -44,31 +42,29 @@
  "Bank of America": {
   "error": "WorkdayError: HTTP 403 from https://ghr.wd1.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Barclays": {
   "error": "WorkdayError: HTTP 403 from https://barclays.wd3.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "BlackRock": {
   "error": "WorkdayError: HTTP 403 from https://blackrock.wd1.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Blackstone": {
-  "error": "WorkdayError: HTTP 403 from https://blackstone.wd1.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Bristol Myers Squibb": {
-  "error": "WorkdayError: HTTP 403 from https://bristolmyerssquibb.wd5.myworkdayjobs.com",
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Capital One": {
@@ -82,13 +78,13 @@
  "Cisco": {
   "error": "WorkdayError: HTTP 403 from https://cisco.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Citi": {
   "error": "WorkdayError: HTTP 403 from https://citi.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Cloudflare": {
@@ -114,7 +110,7 @@
  "Deutsche Bank": {
   "error": "WorkdayError: HTTP 403 from https://db.wd3.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Eightfold AI": {
@@ -134,10 +130,8 @@
   "ok": true
  },
  "Fidelity International": {
-  "error": "WorkdayError: HTTP 403 from https://fil.wd3.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Franklin Templeton": {
   "fails": 0,
@@ -146,19 +140,19 @@
  "GE HealthCare": {
   "error": "WorkdayError: HTTP 403 from https://gehc.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "GE Vernova": {
   "error": "WorkdayError: HTTP 403 from https://gevernova.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "GSK": {
-  "error": "WorkdayError: HTTP 403 from https://gsk.wd5.myworkdayjobs.com",
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Glance": {
@@ -200,7 +194,7 @@
  "Intel": {
   "error": "WorkdayError: HTTP 403 from https://intel.wd1.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Intuit": {
@@ -210,7 +204,7 @@
  "Invesco": {
   "error": "WorkdayError: HTTP 403 from https://invesco.wd1.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "JPMC": {
@@ -218,21 +212,21 @@
   "ok": true
  },
  "Johnson & Johnson": {
-  "error": "WorkdayError: HTTP 403 from https://jj.wd5.myworkdayjobs.com",
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "LSEG": {
   "error": "WorkdayError: HTTP 403 from https://lseg.wd3.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Lowe's": {
   "error": "WorkdayError: HTTP 403 from https://lowes.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "MSCI": {
@@ -240,21 +234,21 @@
   "ok": true
  },
  "MSD": {
-  "error": "WorkdayError: HTTP 403 from https://msd.wd5.myworkdayjobs.com",
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Maersk": {
   "error": "WorkdayError: HTTP 403 from https://maersk.wd3.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Mastercard": {
   "error": "WorkdayError: HTTP 403 from https://mastercard.wd1.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Meesho": {
@@ -280,19 +274,19 @@
  "Morgan Stanley": {
   "error": "WorkdayError: HTTP 403 from https://ms.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Morningstar": {
   "error": "WorkdayError: HTTP 403 from https://morningstar.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "NVIDIA": {
   "error": "WorkdayError: HTTP 403 from https://nvidia.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Netomi": {
@@ -302,7 +296,7 @@
  "Nike": {
   "error": "WorkdayError: HTTP 403 from https://nike.wd1.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Nomura": {
@@ -310,16 +304,12 @@
   "ok": true
  },
  "Northern Trust": {
-  "error": "WorkdayError: HTTP 403 from https://ntrs.wd1.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Novartis": {
-  "error": "WorkdayError: HTTP 403 from https://novartis.wd3.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Okta": {
   "fails": 0,
@@ -328,20 +318,16 @@
  "P&G": {
   "error": "WorkdayError: HTTP 403 from https://pg.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "PayPal": {
-  "error": "WorkdayError: HTTP 403 from https://paypal.wd1.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Pfizer": {
-  "error": "WorkdayError: HTTP 403 from https://pfizer.wd1.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Point72": {
   "fails": 0,
@@ -364,10 +350,8 @@
   "ok": true
  },
  "Roche": {
-  "error": "WorkdayError: HTTP 403 from https://roche.wd3.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Rubrik": {
   "fails": 0,
@@ -376,7 +360,7 @@
  "S&P Global": {
   "error": "WorkdayError: HTTP 403 from https://spgi.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Salesforce": {
@@ -384,10 +368,8 @@
   "ok": true
  },
  "Sanofi": {
-  "error": "WorkdayError: HTTP 403 from https://sanofi.wd3.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Sarvam": {
   "fails": 0,
@@ -400,7 +382,7 @@
  "Shell": {
   "error": "WorkdayError: HTTP 403 from https://shell.wd3.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Sigmoid": {
@@ -416,10 +398,8 @@
   "ok": true
  },
  "State Street": {
-  "error": "WorkdayError: HTTP 403 from https://statestreet.wd1.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Stripe": {
   "fails": 0,
@@ -436,7 +416,7 @@
  "Target": {
   "error": "WorkdayError: HTTP 403 from https://target.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Teradata": {
@@ -454,13 +434,13 @@
  "Vanguard": {
   "error": "WorkdayError: HTTP 403 from https://vanguard.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 13,
+  "fails": 14,
   "ok": false
  },
  "Visa": {
   "error": "WorkdayError: HTTP 403 from https://visa.wd5.myworkdayjobs.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "Walmart Global Tech": {
@@ -470,7 +450,7 @@
  "Wells Fargo": {
   "error": "WorkdayError: HTTP 403 from https://wd1.myworkdaysite.com",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 12,
+  "fails": 13,
   "ok": false
  },
  "WorldQuant": {

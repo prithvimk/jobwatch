@@ -72430,6 +72430,11 @@
      "req": "JR369669",
      "status": "filtered"
     },
+    "JR369704": {
+     "first_seen": "2026-11-28T08:22:36+00:00",
+     "req": "JR369704",
+     "status": "filtered"
+    },
     "JR369736": {
      "first_seen": "2026-11-27T13:42:36+00:00",
      "jd_score": 2,
