@@ -312,8 +312,10 @@
   "ok": true
  },
  "Salesforce": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 504 from https://salesforce.wd12.myworkdayjobs.com",
+  "failing_since": "2026-11-28T05:32:37+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Sanofi": {
   "fails": 0,
