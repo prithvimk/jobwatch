@@ -6,7 +6,7 @@
  "Adobe": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "AlphaGrep": {
@@ -24,7 +24,7 @@
  "Apollo": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "AstraZeneca": {
@@ -58,7 +58,7 @@
  "Bristol Myers Squibb": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "Capital One": {
@@ -72,13 +72,13 @@
  "Cisco": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 14,
+  "fails": 15,
   "ok": false
  },
  "Citi": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 14,
+  "fails": 15,
   "ok": false
  },
  "Cloudflare": {
@@ -132,19 +132,19 @@
  "GE HealthCare": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "GE Vernova": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "GSK": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "Glance": {
@@ -202,7 +202,7 @@
  "Johnson & Johnson": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "LSEG": {
@@ -212,7 +212,7 @@
  "Lowe's": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "MSCI": {
@@ -222,7 +222,7 @@
  "MSD": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "Maersk": {
@@ -256,19 +256,19 @@
  "Morgan Stanley": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 14,
+  "fails": 15,
   "ok": false
  },
  "Morningstar": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "NVIDIA": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "Netomi": {
@@ -298,7 +298,7 @@
  "P&G": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "PayPal": {
@@ -340,7 +340,7 @@
  "S&P Global": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "Salesforce": {
@@ -394,7 +394,7 @@
  "Target": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "Teradata": {
@@ -412,13 +412,13 @@
  "Vanguard": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 15,
+  "fails": 16,
   "ok": false
  },
  "Visa": {
   "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
   "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 14,
+  "fails": 15,
   "ok": false
  },
  "Walmart Global Tech": {
@@ -426,10 +426,8 @@
   "ok": true
  },
  "Wells Fargo": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 14,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "WorldQuant": {
   "fails": 0,
