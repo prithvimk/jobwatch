@@ -356,8 +356,10 @@
   "ok": true
  },
  "Takeda": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://takeda.wd502.myworkdayjobs.com",
+  "failing_since": "2026-11-28T00:07:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Target": {
   "fails": 0,
