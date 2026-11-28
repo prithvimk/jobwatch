@@ -56,8 +56,10 @@
   "ok": true
  },
  "Capital One": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://capitalone.wd12.myworkdayjobs.com",
+  "failing_since": "2026-11-28T06:07:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Charles Schwab": {
   "fails": 0,
@@ -100,10 +102,8 @@
   "ok": true
  },
  "Eli Lilly": {
-  "error": "WorkdayError: HTTP 500 from https://lilly.wd115.myworkdayjobs.com",
-  "failing_since": "2026-11-28T06:02:37+00:00",
-  "fails": 1,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Expedia": {
   "fails": 0,
@@ -314,8 +314,10 @@
   "ok": true
  },
  "Salesforce": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://salesforce.wd12.myworkdayjobs.com",
+  "failing_since": "2026-11-28T06:07:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Sanofi": {
   "fails": 0,
