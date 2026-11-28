@@ -4,8 +4,10 @@
   "ok": true
  },
  "Adobe": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://adobe.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "AlphaGrep": {
   "fails": 0,
@@ -16,12 +18,16 @@
   "ok": true
  },
  "Amgen": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://amgen.wd1.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Apollo": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 0 from https://athene.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "AstraZeneca": {
   "fails": 0,
@@ -40,20 +46,26 @@
   "ok": true
  },
  "Barclays": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 502 from https://barclays.wd3.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "BlackRock": {
   "fails": 0,
   "ok": true
  },
  "Blackstone": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://blackstone.wd1.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Bristol Myers Squibb": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Capital One": {
   "fails": 0,
@@ -112,24 +124,32 @@
   "ok": true
  },
  "Fidelity International": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Franklin Templeton": {
   "fails": 0,
   "ok": true
  },
  "GE HealthCare": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "GE Vernova": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "GSK": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Glance": {
   "fails": 0,
@@ -176,36 +196,46 @@
   "ok": true
  },
  "Invesco": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://invesco.wd1.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "JPMC": {
   "fails": 0,
   "ok": true
  },
  "Johnson & Johnson": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "LSEG": {
   "fails": 0,
   "ok": true
  },
  "Lowe's": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 502 from https://lowes.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "MSCI": {
   "fails": 0,
   "ok": true
  },
  "MSD": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Maersk": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 502 from https://maersk.wd3.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Mastercard": {
   "fails": 0,
@@ -236,48 +266,62 @@
   "ok": true
  },
  "Morningstar": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://morningstar.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "NVIDIA": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 502 from https://nvidia.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Netomi": {
   "fails": 0,
   "ok": true
  },
  "Nike": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://nike.wd1.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Nomura": {
   "fails": 0,
   "ok": true
  },
  "Northern Trust": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://ntrs.wd1.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Novartis": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://novartis.wd3.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Okta": {
   "fails": 0,
   "ok": true
  },
  "P&G": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://pg.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "PayPal": {
   "fails": 0,
   "ok": true
  },
  "Pfizer": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://pfizer.wd1.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Point72": {
   "fails": 0,
@@ -300,24 +344,30 @@
   "ok": true
  },
  "Roche": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://roche.wd3.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Rubrik": {
   "fails": 0,
   "ok": true
  },
  "S&P Global": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Salesforce": {
   "fails": 0,
   "ok": true
  },
  "Sanofi": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://sanofi.wd3.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Sarvam": {
   "fails": 0,
@@ -328,8 +378,10 @@
   "ok": true
  },
  "Shell": {
-  "fails": 0,
-  "ok": true
+  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Sigmoid": {
   "fails": 0,
@@ -360,8 +412,10 @@
   "ok": true
  },
  "Target": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 502 from https://target.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Teradata": {
   "fails": 0,
@@ -376,8 +430,10 @@
   "ok": true
  },
  "Vanguard": {
-  "fails": 0,
-  "ok": true
+  "error": "WorkdayError: HTTP 500 from https://vanguard.wd5.myworkdayjobs.com",
+  "failing_since": "2026-11-28T07:02:36+00:00",
+  "fails": 1,
+  "ok": false
  },
  "Visa": {
   "fails": 0,
