@@ -34,7 +34,7 @@
  "BNY": {
   "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://eofe.fa.us2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=t",
   "failing_since": "2026-11-28T03:02:37+00:00",
-  "fails": 2,
+  "fails": 3,
   "ok": false
  },
  "Bank of America": {
@@ -184,7 +184,7 @@
  "JPMC": {
   "error": "HTTPStatusError: Server error '503 Service Temporarily Unavailable' for url 'https://jpmc.fa.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?on",
   "failing_since": "2026-11-28T03:02:37+00:00",
-  "fails": 2,
+  "fails": 3,
   "ok": false
  },
  "Johnson & Johnson": {
