@@ -4,10 +4,8 @@
   "ok": true
  },
  "Adobe": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 18,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "AlphaGrep": {
   "fails": 0,
@@ -66,16 +64,12 @@
   "ok": true
  },
  "Cisco": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 17,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Citi": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 17,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Cloudflare": {
   "fails": 0,
@@ -134,10 +128,8 @@
   "ok": true
  },
  "GSK": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 18,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Glance": {
   "fails": 0,
@@ -200,10 +192,8 @@
   "ok": true
  },
  "Lowe's": {
-  "error": "WorkdayError: HTTP 502 from https://lowes.wd5.myworkdayjobs.com",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 18,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "MSCI": {
   "fails": 0,
@@ -242,10 +232,8 @@
   "ok": true
  },
  "Morgan Stanley": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 17,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Morningstar": {
   "fails": 0,
@@ -320,10 +308,8 @@
   "ok": true
  },
  "S&P Global": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-28T07:02:36+00:00",
-  "fails": 18,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Salesforce": {
   "fails": 0,
@@ -394,10 +380,8 @@
   "ok": true
  },
  "Visa": {
-  "error": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "failing_since": "2026-11-28T07:12:36+00:00",
-  "fails": 17,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Walmart Global Tech": {
   "fails": 0,
