@@ -360,3 +360,31 @@ def test_applied_roles_pass_the_title_filter():
     dropped = [e["title"] for e in roles
                if not PF.check(job(e["title"]))[0] and not PF.jd_eligible(job(e["title"]))]
     assert dropped == []
+
+
+def test_health_pushes_group_a_platform_outage():
+    # Workday, 2026-11-28: every tenant redirected to the maintenance page; errors differ only by host.
+    down = [("NVIDIA", "workday", 3, "WorkdayError: HTTP 403 from https://nvidia.wd5.myworkdayjobs.com"),
+            ("Citi", "workday", 3, "WorkdayError: HTTP 403 from https://citi.wd5.myworkdayjobs.com"),
+            ("Roche", "workday", 3, "WorkdayError: HTTP 403 from https://roche.wd3.myworkdayjobs.com")]
+    [(title, body, tags)] = runmod.health_pushes(down, [])
+    assert title == "jobwatch: Workday unreachable (3 boards)"
+    assert body == "3 runs failed. Status unknown.\nWorkdayError: HTTP 403\nNVIDIA, Citi, Roche"
+    assert tags == ["warning"]
+
+
+def test_health_pushes_single_board_and_distinct_errors_stay_separate():
+    down = [("NVIDIA", "workday", 3, "WorkdayError: HTTP 403 from https://nvidia.wd5.myworkdayjobs.com"),
+            ("Citi", "workday", 3, "WorkdayError: HTTP 500 from https://citi.wd5.myworkdayjobs.com"),
+            ("Stripe", "greenhouse", 3, "HTTPStatusError: 503")]
+    titles = [t for t, _, _ in runmod.health_pushes(down, [])]
+    assert titles == ["jobwatch: NVIDIA unreachable", "jobwatch: Citi unreachable", "jobwatch: Stripe unreachable"]
+    [(_, body, _)] = runmod.health_pushes(down[:1], [])
+    assert body == "3 runs failed. Status unknown.\nWorkdayError: HTTP 403 from https://nvidia.wd5.myworkdayjobs.com"
+
+
+def test_health_pushes_group_recovery_by_platform():
+    back = [("NVIDIA", "workday", 9), ("Citi", "workday", 8), ("Stripe", "greenhouse", 4)]
+    out = runmod.health_pushes([], back)
+    assert out == [("jobwatch: Workday back (2 boards)", "Reachable again: NVIDIA, Citi", []),
+                   ("jobwatch: Stripe back", "Reachable again after 4 failed runs.", [])]

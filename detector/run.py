@@ -12,6 +12,7 @@ first run does not flood the phone. Use the on-demand sweep (later milestone) fo
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 import time
 from pathlib import Path
@@ -31,6 +32,36 @@ SCREEN_WORKERS = 4     # parallel Claude calls per pass
 FULL_SWEEP_EVERY = 12  # 5-min slots; each incremental board (Workday, Amazon, Eightfold) is read in full once per 12, staggered so ~1/12 of boards per pass
 CLOSED_TEXT = ("this job is no longer", "position has been filled", "no longer accepting applications",
                "job you are looking for is no longer")
+
+
+def health_pushes(down: list[tuple[str, str, int, str]], back: list[tuple[str, str, int]]) -> list[tuple[str, str, list[str]]]:
+    """(title, body, tags) for this pass's board-health changes. `down`: (board, platform, fails, error) for
+    boards that reached the alert threshold this pass; `back`: (board, platform, fails) for boards reachable
+    again. Boards on one platform failing with the same error (URLs aside: each names its own host) get one
+    push, as do boards coming back together, so a platform outage (Workday, 2026-11-28: 41 boards) is one
+    alert, not one per board."""
+    out: list[tuple[str, str, list[str]]] = []
+    groups: dict[tuple[str, str], list[tuple[str, int, str]]] = {}
+    for name, platform, fails, err in down:
+        groups.setdefault((platform, re.sub(r"\s*(\bfrom\s+)?\bhttps?://\S+", "", err)), []).append((name, fails, err))
+    for (platform, err), xs in groups.items():
+        if len(xs) == 1:
+            name, fails, full = xs[0]
+            out.append((f"jobwatch: {name} unreachable", f"{fails} runs failed. Status unknown.\n{full}", ["warning"]))
+        else:
+            names = ", ".join(n for n, _, _ in xs)
+            out.append((f"jobwatch: {platform.capitalize()} unreachable ({len(xs)} boards)",
+                        f"{xs[0][1]} runs failed. Status unknown.\n{err}\n{names}", ["warning"]))
+    by_platform: dict[str, list[tuple[str, int]]] = {}
+    for name, platform, fails in back:
+        by_platform.setdefault(platform, []).append((name, fails))
+    for platform, xs in by_platform.items():
+        if len(xs) == 1:
+            out.append((f"jobwatch: {xs[0][0]} back", f"Reachable again after {xs[0][1]} failed runs.", []))
+        else:
+            out.append((f"jobwatch: {platform.capitalize()} back ({len(xs)} boards)",
+                        "Reachable again: " + ", ".join(n for n, _ in xs), []))
+    return out
 
 
 def kind(b: dict) -> str:
@@ -169,6 +200,8 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
     jd_queue: list[Job] = []  # title misses whose JD gets a keyword read (status jdcheck)
     pass_no = int(time.time() // 300)  # a 5-min slot number: rotates Workday full sweeps across boards
     ats_of: dict[str, str] = {}
+    went_down: list[tuple[str, str, int, str]] = []  # boards reaching the failure-alert threshold this pass
+    came_back: list[tuple[str, str, int]] = []        # alerted boards reachable again this pass
 
     with client() as c:
         for i, b in enumerate(load_boards(names)):
@@ -188,8 +221,7 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
                 h.setdefault("failing_since", ts)
                 print(f"{name:<14} UNKNOWN (fetch failed: {h['error']})")
                 if h["fails"] == cfg["board_fail_alert_after"]:
-                    notify.push(f"jobwatch: {name} unreachable", f"{h['fails']} runs failed. Status unknown.\n{h['error']}",
-                                tags=["warning"], dry_run=dry_run)
+                    went_down.append((name, kind(b), h["fails"], h["error"]))
                 continue
 
             new = [j for j in jobs if j.id not in known]
@@ -213,11 +245,13 @@ def run(names: list[str] | None, dry_run: bool, screen_roles: bool | None = None
             if baseline:
                 bs["baseline_at"] = ts
             if not h.get("ok", True) and h.get("fails", 0) >= cfg["board_fail_alert_after"]:
-                notify.push(f"jobwatch: {name} back", f"Reachable again after {h['fails']} failed runs.", dry_run=dry_run)
+                came_back.append((name, kind(b), h["fails"]))
             health[name] = {"ok": True, "fails": 0}
             print(f"{name:<14} fetched={len(jobs):<4} new={len(new):<4} passed={passed:<3} "
                   + (f"jd-check={jd_wait} " if jd_wait else "")
                   + ("(baseline: recorded, no alerts)" if baseline else ""))
+        for title, body, tags in health_pushes(went_down, came_back):
+            notify.push(title, body, tags=tags or None, dry_run=dry_run)
 
         enriched: set[str] = set()  # board:id already given its detail lookup this pass
         alerts += jd_pass(c, pf, cfg, seen, jd_queue, ats_of, enriched)
