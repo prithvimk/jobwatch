@@ -32,10 +32,8 @@
   "ok": true
  },
  "BNY": {
-  "error": "HTTPStatusError: Redirect response '302 Moved Temporarily' for url 'https://eofe.fa.us2.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyDat",
-  "failing_since": "2026-11-28T03:02:37+00:00",
-  "fails": 4,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Bank of America": {
   "fails": 0,
@@ -182,10 +180,8 @@
   "ok": true
  },
  "JPMC": {
-  "error": "HTTPStatusError: Server error '503 Service Temporarily Unavailable' for url 'https://jpmc.fa.oraclecloud.com/hcmRestApi/resources/latest/recruitingCEJobRequisitions?on",
-  "failing_since": "2026-11-28T03:02:37+00:00",
-  "fails": 4,
-  "ok": false
+  "fails": 0,
+  "ok": true
  },
  "Johnson & Johnson": {
   "fails": 0,
